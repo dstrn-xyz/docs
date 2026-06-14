@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://framework.dstrn.xyz" target="_blank"><img src="./.images/text_logo.png" width="400"></a>
+  <a href="https://framework.dstrn.xyz" target="_blank"><img src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.images/text_logo.png" width="400"></a>
 </p>
 <p align="center">
 a fully integrated javascript application framework built around elegance by default.
