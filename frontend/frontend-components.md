@@ -49,7 +49,7 @@ dframework ships a set of web components and a performance tailored base class f
 
 <p align="center">
   <video autoplay loop muted playsinline width="400">
-    <source src="../.videos/checkbox.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.videos/checkbox.mp4" type="video/mp4">
   </video>
 </p>
 
@@ -68,7 +68,7 @@ events: `change`
 
 <p align="center">
   <video autoplay loop muted playsinline width="400">
-    <source src="../.videos/color-picker.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.videos/color-picker.mp4" type="video/mp4">
   </video>
 </p>
 
@@ -83,7 +83,7 @@ events: `change`
 
 <p align="center">
   <video autoplay loop muted playsinline width="400">
-    <source src="../.videos/combobox.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.videos/combobox.mp4" type="video/mp4">
   </video>
 </p>
 
@@ -111,7 +111,7 @@ events: `change`, `add`, `open`, `close`
 
 <p align="center">
   <video autoplay loop muted playsinline width="400">
-    <source src="../.videos/context-menu.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.videos/context-menu.mp4" type="video/mp4">
   </video>
 </p>
 
@@ -132,7 +132,7 @@ renders a context menu on right click within the parent element:
 
 <p align="center">
   <video autoplay loop muted playsinline width="400">
-    <source src="../.videos/drawer.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.videos/drawer.mp4" type="video/mp4">
   </video>
 </p>
 
@@ -153,7 +153,7 @@ methods: `toggle()`
 
 <p align="center">
   <video autoplay loop muted playsinline width="400">
-    <source src="../.videos/dropdown.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.videos/dropdown.mp4" type="video/mp4">
   </video>
 </p>
 
@@ -169,7 +169,7 @@ methods: `toggle()`
 
 <p align="center">
   <video autoplay loop muted playsinline width="400">
-    <source src="../.videos/hold-button.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.videos/hold-button.mp4" type="video/mp4">
   </video>
 </p>
 
@@ -185,7 +185,7 @@ fires `click` only after the user holds for the specified duration. prevents acc
 
 <p align="center">
   <video autoplay loop muted playsinline width="400">
-    <source src="../.videos/icon-button.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.videos/icon-button.mp4" type="video/mp4">
   </video>
 </p>
 
@@ -197,7 +197,7 @@ fires `click` only after the user holds for the specified duration. prevents acc
 
 <p align="center">
   <video autoplay loop muted playsinline width="400">
-    <source src="../.videos/image-input.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.videos/image-input.mp4" type="video/mp4">
   </video>
 </p>
 
@@ -227,7 +227,7 @@ events: `change`
 
 <p align="center">
   <video autoplay loop muted playsinline width="400">
-    <source src="../.videos/file-input.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.videos/file-input.mp4" type="video/mp4">
   </video>
 </p>
 
@@ -254,7 +254,7 @@ events: `change`
 
 <p align="center">
   <video autoplay loop muted playsinline width="400">
-    <source src="../.videos/loader.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.videos/loader.mp4" type="video/mp4">
   </video>
 </p>
 
@@ -278,7 +278,7 @@ methods: `open()`, `close()`
 
 <p align="center">
   <video autoplay loop muted playsinline width="400">
-    <source src="../.videos/notification.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.videos/notification.mp4" type="video/mp4">
   </video>
 </p>
 
@@ -294,7 +294,7 @@ methods: `show()`, `hide()`, `destroy()`
 
 <p align="center">
   <video autoplay loop muted playsinline width="400">
-    <source src="../.videos/skeleton.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.videos/skeleton.mp4" type="video/mp4">
   </video>
 </p>
 
@@ -319,7 +319,7 @@ placeholder shapes rendered during content loading:
 
 <p align="center">
   <video autoplay loop muted playsinline width="400">
-    <source src="../.videos/slider.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.videos/slider.mp4" type="video/mp4">
   </video>
 </p>
 
@@ -334,7 +334,7 @@ events: `change`
 
 <p align="center">
   <video autoplay loop muted playsinline width="400">
-    <source src="../.videos/input.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.videos/input.mp4" type="video/mp4">
   </video>
 </p>
 
@@ -356,7 +356,7 @@ events: `change`
 
 <p align="center">
   <video autoplay loop muted playsinline width="400">
-    <source src="../.videos/toggle.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.videos/toggle.mp4" type="video/mp4">
   </video>
 </p>
 
@@ -375,7 +375,7 @@ events: `change`
 
 <p align="center">
   <video autoplay loop muted playsinline width="400">
-    <source src="../.videos/morph.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.videos/morph.mp4" type="video/mp4">
   </video>
 </p>
 
