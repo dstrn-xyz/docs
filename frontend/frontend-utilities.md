@@ -1,46 +1,30 @@
 # frontend utilities
 
 - [frontend utilities](#frontend-utilities)
-
   - [introduction](#introduction)
-
+  - [button classes](#button-classes)
   - [responsive prefixes](#responsive-prefixes)
-
   - [layout](#layout)
-
     - [positioning](#positioning)
     - [grid](#grid)
     - [flexbox](#flexbox)
-
   - [spacing](#spacing)
-
   - [sizing](#sizing)
-
   - [typography](#typography)
-
   - [appearance](#appearance)
-
   - [interaction](#interaction)
-
   - [transitions & animation](#transitions--animation)
-
   - [performance](#performance)
-
   - [dom functions](#dom-functions)
-
     - [selection](#selection)
     - [events](#events)
     - [classes](#classes)
     - [timing](#timing)
-
   - [data functions](#data-functions)
-
     - [type checking](#type-checking)
     - [array utilities](#array-utilities)
     - [extras](#extras)
-
   - [notify & modal](#notify--modal)
-
     - [notify](#notify)
     - [modal](#modal)
 
@@ -48,7 +32,29 @@
 
 ## introduction
 
-dframework ships a complete utility layer for styling and dom interaction. utility classes are generated at compile time. no runtime css-in-js. frontend functions are available globally in every page script and component.
+dframework ships a complete utility layer for styling and dom interaction. utility classes are generated at compile time. no runtime css in js. frontend functions are available globally in every page script and component.
+
+<a name="button-classes"></a>
+
+## button classes
+
+<p align="center">
+  <img width="400" src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.images/buttons.png"></img>
+</p>
+
+you can use prestyled buttons by using the base class `btn` and then chaining a prefix class `btn-*` where `*` represents the button color.
+
+| available colors          | description          |
+| -------------- | -------------------- |
+| `.btn-accent` | accent colored button        |
+| `.btn-red`      | soft red button        |
+| `.btn-yellow`   | soft yellow button       |
+| `.btn-green`   | soft green button        |
+| `.btn-blue`   | soft blue button |
+| `.btn-purple`   | soft purple button |
+| `.btn-pink`   | soft pink button |
+| `.btn-gray`   | `var(--container)` colored button |
+| `.btn-transparent`   | transparent button (use for animation) |
 
 <a name="responsive-prefixes"></a>
 

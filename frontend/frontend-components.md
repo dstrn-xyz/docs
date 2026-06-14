@@ -19,7 +19,6 @@
     - [d-loader](#d-loader)
     - [d-modal](#d-modal)
     - [d-notification](#d-notification)
-    - [d-scroll](#d-scroll)
     - [d-skeleton](#d-skeleton)
     - [d-slider](#d-slider)
     - [d-text-input](#d-text-input)
@@ -48,6 +47,12 @@ dframework ships a set of web components and a performance tailored base class f
 
 ### d-checkbox
 
+<p align="center">
+  <video autoplay loop muted playsinline width="400">
+    <source src="../.videos/checkbox.mp4" type="video/mp4">
+  </video>
+</p>
+
 ```html
 <d-checkbox text="enable notifications" checked></d-checkbox>
 ```
@@ -61,6 +66,12 @@ events: `change`
 
 ### d-color-picker
 
+<p align="center">
+  <video autoplay loop muted playsinline width="400">
+    <source src="../.videos/color-picker.mp4" type="video/mp4">
+  </video>
+</p>
+
 ```html
 <d-color-picker value="#ff0000" name="theme color"></d-color-picker>
 ```
@@ -69,6 +80,12 @@ methods: `toggle()`, `setHex(hex)`
 events: `change`
 
 ### d-combobox
+
+<p align="center">
+  <video autoplay loop muted playsinline width="400">
+    <source src="../.videos/combobox.mp4" type="video/mp4">
+  </video>
+</p>
 
 a searchable, extensible select component.
 
@@ -92,6 +109,12 @@ events: `change`, `add`, `open`, `close`
 
 ### d-context-menu
 
+<p align="center">
+  <video autoplay loop muted playsinline width="400">
+    <source src="../.videos/context-menu.mp4" type="video/mp4">
+  </video>
+</p>
+
 renders a context menu on right click within the parent element:
 
 ```html
@@ -106,6 +129,12 @@ renders a context menu on right click within the parent element:
 ```
 
 ### d-drawer
+
+<p align="center">
+  <video autoplay loop muted playsinline width="400">
+    <source src="../.videos/drawer.mp4" type="video/mp4">
+  </video>
+</p>
 
 ```html
 <d-drawer direction="left" opened>
@@ -122,6 +151,12 @@ methods: `toggle()`
 
 ### d-dropdown
 
+<p align="center">
+  <video autoplay loop muted playsinline width="400">
+    <source src="../.videos/dropdown.mp4" type="video/mp4">
+  </video>
+</p>
+
 ```html
 <d-dropdown header="account">
   <a href="/profile">profile</a>
@@ -131,6 +166,12 @@ methods: `toggle()`
 ```
 
 ### d-hold-button
+
+<p align="center">
+  <video autoplay loop muted playsinline width="400">
+    <source src="../.videos/hold-button.mp4" type="video/mp4">
+  </video>
+</p>
 
 fires `click` only after the user holds for the specified duration. prevents accidental activation of destructive actions.
 
@@ -142,11 +183,23 @@ fires `click` only after the user holds for the specified duration. prevents acc
 
 ### d-icon-button
 
+<p align="center">
+  <video autoplay loop muted playsinline width="400">
+    <source src="../.videos/icon-button.mp4" type="video/mp4">
+  </video>
+</p>
+
 ```html
 <d-icon-button icon="dstrn-heart" size="2em" color="red"></d-icon-button>
 ```
 
 ### d-image-input
+
+<p align="center">
+  <video autoplay loop muted playsinline width="400">
+    <source src="../.videos/image-input.mp4" type="video/mp4">
+  </video>
+</p>
 
 ```html
 <d-image-input accept="image/png,image/jpeg" name="avatar" fit="contain"></d-image-input>
@@ -172,6 +225,12 @@ events: `change`
 
 ### d-file-input
 
+<p align="center">
+  <video autoplay loop muted playsinline width="400">
+    <source src="../.videos/file-input.mp4" type="video/mp4">
+  </video>
+</p>
+
 ```html
 <d-file-input accept="*/*" name="document" multiple compact></d-file-input>
 ```
@@ -193,6 +252,12 @@ events: `change`
 
 ### d-loader
 
+<p align="center">
+  <video autoplay loop muted playsinline width="400">
+    <source src="../.videos/loader.mp4" type="video/mp4">
+  </video>
+</p>
+
 ```html
 <d-loader></d-loader>
 ```
@@ -211,6 +276,12 @@ methods: `open()`, `close()`
 
 ### d-notification
 
+<p align="center">
+  <video autoplay loop muted playsinline width="400">
+    <source src="../.videos/notification.mp4" type="video/mp4">
+  </video>
+</p>
+
 ```html
 <d-notification timer="4000">
   <p>your changes have been saved.</p>
@@ -219,23 +290,13 @@ methods: `open()`, `close()`
 
 methods: `show()`, `hide()`, `destroy()`
 
-### d-scroll
-
-a scroll container with framework managed scroll position tracking.
-
-```html
-<d-scroll style="height: 400px;">
-  <div>scrollable content</div>
-</d-scroll>
-```
-
-| attribute    | description                 |
-| ------------ | --------------------------- |
-| `horizontal` | enable horizontal scrolling |
-
-methods: `scrollTo(position)`, `refresh()`
-
 ### d-skeleton
+
+<p align="center">
+  <video autoplay loop muted playsinline width="400">
+    <source src="../.videos/skeleton.mp4" type="video/mp4">
+  </video>
+</p>
 
 placeholder shapes rendered during content loading:
 
@@ -256,6 +317,12 @@ placeholder shapes rendered during content loading:
 
 ### d-slider
 
+<p align="center">
+  <video autoplay loop muted playsinline width="400">
+    <source src="../.videos/slider.mp4" type="video/mp4">
+  </video>
+</p>
+
 ```html
 <d-slider min="0" max="100" value="50" step="1"></d-slider>
 ```
@@ -264,6 +331,12 @@ methods: `getValue()`, `setValue(value)`
 events: `change`
 
 ### d-text-input
+
+<p align="center">
+  <video autoplay loop muted playsinline width="400">
+    <source src="../.videos/input.mp4" type="video/mp4">
+  </video>
+</p>
 
 ```html
 <d-text-input placeholder="search" icon="dstrn-search" shortcut="cmd+k"></d-text-input>
@@ -281,6 +354,12 @@ events: `change`
 
 ### d-toggle
 
+<p align="center">
+  <video autoplay loop muted playsinline width="400">
+    <source src="../.videos/toggle.mp4" type="video/mp4">
+  </video>
+</p>
+
 renders a segmented toggle between two or more options. mark the default with `default`:
 
 ```html
@@ -293,6 +372,12 @@ renders a segmented toggle between two or more options. mark the default with `d
 events: `change`
 
 ### d-morph
+
+<p align="center">
+  <video autoplay loop muted playsinline width="400">
+    <source src="../.videos/morph.mp4" type="video/mp4">
+  </video>
+</p>
 
 standalone morphing elements. the `dMotion` singleton engine orchestrates physics based animated transitions between named elements placed anywhere in the document.
 
