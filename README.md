@@ -6,7 +6,7 @@ a fully integrated javascript application framework built around elegance by def
 </p>
 
 <p align="center">
-<a href="https://github.com/dstrn825/dframework2/actions"><img src="https://github.com/dstrn825/dframework2/actions/workflows/node.js.yml/badge.svg" alt="build status"></a>
+  <a href="https://github.com/dstrn825/dframework2/actions"><img src="https://github.com/dstrn825/dframework2/actions/workflows/node.js.yml/badge.svg" alt="build status"></a>
 </p>
 
 ## about dframework
