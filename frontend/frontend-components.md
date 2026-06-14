@@ -91,7 +91,7 @@ a searchable, extensible select component.
 
 ```html
 <d-combobox
-  options='[{"value":"a","text":"Option A"},{"value":"b","text":"Option B"}]'
+  options='[{"value":"a","text":"option A"},{"value":"b","text":"option B"}]'
   placeholder="select an option"
   allow-search>
 </d-combobox>
@@ -176,8 +176,8 @@ methods: `toggle()`
 fires `click` only after the user holds for the specified duration. prevents accidental activation of destructive actions.
 
 ```html
-<d-hold-button delay="2000" d-wire="post:delete" d-wire-data="id:{{ post.id }}">
-  delete post
+<d-hold-button delay="2000">
+  delete
 </d-hold-button>
 ```
 
