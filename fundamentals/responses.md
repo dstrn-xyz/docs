@@ -7,6 +7,7 @@
   - [headers and cookies](#headers-and-cookies)
   - [json responses](#json-responses)
   - [rendering views](#rendering-views)
+  - [streaming responses](#streaming-responses)
   - [redirects](#redirects)
   - [error responses](#error-responses)
 
@@ -14,7 +15,7 @@
 
 ## introduction
 
-the `Response` class wraps the raw node http response. however, you almost never interact with the response object directly. instead, controllers return one of the globally available response helpers: `render()`, `json()`, `redirect()`, `back()`, `abort()`, or `status()`.
+the `Response` class wraps the raw node http response. however, you almost never interact with the response object directly. instead, controllers return one of the globally available response helpers: `render()`, `json()`, `redirect()`, `back()`, `abort()`, `status()`, or `stream()`.
 
 dframework detects the returned helper and finalizes the http response automatically.
 
@@ -113,6 +114,45 @@ export default class SettingsController {
   }
 }
 ```
+
+<a name="streaming-responses"></a>
+
+## streaming responses
+
+the `stream(writer)` helper sends a response body in chunks with backpressure support. it receives an async function `(write, close)` where `write(chunk)` sends a chunk and returns a promise that resolves when the transport is ready for more data, and `close()` ends the response.
+
+streaming is ideal for proxying large files (audio, video, documents) without buffering the entire payload in memory. set headers (content type, range, cache control) before calling `stream()`, just like any other response method.
+
+dframework handles backpressure automatically. if the client or transport cannot keep up, `write()` will wait until the socket is writable again before resolving. the response pool is not released until `close()` is called, so long running streams do not interfere with object reuse.
+
+```javascript
+export default class StreamController {
+  async audio(req) {
+    const file = await AudioFile.find(req.params.id);
+    if (!file) return abort(404);
+
+    const upstream = await fetch(file.url, {
+      headers: { range: req.headers['range'] }
+    });
+
+    return status(upstream.status)
+      .set('accept-ranges', 'bytes')
+      .set('content-range', upstream.headers.get('content-range'))
+      .type('audio/mpeg')
+      .stream(async (write, close) => {
+        const reader = upstream.body.getReader();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          await write(Buffer.from(value));
+        }
+        close();
+      });
+  }
+}
+```
+
+`close()` must be called when you are done writing. if your writer function returns without calling `close()`, the framework will call it automatically for you. if the writer throws an error, the response is ended and the pool is released.
 
 <a name="redirects"></a>
 
