@@ -39,7 +39,7 @@ Route.post('/users', 'UserController@store').name('users.store');
 controllers handle request logic:
 
 ```javascript
-export default class UserController extends Controller {
+export default class UserController {
   async store(req) {
     const validation = validate(req.body, {
       email: 'required|email',
