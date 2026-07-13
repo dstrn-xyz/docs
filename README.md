@@ -253,4 +253,4 @@ all contributions must align with the framework philosophy.
 
 # license
 
-[apache 2.0](/LICENSE)
+[apache 2.0](https://github.com/dstrn-xyz/docs/blob/main/LICENSE)
