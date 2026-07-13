@@ -2,11 +2,15 @@
   <a href="https://framework.dstrn.xyz" target="_blank"><img src="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/.images/text_logo.png" width="400"></a>
 </p>
 <p align="center">
-a fully integrated javascript application framework built around elegance by default.
+a fully integrated javascript application framework built around architectural consistency, deterministic behavior, and performance.
 </p>
 
 <p align="center">
-  <a href="https://github.com/dstrn825/dframework2/actions"><img src="https://github.com/dstrn825/dframework2/actions/workflows/node.js.yml/badge.svg" alt="build status"></a>
+  <a href="https://github.com/dstrn-xyz/framework/actions"><img src="https://github.com/dstrn-xyz/framework/actions/workflows/node.js.yml/badge.svg" alt="build status"></a>
+  <img src="https://img.shields.io/badge/version-0.21.0-d3ac5f" alt="version">
+  <a href="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/LICENSE"><img src="https://img.shields.io/badge/license-apache%202.0-blue.svg" alt="license"></a>
+  <img src="https://img.shields.io/badge/established_in-2019-d3ac5f" alt="established in 2019">
+  <a href="https://dstrn.xyz"><img src="https://img.shields.io/badge/copyright-dstrn-d46a6a" alt="copyright"></a>
 </p>
 
 ## about dframework
@@ -177,7 +181,7 @@ dframework achieves performance through its closed world runtime architecture wi
 
 benchmark results and methodology:
 
-- [benchmarks](/benchmarks/benchmarks.md)
+- [benchmarks](https://github.com/dstrn-xyz/benchmarks)
 
 <a name="documentation"></a>
 
@@ -214,11 +218,12 @@ benchmark results and methodology:
 - [jobs and queues](/asynchronous/jobs-and-queues.md)
 - [scheduling and commands](/asynchronous/scheduling-and-commands.md)
 
-## tooling
+## other
 
 - [cli](/other/cli.md)
 - [localization](/other/localization.md)
 - [logging and errors](/other/logging-and-errors.md)
+- [deployment](/other/deployment.md)
 
 ## security
 
@@ -248,4 +253,4 @@ all contributions must align with the framework philosophy.
 
 # license
 
-[mit](/license.md)
+[apache 2.0](/LICENSE)
