@@ -76,7 +76,7 @@ as detailed in the [controllers documentation](controllers.md), `req.body` and `
 
 ## headers
 
-you can retrieve headers using the `header()` or `get()` methods, which are case insensitive.
+you can retrieve headers using the `header()` method, which is case insensitive.
 
 ```javascript
 const userAgent = req.header('user-agent');
