@@ -354,14 +354,19 @@ route('users.show', { id: 42 });
 
 the `Route` facade must be initialized before using this helper. it is automatically available in all request contexts.
 
-**`routeIs(name)`**
+**`routeIs(name, params?)`**
 
-checks if the current request's route matches the given name. supports wildcard patterns with `*`.
+checks if the current request's route matches the given name. supports wildcard patterns with `*`. accepts an optional params object to constrain the match to specific route parameters.
 
 ```javascript
 routeIs('dashboard');       // exact match
 routeIs('admin.*');         // matches admin.users, admin.settings, etc.
+
+// constrain to a specific document page
+routeIs('docs.render', { slug: 'getting-started', page: 'installation' });
 ```
+
+when params are supplied, each key must exactly match (string comparison) the corresponding value on `req.params`. use this inside view templates to determine which navigation link is active for parameterized routes.
 
 <a name="validation"></a>
 
