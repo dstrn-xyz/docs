@@ -68,7 +68,7 @@ export default class ThemeController {
 
 ## json responses
 
-the `json()` helper automatically sets the `Content-Type` to `application/json; charset=utf-8` and serializes the provided object.
+the `json()` helper automatically sets the `Content-Type` to `application/json` and serializes the provided object. JSON is UTF-8 by default per RFC 8259, no explicit charset needed.
 
 ```javascript
 export default class ApiController {

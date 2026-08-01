@@ -157,7 +157,7 @@ const limiter = new RateLimiter({
   message: 'too many requests, please slow down',
 });
 
-Route.middleware(limiter.middleware()).group({ prefix: '/api' }, (Route) => {
+Route.middleware(limiter).group({ prefix: '/api' }, (Route) => {
   Route.post('/messages', 'MessageController@store');
   Route.post('/uploads',  'UploadController@store');
 });

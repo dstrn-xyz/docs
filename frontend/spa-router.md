@@ -6,7 +6,7 @@
 - [links and navigation](#links-and-navigation)
   - [anchor interception](#anchor-interception)
   - [the d-link element](#the-d-link-element)
-  - [opting out of interception](#opting-out-of-interception)
+  - [forcing full page navigation on d-link](#forcing-full-page-navigation-on-d-link)
 - [programmatic navigation](#programmatic-navigation)
 - [swap modes](#swap-modes)
 - [transition hooks](#transition-hooks)
@@ -38,7 +38,7 @@
 
 ## introduction
 
-dframework includes a fully integrated client side router called dSPA. it transforms your server rendered application into a single page application without requiring a javascript framework, a build step, or any configuration. every standard `<a>` tag on your page is automatically intercepted and navigated via fetch, replacing only the targeted portion of the dom while preserving the rest of the page, layout scripts, socket connections, and audio playback.
+dframework includes a fully integrated client side router called dSPA. it transforms your server rendered application into a single page application without requiring a javascript framework, a build step, or any configuration. `<a>` tags are intercepted only when marked with the `d-link` attribute. `<d-link>` custom elements are always intercepted. the router fetches the destination, replacing only the targeted portion of the dom while preserving the rest of the page, layout scripts, socket connections, and audio playback.
 
 the router is loaded automatically when your application includes the framework's frontend runtime. there is nothing to install or import.
 
@@ -72,19 +72,19 @@ the value is an array of css selectors. the router will try each selector in ord
 
 ### anchor interception
 
-every same origin `<a>` tag on the page is automatically intercepted by the router. when clicked, the router fetches the href and swaps the default target region. no special attributes or classes are needed.
+standard `<a>` tags are intercepted only when marked with the `d-link` attribute. when clicked, the router fetches the href and swaps the default target region.
 
 ```html
-<a href="/dashboard">dashboard</a>
+<a href="/dashboard" d-link>dashboard</a>
 ```
 
 the router skips interception in the following cases:
 
+- the link is a standard `<a>` without the `d-link` attribute
 - the link points to a different origin
 - the link has `target="_blank"`
 - the link starts with `#`, `mailto:`, `tel:`, or `javascript:`
 - the user is holding a modifier key (ctrl, meta, shift, alt)
-- the link has the `full` attribute
 
 <a name="the-d-link-element"></a>
 
@@ -126,14 +126,14 @@ to force external scripts inside the swapped content to reexecute even if they h
 <d-link href="/editor" rerun-scripts>open editor</d-link>
 ```
 
-<a name="opting-out-of-interception"></a>
+<a name="forcing-full-page-navigation-on-d-link"></a>
 
-### opting out of interception
+### forcing full page navigation on d-link
 
-add the `full` attribute to any `<a>` or `<d-link>` element to force a traditional full page navigation.
+standard `<a>` tags without `d-link` already perform normal page navigation. to force a full page reload on a `<d-link>` element, use the `d-full-reload` attribute.
 
 ```html
-<a href="/logout" full>logout</a>
+<d-link href="/logout" d-full-reload>logout</d-link>
 ```
 
 <a name="programmatic-navigation"></a>
@@ -439,16 +439,18 @@ scripts that need to survive navigation cycles use the `type="text/dspa"` attrib
 
 use `text/dspa` for scripts that depend on the socket connection or that should persist across spa navigations within the same layout.
 
+the `Socket` frontend facade is only available inside scoped scripts (`type="text/dspa"`, inline page scripts, and module scripts with `d-spa-scope`). it is not available outside of scope contexts.
+
 <a name="module-scripts"></a>
 
 ### module scripts
 
 es module scripts (`type="module"`) are supported. by default, module scripts do not receive the scoped api variables because module scope isolation prevents the wrapping technique used for classic scripts.
 
-to opt a module script into scope injection, add the `data-dspa-scope` attribute.
+to opt a module script into scope injection, add the `d-spa-scope` attribute.
 
 ```html
-<script type="module" data-dspa-scope>
+<script type="module" d-spa-scope>
   const el = document.querySelector('#timer');
   setInterval(() => {
     el.textContent = new Date().toLocaleTimeString();
@@ -466,10 +468,10 @@ to force an external script to reexecute on every navigation, add the `rerun-scr
 
 you can manually mark an external script as loaded using `dSPA.markExternalScriptLoaded(src)` to prevent it from being fetched again.
 
-to prevent the router from executing a specific script tag entirely, add the `data-dspa-ignore` attribute.
+to prevent the router from executing a specific script tag entirely, add the `d-spa-ignore` attribute.
 
 ```html
-<script src="/analytics.js" data-dspa-ignore></script>
+<script src="/analytics.js" d-spa-ignore></script>
 ```
 
 <a name="active-navigation"></a>

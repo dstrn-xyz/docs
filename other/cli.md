@@ -96,8 +96,9 @@ dstrn help
 
 | command                   | description                                     |
 | ------------------------- | ----------------------------------------------- |
-| `dstrn run <CommandName>` | run a user command from `console/commands`      |
-| `dstrn logs:clear`        | clear or archive log files with date filtering  |
+| `dstrn run <CommandName>`               | run a user command from `console/commands`                                    |
+| `dstrn dispatch <JobName> [--payload]` | dispatch a background job from the command line with an optional json payload |
+| `dstrn logs:clear`                      | clear or archive log files with date filtering                                |
 | `dstrn docs:publish`      | publish framework documentation to your project |
 | `dstrn ai:publish`        | publish agentic documentation helpers           |
 

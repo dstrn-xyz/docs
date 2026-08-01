@@ -295,6 +295,8 @@ await Socket.connect();
 
 the connection url defaults to `/ws` and automatically uses `wss:` on secure pages and `ws:` on insecure ones. the full uri is constructed from the current page's `location.host`.
 
+the `Socket` frontend facade is only available inside scoped scripts (`type="text/dspa"`, inline page scripts, and module scripts with `d-spa-scope`). it is not available outside of scope contexts.
+
 <a name="emitting-events"></a>
 
 ### emitting events

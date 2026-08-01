@@ -8,6 +8,7 @@
   - [dispatching jobs](#dispatching-jobs)
     - [from controllers](#from-controllers)
     - [from anywhere](#from-anywhere)
+    - [from the command line](#from-the-command-line)
     - [payload data](#payload-data)
   - [the job facade](#the-job-facade)
   - [how the worker pool works](#how-the-worker-pool-works)
@@ -99,6 +100,22 @@ or simply use the global `Job` variable that is automatically available in all r
 
 ```javascript
 Job.dispatch('GenerateReportJob', { month: 'june', year: 2026 });
+```
+
+<a name="from-the-command-line"></a>
+
+### from the command line
+
+you can also dispatch a job from the command line using the `dstrn dispatch` command. this is useful for testing jobs during development or running one off tasks manually.
+
+```bash
+dstrn dispatch SendWelcomeEmailJob --payload '{"userId": 1}'
+```
+
+the `--payload` flag accepts a json string that is parsed and passed to the job's `handle` method. if omitted, the job receives an empty object. the command bootstraps the full application context including database connectivity and all framework globals, exactly as a worker thread does. execution time is reported on completion.
+
+```bash
+dstrn dispatch CleanupExpiredSessionsJob
 ```
 
 <a name="payload-data"></a>

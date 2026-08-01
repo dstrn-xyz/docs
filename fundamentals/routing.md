@@ -161,7 +161,7 @@ pair.post('/approve', ['AuthMiddleware@requireAuth', 'auth.AuthController@approv
 you can also apply middleware to a single route without a group by calling `.middleware()`.
 
 ```javascript
-Route.middleware(authLimiter.middleware()).post('/register', 'auth.AuthController@register');
+Route.middleware(authLimiter).post('/register', 'auth.AuthController@register');
 ```
 
 <a name="route-modifiers"></a>
