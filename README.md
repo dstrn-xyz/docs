@@ -6,7 +6,7 @@ a fully integrated javascript application framework built around architectural c
 </p>
 
 <p align="center">
-  <a href="https://github.com/dstrn-xyz/framework/actions"><img src="https://github.com/dstrn-xyz/framework/actions/workflows/node.js.yml/badge.svg" alt="build status"></a>
+  <a href="https://github.com/dstrn-xyz/framework/actions"><img src="https://github.com/dstrn-xyz/framework/actions/workflows/tests.yml/badge.svg" alt="build status"></a>
   <img src="https://img.shields.io/badge/version-0.21.0-d3ac5f" alt="version">
   <a href="https://raw.githubusercontent.com/dstrn-xyz/docs/refs/heads/main/LICENSE"><img src="https://img.shields.io/badge/license-apache%202.0-blue.svg" alt="license"></a>
   <img src="https://img.shields.io/badge/established_in-2019-d3ac5f" alt="established in 2019">
