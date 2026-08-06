@@ -11,7 +11,6 @@
   - [pagination](#pagination)
     - [custom pagination html](#custom-pagination-html)
   - [automatic form handling](#automatic-form-handling)
-  - [anti peeping protection](#anti-peeping-protection)
   - [view compilation](#view-compilation)
 
 <a name="introduction"></a>
@@ -236,14 +235,6 @@ the framework evaluates the block only if there is more than one page (`last > 1
 when you create an html `<form>` with a mutating method (e.g. `POST`, `PUT`), the view engine automatically injects a hidden `_csrf` input field and the current csrf token value. you do not need to manually output csrf tokens in your forms.
 
 additionally, the engine injects a `<meta name="csrf-token">` tag into the document's `<head>`, allowing your ajax requests to pick up the token.
-
-<a name="anti-peeping-protection"></a>
-
-## anti peeping protection
-
-dframework includes a built in anti peeping script that disables context menus, blocks common developer tools keyboard shortcuts, and triggers infinite debugger loops if the console is forced open.
-
-this behavior can be toggled globally via `app.antiPeeping` in your configuration, or overridden per response using the `antiPeeping(false)` chainable helper in your controller.
 
 <a name="view-compilation"></a>
 

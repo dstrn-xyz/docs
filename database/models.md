@@ -3,22 +3,29 @@
 - [models](#models)
   - [introduction](#introduction)
   - [defining models](#defining-models)
+
     - [table names](#table-names)
     - [primary keys](#primary-keys)
   - [retrieving models](#retrieving-models)
+
+    - [methods overview](#methods-overview)
     - [magic finders](#magic-finders)
     - [pagination](#pagination)
+    - [latest rows](#latest-rows)
   - [inserting and updating](#inserting-and-updating)
+
     - [mass assignment](#mass-assignment)
     - [first or create](#first-or-create)
   - [deleting models](#deleting-models)
   - [relationships](#relationships)
+
     - [one to one](#one-to-one)
     - [one to many](#one-to-many)
     - [belongs to](#belongs-to)
     - [eager loading](#eager-loading)
     - [lazy eager loading](#lazy-eager-loading)
   - [serialization](#serialization)
+
     - [hiding attributes](#hiding-attributes)
   - [mutations](#mutations)
 
@@ -76,13 +83,43 @@ models proxy all methods from the fluent query builder, allowing you to chain co
 
 ```javascript
 const users = await User.all();
+// users: Array<User>. hydrated model instances. [] when the table is empty.
 ```
 
 you may use the `find` method to retrieve a specific record by its primary key.
 
 ```javascript
 const user = await User.find(1);
+// user: User | null. null when no row matches the given id.
 ```
+
+<a name="methods-overview"></a>
+
+### methods overview
+
+every method that runs a query returns a `Promise`. the result column lists what that promise resolves with, including null and empty array semantics.
+
+| method | arguments | returns |
+| --- | --- | --- |
+| `Model.all()` | none | `Promise<Model[]>` (hydrated instances, `[]` when no rows) |
+| `Model.find(id)` | primary key value, or `{ pk1, pk2 }` for composite keys | `Promise<Model\|null>` |
+| `Model.first(where?)` | optional `{ column: value }` object | `Promise<Model\|null>` |
+| `Model.latest(count?, column?)` | `null` or number; optional column name | `null` count: `Promise<Model\|null>`; numeric count: `Promise<Model[]>` |
+| `Model.where(...)` | column/operator/value, or object | `ModelQueryBuilder` (chainable, thenable, async iterable) |
+| `Model.orderBy(...)` / `groupBy(...)` / `limit(...)` / `offset(...)` / `distinct(...)` | chain values | `ModelQueryBuilder` (chainable) |
+| `Model.with(...relations)` | dot notation relation names | `ModelQueryBuilder` (chainable) |
+| `Model.paginate(perPage)` | rows per page (default 10) | `Promise<{ data: Model[], total, per_page, current_page, last_page, next_page_url, prev_page_url }>` |
+| `Model.firstOrCreate(attributes, values?)` | attributes object; optional extra values | `Promise<Model>` (existing or newly created) |
+| `Model.updateOrCreate(attributes, values?)` | attributes object; optional extra values | `Promise<Model>` (updated or newly created) |
+| `Model.create(data)` | column/value object | `Promise<Model>` (reloaded from the database using the primary key) |
+| `instance.save(newData?)` | optional object to merge before saving | `Promise<void>` |
+| `instance.update(data)` | column/value object | `Promise<void>` |
+| `instance.delete()` | none | `Promise<void>` |
+| `instance.hash(field)` | attribute name on the instance | `Promise<void>` (mutates the instance in place) |
+| `instance.load(...relations)` | relation names | `Promise<Model>` (the same instance, with relations populated) |
+| `instance.toJSON()` | none | plain object with hidden keys removed and relations serialized |
+
+the `where` chainable builder exposes the same constraint methods as the fluent query builder (`where`, `whereIn`, `whereNull`, `whereBetween`, `whereColumn`, `whereHashed`, etc.). it is also thenable (`await builder`) and async iterable (`for await (const m of builder)`).
 
 <a name="magic-finders"></a>
 
@@ -92,6 +129,7 @@ the framework provides dynamic magic methods for retrieving records by a specifi
 
 ```javascript
 const user = await User.findByEmail('test@example.com');
+// user: User | null. resolves via findBy => where({ email }).first()
 ```
 
 <a name="pagination"></a>
@@ -102,9 +140,34 @@ to paginate records, use the `paginate` method. it automatically reads the `page
 
 ```javascript
 const results = await User.where('status', 'active').paginate(15);
+// results: {
+//   data: Model[],
+//   total: number,
+//   per_page: number,
+//   current_page: number,
+//   last_page: number,
+//   next_page_url: string | null,
+//   prev_page_url: string | null
+// }
+//
+// `data` is always an array, even on the last page where it may be empty.
+// `total` reflects the unfiltered matching count. `next_page_url` and
+// `prev_page_url` are null when there is no adjacent page.
 ```
 
-the returned object contains the `data` array alongside pagination metadata like `total`, `current_page`, and `last_page`.
+<a name="latest-rows"></a>
+
+### latest rows
+
+the `latest` method orders rows by a column descending and returns either a single model or an array.
+
+```javascript
+const newestPost = await Post.latest();
+const recentPosts = await Post.latest(10);
+const recentlyPublished = await Post.latest(10, 'published_at');
+```
+
+calling `latest()` with no arguments returns the single most recent instance (or null). passing a numeric `count` returns that many model instances as an array. the column defaults to `created_at` but may be overridden with the second argument.
 
 <a name="inserting-and-updating"></a>
 
@@ -117,6 +180,8 @@ const user = new User();
 user.name = 'tarou';
 user.email = 'tarou@example.com';
 await user.save();
+// returns undefined. the instance now carries the assigned primary key
+// (if the table has an auto increment column).
 ```
 
 <a name="mass-assignment"></a>
@@ -130,6 +195,8 @@ const user = await User.create({
   name: 'tarou',
   email: 'tarou@example.com'
 });
+// user: User. reloaded from the database after insert, so it carries
+// the generated primary key and any column defaults.
 ```
 
 to update a model, you can either mutate its properties and call `save`, or use the `update` method directly.
@@ -137,6 +204,8 @@ to update a model, you can either mutate its properties and call `save`, or use 
 ```javascript
 const user = await User.find(1);
 await user.update({ status: 'active' });
+// returns undefined. the instance attributes are mutated in place
+// before the underlying UPDATE executes.
 ```
 
 <a name="first-or-create"></a>
@@ -150,9 +219,11 @@ const user = await User.firstOrCreate(
   { email: 'tarou@example.com' },
   { name: 'tarou' }
 );
+// user: User. always a hydrated instance; either the matched row
+// or the one created by inserting { ...attributes, ...values }.
 ```
 
-the `updateOrCreate` method is also available.
+the `updateOrCreate` method is also available. it returns the existing instance with the update applied, or a new instance if none matched.
 
 <a name="deleting-models"></a>
 
@@ -163,13 +234,15 @@ to delete a model, call the `delete` method on a model instance.
 ```javascript
 const user = await User.find(1);
 await user.delete();
+// returns undefined. throws a diagnostic error when the instance
+// is missing the primary key value(s) required to scope the delete.
 ```
 
 <a name="relationships"></a>
 
 ## relationships
 
-models can define relationships to other models, allowing you to fluently traverse and query connected data.
+models can define relationships to other models, allowing you to fluently traverse and query connected data. every relationship method returns a `ModelQueryBuilder` (chainable, thenable, and awaitable).
 
 <a name="one-to-one"></a>
 
@@ -219,10 +292,18 @@ export default class Post extends Model {
 }
 ```
 
-once a relationship is defined, you can query it by calling the method, which returns a query builder.
+once a relationship is defined, you can query it by calling the method, which returns a `ModelQueryBuilder`.
 
 ```javascript
 const activePosts = await user.posts().where('status', 'active').get();
+// activePosts: Array<Post>. empty [] when no posts match.
+```
+
+awaiting a `hasMany`/`belongsTo`/`hasOne` relation builder returns the hydrated model(s) directly (array for `hasMany`, single model or null for `hasOne`/`belongsTo`), so you can also write:
+
+```javascript
+const profile = await user.profile(); // Profile | null
+const posts = await user.posts();      // Array<Post>
 ```
 
 <a name="eager-loading"></a>
@@ -233,10 +314,11 @@ when you access a relationship as a property, the framework will read the preloa
 
 ```javascript
 const users = await User.with('profile', 'posts').limit(10).get();
+// users: Array<User>. each user already has _relations populated.
 
 for (const user of users) {
   // accessing user.posts does not trigger an additional query
-  console.log(user.posts);
+  console.log(user.posts); // Array<Post>
 }
 ```
 
@@ -254,14 +336,15 @@ if you have already retrieved a model instance and need to eager load a relation
 
 ```javascript
 const user = await User.find(1);
-await user.load('posts', 'profile');
+const sameUser = await user.load('posts', 'profile');
+// returns the same instance with the relations populated.
 ```
 
 <a name="serialization"></a>
 
 ## serialization
 
-when you cast a model to a json string or return it from a route, the framework automatically converts it using the `toJSON` method. this method serializes all attributes and eager loaded relationships.
+when you cast a model to a json string or return it from a route, the framework automatically converts it using the `toJSON` method. this method returns a plain object with all attributes and eager loaded relationships, applying the `hidden` list.
 
 <a name="hiding-attributes"></a>
 
@@ -290,4 +373,5 @@ const user = await User.find(1);
 user.custom_secret = 'plain-text';
 await user.hash('custom_secret');
 await user.save();
+// hash() mutates the instance in place; save() persists it.
 ```

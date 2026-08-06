@@ -93,8 +93,7 @@ export default class ProfileController {
     const user = Auth.user();
     
     return render('app.profile.show', { user })
-      .withData({ title: 'my profile' })
-      .antiPeeping(false);
+      .withData({ title: 'my profile' });
   }
 }
 ```

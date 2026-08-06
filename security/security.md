@@ -96,6 +96,35 @@ const apiLimiter = new RateLimiter({
 
 The limiter injects standard rate limit headers (`Retry-After`, `X-RateLimit-Limit`, `X-RateLimit-Remaining`) into every response. An internal cleanup interval runs once per window to evict stale entries. The interval is stopped and all tracking data is cleared automatically when the application shuts down.
 
+### layered rate limiters (group plus route)
+
+when a route group applies a `RateLimiter` and a route inside that group applies a second `RateLimiter`, both limiters run on every request to the inner route. the framework does not pick one or replace one with the other.
+
+the call order is determined at route registration time: group middleware is prepended to the route's own handler chain, so the group's limiter runs first and the route's limiter runs second (followed by the controller). the runtime stack is effectively `[groupLimiter, routeLimiter, controllerHandler]`.
+
+```javascript
+Route.group({ middleware: [apiLimiter] }, (api) => {
+  api.middleware(strictLimiter).post('/login', 'AuthController@login');
+});
+// runtime stack per /login request: [apiLimiter, strictLimiter, AuthController@login]
+```
+
+each `RateLimiter` instance keeps its own sliding window and its own hit count. the two layers do not share state:
+
+**counts accumulate independently**
+with `apiLimiter({ max: 100 })` and `strictLimiter({ max: 5 })` using the same per ip key, the inner route effectively allows 100 requests per minute at the group level plus 5 per minute at the route level. the stricter one (`strictLimiter`) is what a real caller will hit first.
+
+**whoever trips first short circuits the chain**
+when a limiter rejects, it sends a `429` and never calls `next()`, so the second limiter and the controller never execute. the response carries only the rejecting limiter's headers (`Retry-After`, `X-RateLimit-Limit`, `X-RateLimit-Remaining`); the other limiter does not get to set or override them.
+
+**both limiters increment on success**
+when a limiter allows a request through, it increments its own counter and calls `next()`. so a request that passes both layers bumps the count on both buckets.
+
+**do not reuse the same instance across layers**
+if you pass the same `RateLimiter` reference to both the group and the route, every successful request increments the shared `hits` map twice (once for each `next()` call in the chain). the effective limit becomes `max / 2`, which is almost certainly not what you want. construct a separate `new RateLimiter(...)` per layer.
+
+if you need a stricter cap on a specific route inside an already rate limited group, prefer either tightening the existing per ip limit at the route layer (a smaller `max`, a custom `keyGenerator` that includes `req.user.id`, or both) or removing the group limiter for that route. layering two limiters with the same key tends to produce surprising budget behavior because the layers interleave increments without coordination.
+
 <a name="shield-guard"></a>
 
 ## shield guard

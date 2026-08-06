@@ -37,7 +37,6 @@ APP_DEBUG=true
 APP_URL=http://localhost
 APP_PORT=0825
 
-ANTI_PEEPING=false
 SHIELD_ENABLED=false
 SESSION_DRIVER=memory
 

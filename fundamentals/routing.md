@@ -148,6 +148,23 @@ Route.group({ middleware: ['AuthMiddleware@requireAuth'] }, (auth) => {
 });
 ```
 
+<a name="middleware-ordering"></a>
+
+### middleware ordering
+
+when a route sits inside one or more groups, the runtime middleware stack is `outer group middleware, inner group middleware, route level middleware, controller`. group middleware is prepended to the route's own handler chain at registration time, in declaration order, so nested groups run their parents' middleware before their own.
+
+```javascript
+Route.group({ middleware: [a] }, (g1) => {
+  g1.group({ middleware: [b] }, (g2) => {
+    g2.middleware(c).get('/path', 'Ctrl@index');
+  });
+});
+// runtime stack for GET /path: [a, b, c, Ctrl@index]
+```
+
+middleware that returns a response without calling `next()` (such as the built in `RateLimiter` rejecting a request) short circuits the rest of the chain: the controller never runs and any later middleware never executes. this matters specifically when both a group and a route inside it apply a `RateLimiter`. the two limiters do not coordinate: each tracks its own window and its own count, whichever limit trips first wins, and reusing the same `RateLimiter` instance across both layers doubles the per request increment (so the effective limit becomes `max / 2`). see the [layered rate limiters](../security/security.md#layered-rate-limiters-group-plus-route) section in the security docs for the full interaction model.
+
 <a name="inline-middleware-chains"></a>
 
 ## inline middleware chains

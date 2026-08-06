@@ -47,7 +47,6 @@ export default {
   port: Env.value('APP_PORT', 825),
   locale: Env.value('APP_LOCALE', 'en'),
   key: Env.value('APP_KEY'),
-  antiPeeping: Env.value('ANTI_PEEPING', false),
   shield: Env.value('SHIELD_ENABLED', false),
   session_driver: Env.value('SESSION_DRIVER', 'memory'),
   queue: {
@@ -74,7 +73,6 @@ export default {
     },
   }
 };
-
 ```
 
 ```javascript
