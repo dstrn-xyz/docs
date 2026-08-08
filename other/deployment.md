@@ -44,7 +44,7 @@ this setup guarantees zero security compromise, automated zero maintenance ssl c
 
 ## automated deployment with dstrn deploy
 
-dframework includes a dedicated deployment helper via the `dstrn deploy` CLI command. it automates production setup by generating or installing caddy and systemd service configurations.
+dframework includes a dedicated deployment helper via the `dstrn deploy` cli command. it automates production setup by generating or installing caddy and systemd service configurations.
 
 <a name="generating-configuration-files"></a>
 
