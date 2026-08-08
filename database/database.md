@@ -95,6 +95,8 @@ the `ttl` parameter defines the cache lifespan in milliseconds. the default is f
 
 the caching system parses your raw sql to extract referenced table names. when you execute an `INSERT`, `UPDATE`, or `DELETE` against a table, the framework automatically flushes any cached select queries that reference that table. this keeps subsequent reads consistent without manual invalidation.
 
+the cache is LRU and capped at `app.queryCache.maxEntries` entries per request (default `200`). promote hot queries to most recently used simply by reading them; you do not need to evict cold entries manually. see [configuration > performance tuning keys](../getting-started/configuration.md#config-tuning) for details.
+
 <a name="return-contract"></a>
 
 ### return contract

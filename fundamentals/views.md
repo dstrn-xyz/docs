@@ -243,3 +243,5 @@ additionally, the engine injects a `<meta name="csrf-token">` tag into the docum
 in the `local` environment, the framework uses a custom jit compiler and provides detailed error traces mapped directly to your original `.d` files.
 
 in the `production` environment, views are ahead of time compiled into highly optimized `.dc` (.d compiled) files. the framework verifies the cryptographic integrity of these `.dc` files on startup to ensure your templates have not been tampered with.
+
+compiled views are retained in an LRU cache capped at `app.maxCompiledCacheSize` entries (default `500`). rendering a cached view touches it back to most recently used, so hot views stay resident under churn. see [configuration > performance tuning keys](../getting-started/configuration.md#config-tuning) for details.

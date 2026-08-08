@@ -9,6 +9,7 @@
   - [config/app.js](#config-app)
   - [config/auth.js](#config-auth)
   - [config/native.js](#config-native)
+  - [performance tuning keys](#config-tuning)
 
 - [accessing configuration values](#accessing-configuration-values)
 
@@ -82,6 +83,15 @@ export default {
   shield: Env.value('SHIELD_ENABLED', true),
   session_driver: Env.value('SESSION_DRIVER', 'memory'),
 
+  objectPoolSize: Env.value('OBJECT_POOL_SIZE', 2000),
+
+  staticFileCache: {
+    maxFiles: Env.value('STATIC_FILE_CACHE_MAX_FILES', 100),
+    maxSize: Env.value('STATIC_FILE_CACHE_MAX_SIZE', 1024 * 1024),
+  },
+
+  maxCompiledCacheSize: Env.value('MAX_COMPILED_CACHE_SIZE', 500),
+
   css: {
     optimize: Env.value('OPTIMIZE_CSS', true),
   },
@@ -95,6 +105,9 @@ export default {
     user: Env.value('DB_USER', 'root'),
     pass: Env.value('DB_PASS', ''),
     name: Env.value('DB_NAME', 'dframework'),
+    queryCache: {
+      maxEntries: Env.value('DB_QUERY_CACHE_MAX_ENTRIES', 200),
+    },
   },
 };
 ```
