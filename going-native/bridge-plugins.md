@@ -174,6 +174,7 @@ const platform = await App.native.device.platform();
 if (platform === 'ios' || platform === 'android') {
   // enable native only features
 }
+```
 
 <a name="storage-plugin"></a>
 
