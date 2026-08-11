@@ -306,10 +306,10 @@ listenAll(selectAll('.btn'), 'click', handler);
 ### classes
 
 ```javascript
-addClass(el, 'active')
-removeClass(el, 'hidden')
-toggleClass(el, 'open')
-hasClass(el, 'disabled')  // returns boolean
+addClass('active', el)
+removeClass('hidden', el)
+toggleClass('open', el, state) // state is optional
+hasClass('disabled', el)  // returns boolean
 ```
 
 ### timing
