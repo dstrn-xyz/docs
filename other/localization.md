@@ -10,6 +10,8 @@
     - [the t helper](#the-t-helper)
     - [in views](#in-views)
     - [fallback behavior](#fallback-behavior)
+    - [variable interpolation](#variable-interpolation)
+    - [japanese furigana (ruby) support](#japanese-furigana-ruby-support)
   - [locale detection](#locale-detection)
     - [detection order](#detection-order)
     - [default locale](#default-locale)
@@ -150,6 +152,67 @@ await t(req, 'common.missing_key', 'fallback text');
 ```
 
 if the translation file itself does not exist for the current locale, the function also falls back gracefully.
+
+<a name="variable-interpolation"></a>
+
+### variable interpolation
+
+translations support dynamic parameter placeholders using `:name` syntax matching framework route parameter conventions. pass an object as the third argument to `t()` or second argument to `@t()`.
+
+```json
+{
+  "greeting": "こんにちは、:nameさん！",
+  "items": ":name様は:count個のアイテムを持っています。"
+}
+```
+
+```javascript
+await t(req, 'messages.greeting', { name: '太郎' });
+// "こんにちは、太郎さん！"
+
+await t(req, 'messages.items', { name: '山田', count: 5 });
+// "山田様は5個のアイテムを持っています。"
+```
+
+in views pass the parameter object to `@t()`:
+
+```html
+<p>@t('messages.greeting', { name: '太郎' })</p>
+```
+
+<a name="japanese-furigana-ruby-support"></a>
+
+### japanese furigana (ruby) support
+
+dframework provides built in support for japanese furigana (ruby text) annotations. you can define furigana directly inside translation strings using `漢字[かんじ]` notation or use the global `ruby()` helper and `@ruby()` directive.
+
+```json
+{
+  "welcome": "東京[とうきょう]へようこそ、:nameさん！"
+}
+```
+
+```javascript
+await t(req, 'messages.welcome', { name: '花子' });
+// "<ruby>東京<rt>とうきょう</rt></ruby>へようこそ、花子さん！"
+```
+
+you can also call `ruby()` directly or use `@ruby()` in views:
+
+```javascript
+ruby('漢字', 'かんじ');
+// "<ruby>漢字<rt>かんじ</rt></ruby>"
+
+ruby('日本[にほん]語[ご]へようこそ');
+// "<ruby>日本<rt>にほん</rt></ruby><ruby>語<rt>ご</rt></ruby>へようこそ"
+```
+
+```html
+<h1>@ruby("漢字", "かんじ")</h1>
+<p>@ruby("日本[にほん]語")</p>
+```
+
+both `ruby()` and furigana annotated translations output safe html when rendered in views.
 
 <a name="locale-detection"></a>
 

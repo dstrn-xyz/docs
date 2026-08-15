@@ -10,6 +10,13 @@
     - [prefix](#prefix)
     - [middleware](#middleware)
     - [combined attributes](#combined-attributes)
+    - [middleware ordering](#middleware-ordering)
+  - [domain and port routing](#domain-and-port-routing)
+    - [domain routing](#domain-routing)
+    - [port routing](#port-routing)
+    - [chainable builders](#chainable-builders)
+    - [parameterized domains](#parameterized-domains)
+    - [overlapping route names across domains](#overlapping-route-names-across-domains)
   - [inline middleware chains](#inline-middleware-chains)
   - [route modifiers](#route-modifiers)
     - [csrf](#csrf)
@@ -164,6 +171,105 @@ Route.group({ middleware: [a] }, (g1) => {
 ```
 
 middleware that returns a response without calling `next()` (such as the built in `RateLimiter` rejecting a request) short circuits the rest of the chain: the controller never runs and any later middleware never executes. this matters specifically when both a group and a route inside it apply a `RateLimiter`. the two limiters do not coordinate: each tracks its own window and its own count, whichever limit trips first wins, and reusing the same `RateLimiter` instance across both layers doubles the per request increment (so the effective limit becomes `max / 2`). see the [layered rate limiters](../security/security.md#layered-rate-limiters-group-plus-route) section in the security docs for the full interaction model.
+
+<a name="domain-and-port-routing"></a>
+
+## domain and port routing
+
+dframework supports domain separated and port separated route registration. you can constrain routes to specific hosts subdomains or ports using either group attributes or chainable builder methods.
+
+<a name="domain-routing"></a>
+
+### domain routing
+
+to restrict routes to a specific host or subdomain pass the `domain` option to `Route.group()` or call `Route.domain()`.
+
+```javascript
+Route.group({ domain: 'admin.example.com' }, (admin) => {
+  admin.get('/dashboard', 'admin.AdminController@index').name('admin.dashboard');
+});
+
+Route.domain('api.example.com', (api) => {
+  api.get('/v1/users', 'api.UserController@index').name('api.users');
+});
+```
+
+<a name="port-routing"></a>
+
+### port routing
+
+you can also constrain routes to a specific listening port using the `port` option or `Route.port()`. port matching checks the host header or local server socket port.
+
+```javascript
+Route.group({ port: 8080 }, (metrics) => {
+  metrics.get('/health', 'app.HealthController@check');
+});
+
+Route.port(9090, (internal) => {
+  internal.get('/metrics', 'app.MetricsController@export');
+});
+```
+
+<a name="chainable-builders"></a>
+
+### chainable builders
+
+`.domain()`, `.port()`, and `.middleware()` are fully chainable builders and can be composed in any order before registering endpoints or groups.
+
+```javascript
+Route.domain('shop.example.com').get('/cart', 'shop.CartController@index');
+
+Route.domain('secure.example.com')
+  .port(8443)
+  .middleware('AuthMiddleware@requireAuth')
+  .get('/data', 'app.DataController@show');
+
+Route.domain('admin.example.com')
+  .port(8080)
+  .group({ prefix: '/v1' }, (v1) => {
+    v1.get('/users', 'admin.UserController@index');
+  });
+```
+
+<a name="parameterized-domains"></a>
+
+### parameterized domains
+
+domain definitions support dynamic parameter placeholders using either `:param` or `{param}` syntax. extracted domain parameters are automatically made available on `req.params` alongside path parameters.
+
+```javascript
+Route.domain(':subdomain.example.com', (tenant) => {
+  tenant.get('/users/:id', 'app.TenantController@showUser');
+});
+
+Route.domain('{tenant}.myapp.com', (app) => {
+  app.get('/settings', 'app.SettingsController@show');
+});
+```
+
+```javascript
+// GET http://acme.example.com/users/42
+// req.params.subdomain === 'acme'
+// req.params.id === '42'
+```
+
+<a name="overlapping-route-names-across-domains"></a>
+
+### overlapping route names across domains
+
+route names registered with `.name()` reside in a global lookup table. if two routes on different domains define the exact same `.name()` attribute (for example two separate `.name('dashboard')` calls), the later definition will overwrite the earlier entry in the `route()` helper map.
+
+to avoid collisions when creating named routes across domain boundaries prefix your route names with the target domain or section name (for example `admin.dashboard` and `app.dashboard`).
+
+```javascript
+Route.domain('admin.example.com').get('/dashboard', 'AdminController@dash').name('admin.dashboard');
+Route.domain('app.example.com').get('/dashboard', 'AppController@dash').name('app.dashboard');
+
+// route('admin.dashboard') -> '//admin.example.com/dashboard'
+// route('app.dashboard') -> '//app.example.com/dashboard'
+```
+
+when generating a url for a domain bound route using `route(name, params)`, the framework automatically returns a protocol relative absolute url (such as `//admin.example.com/dashboard`), filling in any domain parameters from the supplied `params` object.
 
 <a name="inline-middleware-chains"></a>
 

@@ -11,6 +11,7 @@
   - [object helpers](#object-helpers)
   - [deep object access](#deep-object-access)
   - [url and asset helpers](#url-and-asset-helpers)
+  - [localization and ruby helpers](#localization-and-ruby-helpers)
   - [response helpers](#response-helpers)
   - [routing helpers](#routing-helpers)
   - [validation](#validation)
@@ -305,6 +306,34 @@ url('/posts/:slug/comments/:commentId', { slug: 'hello-world', commentId: 7 });
 // '/posts/hello-world/comments/7'
 ```
 
+<a name="localization-and-ruby-helpers"></a>
+
+## localization and ruby helpers
+
+**`t(req, key, params?, fallback?)`**
+
+retrieves a localized string for the specified key from the `lang/{locale}/` json files. supports `:name` variable substitution and inline `漢字[かんじ]` furigana parsing.
+
+```javascript
+await t(req, 'messages.greeting', { name: '太郎' });
+// "こんにちは、太郎さん！"
+
+await t(req, 'messages.welcome', { name: '山田' });
+// "<ruby>東京<rt>とうきょう</rt></ruby>へようこそ、山田さん！"
+```
+
+**`ruby(baseOrText, reading?)`**
+
+generates html `<ruby>base<rt>rt</rt></ruby>` annotations for japanese furigana text. accepts either two arguments (kanji and reading) or a single string containing inline `漢字[かんじ]` annotations.
+
+```javascript
+ruby('漢字', 'かんじ');
+// "<ruby>漢字<rt>かんじ</rt></ruby>"
+
+ruby('日本[にほん]語[ご]');
+// "<ruby>日本<rt>にほん</rt></ruby><ruby>語<rt>ご</rt></ruby>"
+```
+
 <a name="response-helpers"></a>
 
 ## response helpers
@@ -345,11 +374,14 @@ export default class HomeController {
 
 **`route(name, params)`**
 
-generates a url from a named route. substitutes `:param` placeholders with values from the params object.
+generates a url from a named route. substitutes `:param` placeholders with values from the params object. for domain bound routes, returns a protocol relative absolute url (such as `//admin.example.com/dashboard`) with domain parameter substitution.
 
 ```javascript
 route('users.show', { id: 42 });
 // '/users/42'
+
+route('admin.dashboard');
+// '//admin.example.com/dashboard'
 ```
 
 the `Route` facade must be initialized before using this helper. it is automatically available in all request contexts.
