@@ -1,40 +1,30 @@
 # cli
 
 - [cli](#cli)
-
   - [introduction](#introduction)
-
   - [available commands](#available-commands)
-
     - [scaffolding](#scaffolding)
     - [database](#database)
     - [generators](#generators)
     - [system](#system)
     - [native](#native)
     - [architecture](#architecture)
-
   - [creating a project](#creating-a-project)
-
   - [running the server](#running-the-server)
-
   - [tinker](#tinker)
-
   - [user commands](#user-commands)
-
     - [creating a command](#creating-a-command)
     - [running a command](#running-a-command)
-
   - [logs management](#logs-management)
-
+  - [deployment and certificates](#deployment-and-certificates)
+    - [deploying applications](#deploying-applications)
+    - [managing certificates](#managing-certificates)
   - [architecture analyzer](#architecture-analyzer)
-
     - [dependency graph](#dependency-graph)
     - [architecture lint](#architecture-lint)
     - [dead code detection](#dead-code-detection)
     - [project doctor](#project-doctor)
-
   - [the compiler](#the-compiler)
-
     - [javascript compilation](#javascript-compilation)
     - [css compilation](#css-compilation)
 
@@ -94,13 +84,17 @@ dstrn help
 
 ### system
 
-| command                   | description                                     |
-| ------------------------- | ----------------------------------------------- |
-| `dstrn run <CommandName>`               | run a user command from `console/commands`                                    |
+| command                                | description                                                                   |
+| -------------------------------------- | ----------------------------------------------------------------------------- |
+| `dstrn run <CommandName>`              | run a user command from `console/commands`                                    |
 | `dstrn dispatch <JobName> [--payload]` | dispatch a background job from the command line with an optional json payload |
-| `dstrn logs:clear`                      | clear or archive log files with date filtering                                |
-| `dstrn docs:publish`      | publish framework documentation to your project |
-| `dstrn ai:publish`        | publish agentic documentation helpers           |
+| `dstrn logs:clear`                     | clear or archive log files with date filtering                                |
+| `dstrn deploy`                         | generate production deployment and service configurations                     |
+| `dstrn cert:obtain`                    | obtain let's encrypt ssl certificates                                         |
+| `dstrn cert:renew`                     | renew expiring ssl certificates                                               |
+| `dstrn cert:status`                    | display certificate validity and expiration details                           |
+| `dstrn docs:publish`                   | publish framework documentation to your project                               |
+| `dstrn ai:publish`                     | publish agentic documentation helpers                                         |
 
 <a name="native"></a>
 
@@ -234,6 +228,55 @@ dstrn logs:clear --preview
 | `--after=YYYY-MM-DD`        | clear logs after the specified date               |
 | `--archive`                 | compress logs into a zip instead of deleting      |
 | `--preview`                 | show which files would be affected without acting |
+
+<a name="deployment-and-certificates"></a>
+
+## deployment and certificates
+
+<a name="deploying-applications"></a>
+
+### deploying applications
+
+the `deploy` command generates production configurations for bare metal deployment with native tls (default), reverse proxy with caddy (`--proxy`), or edge routing with cloudflare (`--edge`).
+
+```bash
+dstrn deploy --domain=api.example.com --email=admin@example.com
+dstrn deploy --proxy --domain=api.example.com
+dstrn deploy --edge --domain=api.example.com
+dstrn deploy --domain=api.example.com --email=admin@example.com --dry-run
+sudo dstrn deploy --domain=api.example.com --email=admin@example.com --install
+```
+
+| flag                 | description                                                                   |
+| -------------------- | ----------------------------------------------------------------------------- |
+| `--domain=<domains>` | comma separated target domains                                                |
+| `--email=<email>`    | acme registration email for let's encrypt certificates                        |
+| `--proxy`            | generate caddy reverse proxy configuration instead of direct tls              |
+| `--edge`             | generate plain http configuration with cloudflare guidance                    |
+| `--port=<port>`      | custom application port (default 825 or 443 for direct tls)                   |
+| `--user=<user>`      | system user for systemd service (default current user)                        |
+| `--dir=<dir>`        | working directory path                                                        |
+| `--dry-run`          | preview generated configurations in console without writing to disk           |
+| `--install`          | write configuration files directly to system paths (requires root privileges) |
+
+<a name="managing-certificates"></a>
+
+### managing certificates
+
+the `cert` command family handles certificate issuance, renewals, and status monitoring.
+
+```bash
+dstrn cert:obtain --domain=api.example.com --email=admin@example.com
+dstrn cert:obtain --domain=api.example.com --email=admin@example.com --staging
+dstrn cert:renew --domain=api.example.com --email=admin@example.com
+dstrn cert:status
+```
+
+| command                                      | description                                                   |
+| -------------------------------------------- | ------------------------------------------------------------- |
+| `dstrn cert:obtain --domain=... --email=...` | obtain a new let's encrypt ssl certificate                    |
+| `dstrn cert:renew --domain=... --email=...`  | renew certificates expiring within 30 days                    |
+| `dstrn cert:status`                          | show validity and expiration dates for installed certificates |
 
 <a name="architecture-analyzer"></a>
 
