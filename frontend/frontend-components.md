@@ -25,6 +25,8 @@
     - [d-toggle](#d-toggle)
     - [d-morph](#d-morph)
 
+  - [overriding built in components](#overriding-built-in-components)
+
   - [dComponent (base class)](#dcomponent-base-class)
 
     - [rendering strategy](#rendering-strategy)
@@ -412,6 +414,30 @@ dMotion.transition('compact', 'expanded', triggerNode)  // trigger a transition 
 dMotion.listen('compact', 'expanded', fn, 'before')     // hook: 'before' or 'after'
 dMotion.unlisten('compact', 'expanded', fn, 'before')
 ```
+
+<a name="overriding-built-in-components"></a>
+
+## overriding built in components
+
+every built in component behavior can be customized, extended, or completely overwritten by application code. to override a built in component, place a file with the exact same component filename under `public/js/components/` (such as `public/js/components/dCheckbox.js`).
+
+when compiling the frontend bundle, the compiler automatically detects the user file and replaces the built in component implementation in place.
+
+```javascript
+// public/js/components/dCheckbox.js
+class dCheckbox extends dComponent {
+  static form = true;
+  static get tag() { return 'd-checkbox'; }
+
+  // custom template or methods
+}
+
+dComponent.define(dCheckbox);
+```
+
+### immutable base class
+
+all custom elements and overrides extend `dComponent`. unlike UI components, `dComponent` is the immutable framework base class providing reactivity, reflection, and lifecycle management. the compiler always preserves the core `dComponent` implementation at the root of the bundle so all components inherit from it consistently.
 
 <a name="dcomponent--base-class"></a>
 
