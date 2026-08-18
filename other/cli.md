@@ -24,6 +24,7 @@
     - [architecture lint](#architecture-lint)
     - [dead code detection](#dead-code-detection)
     - [project doctor](#project-doctor)
+    - [translation lint](#translation-lint)
   - [the compiler](#the-compiler)
     - [javascript compilation](#javascript-compilation)
     - [css compilation](#css-compilation)
@@ -113,12 +114,13 @@ dstrn help
 
 ### architecture
 
-| command        | description                              |
-| -------------- | ---------------------------------------- |
-| `dstrn graph`  | display the application dependency graph |
-| `dstrn lint`   | detect architecture violations           |
-| `dstrn dead`   | find unreachable dead code               |
-| `dstrn doctor` | compute a project quality score          |
+| command           | description                              |
+| ----------------- | ---------------------------------------- |
+| `dstrn graph`     | display the application dependency graph |
+| `dstrn lint`      | detect architecture violations           |
+| `dstrn dead`      | find unreachable dead code               |
+| `dstrn doctor`    | compute a project quality score          |
+| `dstrn lang:lint` | check translation parity and view keys   |
 
 <a name="creating-a-project"></a>
 
@@ -282,7 +284,7 @@ dstrn cert:status
 
 ## architecture analyzer
 
-dframework includes a static analysis engine that builds a complete dependency graph of your application. it powers the `graph`, `lint`, `dead`, and `doctor` commands.
+dframework includes a static analysis engine that builds a complete dependency graph of your application. it powers the `graph`, `lint`, `dead`, `doctor`, and `lang:lint` commands.
 
 <a name="dependency-graph"></a>
 
@@ -385,6 +387,35 @@ deductions
 ```
 
 scores of 90 and above are displayed as success, 70-89 as informational, and below 70 as an error.
+
+<a name="translation-lint"></a>
+
+### translation lint
+
+the `lang:lint` command verifies translation keys across all configured languages and validates references throughout your views and code. it checks for two categories of issues:
+
+- **asymmetric keys** (keys defined in one locale dictionary but missing from another)
+- **missing references** (translation keys used in `.d` views or controllers with `@t()` or `t()` that do not exist in the translation files)
+
+```bash
+dstrn lang:lint
+```
+
+if issues are found, the command reports the exact files, line numbers, and missing locales:
+
+```
+ ERROR  found 2 translation issues
+
+missing translations in views and code
+  views/index.d:4
+    key 'ui.tagline' is missing in [ja]
+
+asymmetric translation keys across locales
+  locale: ja
+    missing 'ui.tagline' (defined in: en)
+```
+
+if all translations are complete and match view usage, a success status is returned.
 
 <a name="the-compiler"></a>
 
