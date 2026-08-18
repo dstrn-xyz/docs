@@ -24,6 +24,7 @@
     - [log](#log)
     - [views](#views)
     - [profile](#profile)
+    - [basic auth](#basic-auth)
   - [controller string syntax](#controller-string-syntax)
   - [multiple route files](#multiple-route-files)
 
@@ -214,10 +215,14 @@ Route.port(9090, (internal) => {
 
 ### chainable builders
 
-`.domain()`, `.port()`, and `.middleware()` are fully chainable builders and can be composed in any order before registering endpoints or groups.
+`.domain()`, `.port()`, `.basicAuth()`, and `.middleware()` are fully chainable builders and can be composed in any order before registering endpoints or groups.
 
 ```javascript
 Route.domain('shop.example.com').get('/cart', 'shop.CartController@index');
+
+Route.basicAuth('admin', 'secret')
+  .port(8080)
+  .get('/metrics', 'app.MetricsController@export');
 
 Route.domain('secure.example.com')
   .port(8443)
@@ -352,6 +357,17 @@ the available profile keys are:
 
 ```javascript
 Route.get('/feed', 'app.FeedController@index').profile({ needsSession: true, needsFlash: true });
+```
+
+<a name="basic-auth"></a>
+
+### basic auth
+
+you can protect a specific route with http basic authentication by chaining `.basicAuth()`. it accepts explicit credentials, a custom validator callback, or defaults to values configured in `config/auth.js` (`auth.basic`).
+
+```javascript
+Route.get('/secret', 'app.SecretController@show').basicAuth('admin', 'secret');
+Route.get('/admin', 'app.AdminController@index').basicAuth();
 ```
 
 <a name="controller-string-syntax"></a>

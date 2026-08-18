@@ -5,6 +5,11 @@
     - [rotating tokens](#rotating-tokens)
   - [rate limiting](#rate-limiting)
     - [configuration](#configuration)
+    - [per user rate limiting](#per-user-rate-limiting)
+    - [trusted proxies](#trusted-proxies)
+    - [layered rate limiters (group plus route)](#layered-rate-limiters-group-plus-route)
+  - [basic authentication](#basic-authentication)
+    - [route protection](#route-protection)
   - [shield guard](#shield-guard)
 
 <a name="csrf-protection"></a>
@@ -61,13 +66,13 @@ Route.middleware(limiter).group({ prefix: '/api' }, (api) => {
 
 the `RateLimiter` constructor accepts the following options. all entries are optional with sensible defaults.
 
-| option            | type       | default                | description                                                                                      |
-| ----------------- | ---------- | ---------------------- | ------------------------------------------------------------------------------------------------ |
-| `windowMs`        | `number`   | `60000` (1 minute)     | the size of the sliding window in milliseconds                                                   |
-| `max`             | `number`   | `60`                   | maximum number of requests allowed within one window                                             |
-| `message`         | `string`   | `'too many requests'`  | the error message returned in the json body when the limit is exceeded                           |
-| `keyGenerator`    | `Function` | `(req) => req.ip`      | a function that returns a string key to track. customize this to limit per user or per api token |
-| `trustedProxies`  | `string[]` | `[]`                   | array of trusted proxy ip addresses for resolving `x-forwarded-for`                              |
+| option           | type       | default               | description                                                                                      |
+| ---------------- | ---------- | --------------------- | ------------------------------------------------------------------------------------------------ |
+| `windowMs`       | `number`   | `60000` (1 minute)    | the size of the sliding window in milliseconds                                                   |
+| `max`            | `number`   | `60`                  | maximum number of requests allowed within one window                                             |
+| `message`        | `string`   | `'too many requests'` | the error message returned in the json body when the limit is exceeded                           |
+| `keyGenerator`   | `Function` | `(req) => req.ip`     | a function that returns a string key to track. customize this to limit per user or per api token |
+| `trustedProxies` | `string[]` | `[]`                  | array of trusted proxy ip addresses for resolving `x-forwarded-for`                              |
 
 ### per user rate limiting
 
@@ -124,6 +129,53 @@ when a limiter allows a request through, it increments its own counter and calls
 if you pass the same `RateLimiter` reference to both the group and the route, every successful request increments the shared `hits` map twice (once for each `next()` call in the chain). the effective limit becomes `max / 2`, which is almost certainly not what you want. construct a separate `new RateLimiter(...)` per layer.
 
 if you need a stricter cap on a specific route inside an already rate limited group, prefer either tightening the existing per ip limit at the route layer (a smaller `max`, a custom `keyGenerator` that includes `req.user.id`, or both) or removing the group limiter for that route. layering two limiters with the same key tends to produce surprising budget behavior because the layers interleave increments without coordination.
+
+<a name="basic-authentication"></a>
+
+## basic authentication
+
+dframework provides built in support for http basic authentication. you can protect routes or entire route groups using chainables route modifiers or group options.
+
+credentials can be configured globally in `config/auth.js` under `auth.basic` (or via `BASIC_AUTH_USER` and `BASIC_AUTH_PASS` environment variables) or supplied directly in route definitions.
+
+```javascript
+// config/auth.js
+export default {
+  model: 'User',
+  basic: {
+    username: 'admin',
+    password: 'password',
+    realm: 'Restricted'
+  }
+};
+```
+
+### route protection
+
+apply basic auth to single routes route groups or using chainable builders:
+
+```javascript
+// on a route group (uses configured default credentials)
+Route.group({ basicAuth: true }, (admin) => {
+  admin.get('/dashboard', 'admin.AdminController@index');
+});
+
+// on a route group with explicit credentials
+Route.group({ basicAuth: { user: 'admin', pass: 'secret', realm: 'Admin Area' } }, (admin) => {
+  admin.get('/settings', 'admin.SettingsController@index');
+});
+
+// as a chainable before routes
+Route.basicAuth('admin', 'secret').get('/metrics', 'app.MetricsController@index');
+
+// on a single route modifier
+Route.get('/secret', 'app.SecretController@show').basicAuth('admin', 'secret');
+
+// with a custom validator callback
+Route.basicAuth((user, pass) => user === 'admin' && pass === 'secret').get('/custom', 'app.CustomController@index');
+```
+
+when credentials are missing or invalid the framework immediately responds with `401 Unauthorized` and sets the `WWW-Authenticate` header with the configured realm. credential comparisons use constant time comparisons to prevent timing attacks.
 
 <a name="shield-guard"></a>
 
