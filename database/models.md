@@ -108,7 +108,7 @@ every method that runs a query returns a `Promise`. the result column lists what
 | `Model.where(...)` | column/operator/value, or object | `ModelQueryBuilder` (chainable, thenable, async iterable) |
 | `Model.orderBy(...)` / `groupBy(...)` / `limit(...)` / `offset(...)` / `distinct(...)` | chain values | `ModelQueryBuilder` (chainable) |
 | `Model.with(...relations)` | dot notation relation names | `ModelQueryBuilder` (chainable) |
-| `Model.paginate(perPage)` | rows per page (default 10) | `Promise<{ data: Model[], total, per_page, current_page, last_page, next_page_url, prev_page_url }>` |
+| `Model.paginate(perPage, pageName?)` | rows per page (default 10), optional page param name | `Promise<Paginator>` |
 | `Model.firstOrCreate(attributes, values?)` | attributes object; optional extra values | `Promise<Model>` (existing or newly created) |
 | `Model.updateOrCreate(attributes, values?)` | attributes object; optional extra values | `Promise<Model>` (updated or newly created) |
 | `Model.create(data)` | column/value object | `Promise<Model>` (reloaded from the database using the primary key) |
@@ -136,23 +136,20 @@ const user = await User.findByEmail('test@example.com');
 
 ### pagination
 
-to paginate records, use the `paginate` method. it automatically reads the `page` query string parameter from the current request context and constructs the limit and offset constraints.
+to paginate records, use the `paginate` method. it automatically reads the active page query string parameter from the current request context, constructs limit and offset constraints, and returns a `Paginator` instance.
 
 ```javascript
 const results = await User.where('status', 'active').paginate(15);
-// results: {
-//   data: Model[],
-//   total: number,
-//   per_page: number,
-//   current_page: number,
-//   last_page: number,
-//   next_page_url: string | null,
-//   prev_page_url: string | null
-// }
-//
-// `data` is always an array, even on the last page where it may be empty.
-// `total` reflects the unfiltered matching count. `next_page_url` and
-// `prev_page_url` are null when there is no adjacent page.
+// results is a Paginator instance
+// directly iterable: for (const user of results) or @foreach(results as user)
+// access metadata: results.total, results.currentPage, results.lastPage
+// render html: results.links() or @pagination(results)
+```
+
+you can also specify a custom page query parameter name as the second argument:
+
+```javascript
+const users = await User.paginate(15, 'user_page');
 ```
 
 <a name="latest-rows"></a>

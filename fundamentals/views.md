@@ -181,39 +181,60 @@ you can translate strings using the `@t()` directive. the framework automaticall
 
 ## pagination
 
-the view engine includes a built in `@pagination` directive that automatically generates html pagination links for a paginated result object returned by the model `.paginate()` method.
-
-if you leave the block empty, the engine automatically generates standard pagination controls with icons and page numbers.
+the view engine integrates with the framework `Paginator` class returned by model `.paginate()` methods. paginators are directly iterable in `@foreach` loops and provide automatic or custom html pagination controls.
 
 ```html
+@foreach (users as user)
+    <div>{{ user.name }}</div>
+@endforeach
+
 <!-- renders standard pagination controls -->
 @pagination(users)
 @endpagination
 ```
 
-by default, if the request comes from the spa router (`dSPAHttpRequest`), the links will automatically trigger spa navigation instead of a full page reload. if you need the pagination links to update a specific dom element via the spa router (e.g. replacing just a table body), you can pass a css selector as the third argument.
+alternatively, you can render links directly using unescaped output:
 
 ```html
-<!-- updates the #user-list container instead of a full page transition -->
+{!! users.links() !!}
+```
+
+existing url query parameters (like search terms or filter keys) are automatically preserved on all generated links.
+
+by default, links render as standard anchors for full page navigation. to enable spa transitions, pass `true` as the second argument:
+
+```html
+<!-- enables spa navigation -->
+@pagination(users, true)
+@endpagination
+```
+
+to update a specific container instead of a full page transition, pass a css selector as the third argument:
+
+```html
+<!-- updates the #user-list container via spa -->
 @pagination(users, true, '#user-list')
 @endpagination
 ```
 
 ### custom pagination html
 
-if you provide content inside the `@pagination` block, the engine skips the default html generation and renders your custom html instead.
+if you provide content inside the `@pagination` block, the engine skips default html generation and renders your custom markup.
 
 inside the block, the engine automatically exposes four variables that you can use to build your custom controls:
 
-- `prev`: the query string for the previous page (or `null`)
-- `next`: the query string for the next page (or `null`)
-- `current`: the current page number
-- `last`: the total number of pages
+- `prev`: previous page url (or `null`)
+- `next`: next page url (or `null`)
+- `current`: current page number
+- `last`: total page count
+- `total`: total item count
+- `perPage`: items per page
+- `paginator`: the paginator instance
 
 ```html
 @pagination(users)
     <div class="custom-pagination">
-        <p>page {{ current }} of {{ last }}</p>
+        <p>page {{ current }} of {{ last }} ({{ total }} users)</p>
         
         @if (prev)
             <a href="{{ prev }}" class="btn">previous</a>
@@ -226,7 +247,7 @@ inside the block, the engine automatically exposes four variables that you can u
 @endpagination
 ```
 
-the framework evaluates the block only if there is more than one page (`last > 1`). if there is only one page, the entire `@pagination` block is skipped and nothing is rendered.
+the framework evaluates the block only when there is more than one page (`last > 1`). if there is only one page, the entire `@pagination` block is skipped.
 
 <a name="automatic-form-handling"></a>
 

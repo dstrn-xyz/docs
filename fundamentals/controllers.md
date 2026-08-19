@@ -226,26 +226,45 @@ export default class LocaleController {
 
 ### pagination
 
-dframework reads `req.page` automatically from the `page` query string parameter. you use `.paginate()` on any model query and the framework resolves the current page from the request context without any additional wiring.
+dframework reads the active page automatically from the query string parameters. calling `.paginate()` on any model query resolves the current page from the request context and returns a `Paginator` instance:
 
 ```javascript
 export default class AdminController {
-  async list(req) {
-    const paginatedResult = await User.paginate(20);
-    return json(paginatedResult);
+  async list() {
+    const users = await User.where('active', 1).paginate(20);
+    return json(users);
   }
 }
 ```
 
-the `.paginate(perPage)` method returns an object containing the records and metadata about the pagination state. you can access these properties directly:
+when returned via `json(users)`, the paginator serializes into a clean response containing both records and pagination metadata.
 
-- `data`: an array of model instances for the current page
-- `total`: the total number of records across all pages
-- `per_page`: the number of records requested per page
-- `current_page`: the current page number
-- `last_page`: the total number of pages
-- `next_page_url`: the query string for the next page (e.g. `?page=3`) or `null`
-- `prev_page_url`: the query string for the previous page or `null`
+the `Paginator` instance supports dual snake_case and camelCase property access, direct iteration in loops, and helper methods:
+
+- `data` / `items`: array of model instances for the current page
+- `total`: total number of records across all pages
+- `per_page` / `perPage`: records per page
+- `current_page` / `currentPage`: current page number
+- `last_page` / `lastPage`: total number of pages
+- `next_page_url` / `nextPageUrl`: url for next page with query parameters preserved (or `null`)
+- `prev_page_url` / `prevPageUrl`: url for previous page with query parameters preserved (or `null`)
+- `first_page_url` / `firstPageUrl`: url for first page
+- `last_page_url` / `lastPageUrl`: url for last page
+- `from`: 1-based index of first record on current page
+- `to`: 1-based index of last record on current page
+- `hasPages()`: returns true if there is more than one page
+- `hasMorePages()`: returns true if not on the last page
+- `onFirstPage()`: returns true if on page 1
+- `onLastPage()`: returns true if on the last page
+- `url(page)`: builds a url for a specific page with query parameters preserved
+- `appends(params)`: appends custom query parameters to generated urls
+
+to paginate multiple distinct collections on the same page, specify a custom page parameter name:
+
+```javascript
+const users = await User.paginate(10, 'user_page');
+const logs = await AuditLog.paginate(10, 'log_page');
+```
 
 <a name="validation"></a>
 
