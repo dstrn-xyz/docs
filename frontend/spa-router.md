@@ -1,38 +1,40 @@
 # spa router
 
-- [introduction](#introduction)
-- [how it works](#how-it-works)
-- [default swap targets](#default-swap-targets)
-- [links and navigation](#links-and-navigation)
-  - [anchor interception](#anchor-interception)
-  - [the d-link element](#the-d-link-element)
-  - [forcing full page navigation on d-link](#forcing-full-page-navigation-on-d-link)
-- [programmatic navigation](#programmatic-navigation)
-- [swap modes](#swap-modes)
-- [transition hooks](#transition-hooks)
-  - [global transitions](#global-transitions)
-  - [per navigation transitions](#per-navigation-transitions)
-  - [hook reference](#hook-reference)
-- [forms](#forms)
-  - [basic usage](#basic-usage)
-  - [validation](#validation)
-  - [json responses](#json-responses)
-  - [html responses](#html-responses)
-  - [redirect handling](#redirect-handling)
-  - [force reload](#force-reload)
-  - [callbacks](#callbacks)
-  - [programmatic submission](#programmatic-submission)
-- [script execution](#script-execution)
-  - [scoped scripts](#scoped-scripts)
-  - [persistent scripts](#persistent-scripts)
-  - [module scripts](#module-scripts)
-  - [external scripts](#external-scripts)
-- [active navigation](#active-navigation)
-- [csrf token management](#csrf-token-management)
-- [dom morphing](#dom-morphing)
-- [scope lifecycle](#scope-lifecycle)
-- [scroll behavior](#scroll-behavior)
-- [debug mode](#debug-mode)
+- [spa router](#spa-router)
+  - [introduction](#introduction)
+  - [how it works](#how-it-works)
+  - [default swap targets](#default-swap-targets)
+  - [links and navigation](#links-and-navigation)
+    - [anchor interception](#anchor-interception)
+    - [the d-link element](#the-d-link-element)
+    - [forcing full page navigation on d-link](#forcing-full-page-navigation-on-d-link)
+  - [programmatic navigation](#programmatic-navigation)
+  - [swap modes](#swap-modes)
+  - [transition hooks](#transition-hooks)
+    - [global transitions](#global-transitions)
+    - [per navigation transitions](#per-navigation-transitions)
+    - [hook reference](#hook-reference)
+  - [forms](#forms)
+    - [basic usage](#basic-usage)
+    - [validation](#validation)
+    - [json responses](#json-responses)
+    - [html responses](#html-responses)
+    - [redirect handling](#redirect-handling)
+    - [force reload](#force-reload)
+    - [callbacks](#callbacks)
+    - [programmatic submission](#programmatic-submission)
+  - [script execution](#script-execution)
+    - [scoped scripts](#scoped-scripts)
+    - [persistent scripts](#persistent-scripts)
+    - [module scripts](#module-scripts)
+    - [external scripts](#external-scripts)
+    - [persistent elements (d-spa-keep)](#persistent-elements-d-spa-keep)
+  - [active navigation](#active-navigation)
+  - [csrf token management](#csrf-token-management)
+  - [dom morphing](#dom-morphing)
+  - [scope lifecycle](#scope-lifecycle)
+  - [scroll behavior](#scroll-behavior)
+  - [debug mode](#debug-mode)
 
 <a name="introduction"></a>
 
@@ -414,9 +416,11 @@ when the user navigates away, the interval is automatically cleared. no manual c
 
 <a name="persistent-scripts"></a>
 
-### persistent scripts
+### initial page load and persistent scripts
 
-scripts that need to survive navigation cycles use the `type="text/dspa"` attribute. these scripts are not executed during the initial page load. instead, they are picked up and executed by the router after the dom is ready and the websocket connection is established. they receive the same scoped apis as regular scripts.
+for standard page views and swapped content, you can write regular `<script>` tags. all inline and external scripts inside swapped regions are automatically managed and scoped by the router.
+
+on the very first full page load (hard refresh or initial visit), the browser runs standard `<script>` tags immediately in global scope before `dstrn` finishes initializing. if you have a layout script that needs to wait until the websocket connection is established and run inside the managed scope from initial boot, mark it with `type="text/dspa"`.
 
 ```html
 <script type="text/dspa">
@@ -428,9 +432,9 @@ scripts that need to survive navigation cycles use the `type="text/dspa"` attrib
 </script>
 ```
 
-use `text/dspa` for scripts that depend on the socket connection or that should persist across spa navigations within the same layout.
+the browser parser ignores `type="text/dspa"` on raw page load. on `DOMContentLoaded`, after `Socket.connect()` completes, the router executes all `type="text/dspa"` scripts within the initial managed scope, providing scoped utilities like `Socket`, `listen`, and auto cleaning timers.
 
-the `Socket` frontend facade is only available inside scoped scripts (`type="text/dspa"`, inline page scripts, and module scripts with `d-spa-scope`). it is not available outside of scope contexts.
+for regular views and swapped content navigated via dSPA, standard `<script>` tags are already executed in managed scopes automatically and do not require `type="text/dspa"`.
 
 <a name="module-scripts"></a>
 
@@ -453,7 +457,7 @@ to opt a module script into scope injection, add the `d-spa-scope` attribute.
 
 ### external scripts
 
-external scripts (those with a `src` attribute) inside swapped content are automatically re-executed on every spa navigation in document order. the router loads and executes them before running subsequent page scripts.
+external scripts (those with a `src` attribute) inside swapped content are automatically reexecuted on every spa navigation in document order. the router loads and executes them before running subsequent page scripts.
 
 to prevent the router from executing a specific script tag on spa navigation, add the `d-spa-ignore` attribute.
 
@@ -465,7 +469,7 @@ to prevent the router from executing a specific script tag on spa navigation, ad
 
 ### persistent elements (d-spa-keep)
 
-elements and scripts that need to be preserved across body swaps (such as dev tools or persistent layout state) use the `d-spa-keep` attribute. when a body swap occurs, all elements with `d-spa-keep` are retained and re-attached to the new body.
+elements and scripts that need to be preserved across body swaps (such as dev tools or persistent layout state) use the `d-spa-keep` attribute. when a body swap occurs, all elements with `d-spa-keep` are retained and reattached to the new body.
 
 ```html
 <div id="player-container" d-spa-keep>
@@ -535,7 +539,13 @@ this means you never need to write cleanup code in your page scripts. the router
 
 ## scroll behavior
 
-by default, the router scrolls to the top of the page after every navigation. you disable this behavior per navigation by adding the `preserve-scroll` attribute to a `<d-link>` or by passing `preserveScroll: true` to `dSPA.navigate()`.
+by default, the router scrolls to the top of the page after every navigation. if the target url includes a `#hash` fragment (for example `/profile#settings` or `{{ route('home') }}#native`), the router automatically finds the matching element and scrolls it into view.
+
+when clicking a link pointing to a `#hash` on the current page (such as `/#layers` while already on `/`), the router intercepts the navigation, skips the unnecessary network fetch, updates the browser history, and smoothly scrolls the target element into view.
+
+for section links in persistent layouts, always write the full route URL with the hash (such as `{{ route('home') }}#native`) rather than relative hash fragments (`#native`), ensuring links work whether clicked from the home page or from a different route.
+
+you disable scrolling per navigation by adding the `preserve-scroll` attribute to a `<d-link>` or by passing `preserveScroll: true` to `dSPA.navigate()`.
 
 <a name="debug-mode"></a>
 
