@@ -1,11 +1,8 @@
 # components
 
 - [components](#components)
-
   - [introduction](#introduction)
-
   - [built in components](#built-in-components)
-
     - [d-checkbox](#d-checkbox)
     - [d-color-picker](#d-color-picker)
     - [d-combobox](#d-combobox)
@@ -24,11 +21,9 @@
     - [d-text-input](#d-text-input)
     - [d-toggle](#d-toggle)
     - [d-morph](#d-morph)
-
   - [overriding built in components](#overriding-built-in-components)
-
+    - [immutable base class](#immutable-base-class)
   - [dComponent (base class)](#dcomponent-base-class)
-
     - [rendering strategy](#rendering-strategy)
     - [reactive state](#reactive-state)
     - [auto cleanup api](#auto-cleanup-api)
@@ -327,6 +322,13 @@ placeholder shapes rendered during content loading:
 
 ```html
 <d-slider min="0" max="100" value="50" step="1"></d-slider>
+```
+
+elements with `data-slider-<id>` automatically update with the current slider percentage:
+
+```html
+<d-slider id="volume" name="volume" min="0" max="1" step="0.01" value="0.4"></d-slider>
+<div data-slider-volume class="text-content-l" style="width:4em;">40%</div>
 ```
 
 methods: `getValue()`, `setValue(value)`
