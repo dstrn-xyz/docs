@@ -54,15 +54,13 @@ back and forward browser navigation is fully handled. when the user presses the 
 
 ## default swap targets
 
-by default, the router looks for the `<body>` element or an element with `id="spa-container"` as the region to swap. you override this globally by setting `dSPA_DEFAULT_TARGETS` in a script tag on your layout before any navigation occurs.
+by default, the router dynamically checks `dSPA.targets` and `window.dSPA_DEFAULT_TARGETS`, falling back to candidate selectors `['#spa-container', 'main', 'body']`. the router resolves the first selector that exists in both the current page and the fetched page. you override this globally by setting `dSPA.targets` or `window.dSPA_DEFAULT_TARGETS`.
 
 ```html
 <script defer>
-  dSPA_DEFAULT_TARGETS = ['#spa-container'];
+  dSPA.targets = ['main'];
 </script>
 ```
-
-the value is an array of css selectors. the router will try each selector in order and use the first match it finds in both the current page and the fetched page.
 
 <a name="links-and-navigation"></a>
 
@@ -120,12 +118,6 @@ to keep the scroll position after navigation, add the `preserve-scroll` attribut
 <d-link href="/feed?page=2" target="#feed" preserve-scroll>next page</d-link>
 ```
 
-to force external scripts inside the swapped content to reexecute even if they have already been loaded in a previous navigation, add the `rerun-scripts` attribute.
-
-```html
-<d-link href="/editor" rerun-scripts>open editor</d-link>
-```
-
 <a name="forcing-full-page-navigation-on-d-link"></a>
 
 ### forcing full page navigation on d-link
@@ -168,7 +160,6 @@ the available options are:
 - `srcTargets`: array of css selectors for the elements to extract from the fetched page (defaults to `targets`)
 - `mode`: swap mode (`inner`, `outer`, `append`, `prepend`)
 - `preserveScroll`: boolean, keeps the scroll position after swap
-- `rerunScripts`: boolean, reexecutes previously loaded external scripts
 - `transitions`: object containing transition hook functions
 - `addToHistory`: boolean, whether to push a new history entry (defaults to `true`)
 
@@ -243,12 +234,12 @@ dSPA.navigate('/' + tab.dataset.tab, {
 
 four hooks are available. each receives two arguments: the dom element being swapped, and a `meta` object containing `url`, `link`, `src`, `dest`, and `mode`.
 
-- `beforeSwap(oldNode, meta)`: fires once before the swap begins, receives the current page's target element
+- `beforeSwap(rootNode, meta)`: fires once before the swap begins, receives the root target element
 - `beforeSwapTarget(oldNode, meta)`: fires once per target selector before that specific target is swapped
-- `afterSwap(newNode, meta)`: fires once after the swap is complete, receives the new content element
+- `afterSwap(rootNode, meta)`: fires once after the swap is complete and scripts have executed, receives the new root content element
 - `afterSwapTarget(newNode, meta)`: fires once per target selector after that specific target has been swapped
 
-if a hook returns a promise, the router waits for it to resolve. a global safety timeout of one second prevents a stuck animation from blocking navigation indefinitely.
+if a hook returns a promise, the router directly awaits it before continuing the lifecycle. per navigation transitions passed to `dSPA.navigate()` override global `dSPA.transitions` for that navigation.
 
 <a name="forms"></a>
 
@@ -462,16 +453,24 @@ to opt a module script into scope injection, add the `d-spa-scope` attribute.
 
 ### external scripts
 
-external scripts (those with a `src` attribute) are loaded and executed once. on subsequent navigations, the router recognizes that the script has already been loaded and skips it. this prevents duplicate library initialization.
+external scripts (those with a `src` attribute) inside swapped content are automatically re-executed on every spa navigation in document order. the router loads and executes them before running subsequent page scripts.
 
-to force an external script to reexecute on every navigation, add the `rerun-scripts` attribute to the `<d-link>` or pass `rerunScripts: true` to `dSPA.navigate()`.
-
-you can manually mark an external script as loaded using `dSPA.markExternalScriptLoaded(src)` to prevent it from being fetched again.
-
-to prevent the router from executing a specific script tag entirely, add the `d-spa-ignore` attribute.
+to prevent the router from executing a specific script tag on spa navigation, add the `d-spa-ignore` attribute.
 
 ```html
 <script src="/analytics.js" d-spa-ignore></script>
+```
+
+<a name="persistent-elements"></a>
+
+### persistent elements (d-spa-keep)
+
+elements and scripts that need to be preserved across body swaps (such as dev tools or persistent layout state) use the `d-spa-keep` attribute. when a body swap occurs, all elements with `d-spa-keep` are retained and re-attached to the new body.
+
+```html
+<div id="player-container" d-spa-keep>
+  <!-- preserved across body swaps -->
+</div>
 ```
 
 <a name="active-navigation"></a>
