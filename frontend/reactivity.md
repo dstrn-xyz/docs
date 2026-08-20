@@ -1,24 +1,18 @@
 # reactivity
 
-- [introduction](#introduction)
-
-- [choosing a system](#choosing-a-system)
-
-- [d-wire event driven reactivity](#d-wire-event-driven-reactivity)
-
-  - [passing data](#passing-data)
-  - [backend handler](#backend-handler)
-  - [trigger types](#trigger-types)
-  - [programmatic dispatch](#programmatic-dispatch)
-
-- [d-live state driven reactivity](#d-live-state-driven-reactivity)
-
-  - [filtering](#filtering)
-  - [how it works under the hood](#how-it-works-under-the-hood)
-
-- [surgical state sync](#surgical-state-sync)
-
-- [error handling](#error-handling)
+- [reactivity](#reactivity)
+  - [introduction](#introduction)
+  - [choosing a system](#choosing-a-system)
+  - [d-wire event driven reactivity](#d-wire-event-driven-reactivity)
+    - [passing data](#passing-data)
+    - [backend handler](#backend-handler)
+    - [trigger types](#trigger-types)
+    - [programmatic dispatch](#programmatic-dispatch)
+  - [d-live state driven reactivity](#d-live-state-driven-reactivity)
+    - [filtering](#filtering)
+    - [how it works](#how-it-works)
+  - [surgical state sync](#surgical-state-sync)
+  - [error handling](#error-handling)
 
 <a name="introduction"></a>
 
