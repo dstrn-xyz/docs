@@ -1,14 +1,18 @@
 # components
 
 - [components](#components)
+
   - [introduction](#introduction)
+
   - [built in components](#built-in-components)
+
     - [d-checkbox](#d-checkbox)
     - [d-color-picker](#d-color-picker)
     - [d-combobox](#d-combobox)
     - [d-context-menu](#d-context-menu)
     - [d-drawer](#d-drawer)
     - [d-dropdown](#d-dropdown)
+    - [d-hamburger](#d-hamburger)
     - [d-hold-button](#d-hold-button)
     - [d-icon-button](#d-icon-button)
     - [d-image-input](#d-image-input)
@@ -21,9 +25,13 @@
     - [d-text-input](#d-text-input)
     - [d-toggle](#d-toggle)
     - [d-morph](#d-morph)
+
   - [overriding built in components](#overriding-built-in-components)
+
     - [immutable base class](#immutable-base-class)
+
   - [dComponent (base class)](#dcomponent-base-class)
+
     - [rendering strategy](#rendering-strategy)
     - [reactive state](#reactive-state)
     - [auto cleanup api](#auto-cleanup-api)
@@ -161,6 +169,111 @@ methods: `toggle()`
   <a href="/logout" full>log out</a>
 </d-dropdown>
 ```
+
+### d-hamburger
+
+responsive mobile navigation hamburger and fullscreen overlay with no duplicate markup, programmable breakpoints, and subcategory navigation:
+
+```html
+<nav class="nav">
+  <div class="container flex-row align-center justify-between py-1">
+    <a d-link href="/" class="flex-row align-center">
+      <img src="/img/logo.png" alt="logo">
+    </a>
+
+    <div id="nav-links" class="flex-row align-center g-2 md:d-flex d-none">
+      <a d-link href="/features" class="nav-link">features</a>
+      <a d-link href="/pricing" class="nav-link">pricing</a>
+    </div>
+
+    <d-hamburger target="#nav-links" breakpoint="md">
+      <div slot="header">
+        <img src="/img/logo.png" class="logo-mark">
+      </div>
+      <div slot="footer">
+        <d-text-input placeholder="search docs"></d-text-input>
+      </div>
+    </d-hamburger>
+  </div>
+</nav>
+```
+
+#### subcategory navigation (nested groups)
+
+wrap related links in a container with `d-submenu="category title"` inside the desktop navigation. the component automatically transforms it into a chevron trigger on mobile that slides into the subcategory view:
+
+```html
+<div id="nav-links" class="flex-row align-center g-2 md:d-flex d-none">
+  <a d-link href="/">home</a>
+
+  <div d-submenu="framework">
+    <a d-link href="/layers">architecture</a>
+    <a d-link href="/benchmarks">benchmarks</a>
+    <a d-link href="/native">native runtime</a>
+  </div>
+
+  <div d-submenu="resources">
+    <a d-link href="/colors">colors</a>
+    <a d-link href="/icons">icons</a>
+  </div>
+</div>
+```
+
+#### subcategory navigation (linked selector)
+
+use `d-submenu="#element-id"` on a link to point to a separate submenu container:
+
+```html
+<div id="nav-links" class="flex-row align-center g-2 md:d-flex d-none">
+  <a d-link href="/">home</a>
+  <a href="#" d-submenu="#docs-menu">documentation</a>
+</div>
+
+<div id="docs-menu" class="d-none">
+  <a d-link href="/docs/models">models</a>
+  <a d-link href="/docs/views">views</a>
+  <a d-link href="/docs/routing">routing</a>
+</div>
+```
+
+#### standalone custom menu
+
+pass custom markup and slots directly inside `<d-hamburger>` without a `target` attribute:
+
+```html
+<d-hamburger breakpoint="md">
+  <div slot="header">
+    <span class="bold">navigation</span>
+  </div>
+
+  <a d-link href="/dashboard">dashboard</a>
+  <div d-submenu="settings">
+    <a d-link href="/profile">profile</a>
+    <a d-link href="/security">security</a>
+  </div>
+
+  <div slot="footer">
+    <button class="btn btn-accent w-100">sign out</button>
+  </div>
+</d-hamburger>
+```
+
+| attribute        | description                                                               |
+| ---------------- | ------------------------------------------------------------------------- |
+| `target`         | css selector of desktop container to clone links from (e.g. `#nav-links`) |
+| `breakpoint`     | viewport breakpoint (`sm`, `md`, `lg`, `xl`, `xxl`, `ultra` or `48em`)    |
+| `opened`         | two way boolean state for open and close                                  |
+| `animation`      | overlay transition (`slide-down`, `fade`, `slide-right`, `slide-left`)    |
+| `direction`      | entrance direction (`top`, `right`, `left`, `bottom`)                     |
+| `size`           | button size in em units (defaults to `1.5em`)                             |
+| `color`          | button stroke color (defaults to `currentColor`)                          |
+| `activecolor`    | active button color when open (defaults to `var(--accent)`)               |
+| `autohidetarget` | automatically hide target element on mobile (defaults to `true`)          |
+| `title`          | default title in overlay header when `slot="header"` is omitted           |
+
+slots: `slot="header"`, `slot="footer"`\
+methods: `open()`, `close()`, `toggle()`, `navigateTo(panel, title)`, `navigateBack()`\
+events: `open`, `close`
 
 ### d-hold-button
 
