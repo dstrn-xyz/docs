@@ -27,7 +27,8 @@
 
 dframework includes a native background job queue that runs jobs in isolated worker threads. jobs are dispatched from your application code and executed asynchronously without blocking the main http process. this is ideal for sending emails, processing images, syncing external apis, or any task that should not delay the user's response.
 
-the queue system requires no external dependencies like redis or a separate queue server. it runs entirely within the node.js runtime using the built in `worker_threads` module.
+> [!NOTE]
+> the queue system requires no external dependencies like redis or a separate queue server. it runs entirely within the node.js runtime using the built in `worker_threads` module.
 
 <a name="creating-jobs"></a>
 

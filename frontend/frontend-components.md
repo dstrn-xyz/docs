@@ -625,7 +625,8 @@ dComponent.define(dCounter);
 
 `dComponent` does not provide a virtual dom. structure belongs in `template()`. all dom mutations belong in `render()` or `onPropChanged()`. this eliminates reflows, preserves listener state, and prevents flicker. any error thrown inside `render()` is caught and logged without crashing the component.
 
-`this.state` cannot be modified inside `render()`, the engine ignores such writes to prevent infinite loops.
+> [!IMPORTANT]
+> `this.state` must never be modified inside `render()`. the engine ignores state writes inside `render()` to prevent infinite update loops.
 
 ### reactive state
 

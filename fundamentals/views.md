@@ -44,7 +44,8 @@ export default class GreetingController {
 }
 ```
 
-for security reasons, you cannot pass dangerous javascript global objects (`process`, `require`, `global`, etc.) into your view data. the engine strictly validates the provided context and will throw an error if tampering is detected.
+> [!IMPORTANT]
+> dangerous javascript globals such as `process`, `require`, and `global` cannot be passed into view data. the engine strictly validates the view context and throws an error if tampering is detected.
 
 <a name="displaying-data"></a>
 

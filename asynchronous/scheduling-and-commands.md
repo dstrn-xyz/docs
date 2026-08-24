@@ -203,7 +203,8 @@ this immediately executes the task and resets its scheduling timer.
 
 ## error handling
 
-if a scheduled task throws an error, the scheduler catches it and logs the error using the application logger. the task is then rescheduled normally. a single failing task does not affect other scheduled tasks or the application's http server.
+> [!NOTE]
+> errors thrown by scheduled tasks are logged and isolated. a failing task is automatically rescheduled without affecting other tasks or interrupting the server.
 
 ```
 [Scheduler] PruneOldLogs caused error: ER_NO_SUCH_TABLE: Table 'logs' doesn't exist

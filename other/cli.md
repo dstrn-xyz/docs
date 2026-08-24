@@ -325,12 +325,10 @@ this outputs the full graph as a json object with `nodes` and `edges` arrays, su
 
 ### architecture lint
 
-the `lint` command detects structural violations in your application. it enforces the following dependency rules:
+the `lint` command detects structural violations in your application.
 
-- controllers may not depend on other controllers
-- models may not depend on controllers
-- middleware may not depend on controllers
-- routes may not depend directly on models
+> [!IMPORTANT]
+> `dstrn lint` enforces strict architectural boundaries: controllers may not depend on other controllers, models may not depend on controllers, middleware may not depend on controllers, and routes may not depend directly on models.
 
 ```bash
 dstrn lint

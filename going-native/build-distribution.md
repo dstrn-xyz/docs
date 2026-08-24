@@ -170,7 +170,8 @@ optimize the signed apk:
 zipalign -v 4 app-release.apk app-release-aligned.apk
 ```
 
-store your keystore password securely. losing the keystore means you cannot update your application on the play store.
+> [!CAUTION]
+> store release keystores and passwords securely outside the project repository. losing the keystore makes updating existing google play applications impossible.
 
 <a name="distribution"></a>
 
@@ -216,6 +217,7 @@ export default {
 };
 ```
 
-the version string is user facing and follows semantic versioning. the build number must increment with every submission to app stores, even if the version string stays the same.
+the version string is user facing and follows semantic versioning.
 
-app stores reject submissions with duplicate build numbers. automate version bumps in your release scripts to avoid this issue.
+> [!IMPORTANT]
+> the `build` integer must increment with every submission to app stores, even if the user facing `version` string remains unchanged. app stores reject submissions with duplicate build numbers.

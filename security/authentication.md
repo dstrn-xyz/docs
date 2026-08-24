@@ -55,7 +55,8 @@ export default {
 
 to log a user into your application, you may use the `login` method on the `Auth` facade. this method accepts the user model instance. you can also optionally pass additional session data as the second argument, and a boolean as the third argument to indicate if the session should be "permanent" (long lived).
 
-when the user is logged in, their id is securely stored in the session and the session identifier is regenerated to prevent session fixation attacks.
+> [!NOTE]
+> when a user logs in via `Auth.login()`, their id is securely stored and the session identifier is regenerated automatically to mitigate session fixation attacks.
 
 ```javascript
 import { Hash } from 'dframework';

@@ -26,7 +26,8 @@ if changes are detected, the pipeline executes its three main phases: view compi
 
 the first phase compiles all `.d` view templates into raw javascript functions (`.dc` files). these compiled files are saved to `storage/framework/views`.
 
-during this phase, a `manifest.json` file is generated containing a cryptographic hmac signature for every compiled view. at runtime, the framework verifies these signatures to ensure your compiled views have not been tampered with.
+> [!NOTE]
+> compiled `.dc` views are signed with a cryptographic hmac in `manifest.json`. at runtime, the framework verifies these signatures to ensure your compiled views have not been tampered with.
 
 <a name="css-optimization-and-obfuscation"></a>
 

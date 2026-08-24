@@ -73,7 +73,8 @@ the payload is merged with any form data present and accessible as the request b
 
 a `d-wire` handler must call render or json. the rendered html replaces the target element on the client. the framework hashes the rendered output and suppresses the update if the content has not changed, preventing redundant dom operations.
 
-to prevent arbitrary dom injection, you must restrict which html elements a route can update by chaining `targets()` to your route definition.
+> [!IMPORTANT]
+> to prevent arbitrary dom injection, socket routes rendering partials must explicitly restrict allowed client targets by chaining `.targets(['#target-id'])`.
 
 ```javascript
 Socket.on('counter:increment', async (req, res) => {

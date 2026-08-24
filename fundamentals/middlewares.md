@@ -80,7 +80,8 @@ export default class AdminMiddleware {
 }
 ```
 
-the middleware runner strictly monitors the response state. if a middleware sends headers or ends the writable stream the chain is immediately broken even if `next()` was accidentally called.
+> [!IMPORTANT]
+> the middleware runner strictly monitors the response state. if a middleware sends headers or ends the writable stream the chain is immediately broken even if `next()` was accidentally called.
 
 <a name="registering-middleware"></a>
 

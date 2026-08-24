@@ -331,7 +331,8 @@ for broadcast events, the callback receives the data payload directly.
 
 ## origin protection
 
-the socket server validates the `Origin` header of every upgrade request against your configured `APP_URL`. connections from mismatched origins are immediately destroyed to prevent cross-site websocket hijacking (cswsh) attacks.
+> [!IMPORTANT]
+> the socket server validates the `Origin` header of every upgrade request against `APP_URL`. connections from mismatched origins are immediately rejected to prevent cross site websocket hijacking (cswsh) attacks.
 
 in the `local` environment, connections from `localhost` and `127.0.0.1` are allowed regardless of the configured url.
 

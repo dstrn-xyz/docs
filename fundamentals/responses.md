@@ -122,7 +122,10 @@ the `stream(writer)` helper sends a response body in chunks with backpressure su
 
 streaming is ideal for proxying large files (audio, video, documents) without buffering the entire payload in memory. set headers (content type, range, cache control) before calling `stream()`, just like any other response method.
 
-dframework handles backpressure automatically. if the client or transport cannot keep up, `write()` will wait until the socket is writable again before resolving. the response pool is not released until `close()` is called, so long running streams do not interfere with object reuse.
+dframework handles backpressure automatically. if the client or transport cannot keep up, `write()` will wait until the socket is writable again before resolving.
+
+> [!NOTE]
+> the response pool is not released until `close()` is called, ensuring long running streams do not interfere with internal object reuse. if the writer function returns without calling `close()`, the framework calls it automatically.
 
 ```javascript
 export default class StreamController {
@@ -151,7 +154,7 @@ export default class StreamController {
 }
 ```
 
-`close()` must be called when you are done writing. if your writer function returns without calling `close()`, the framework will call it automatically for you. if the writer throws an error, the response is ended and the pool is released.
+if the writer throws an error, the response is ended and the pool is released immediately.
 
 <a name="redirects"></a>
 

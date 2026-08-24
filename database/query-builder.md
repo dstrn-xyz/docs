@@ -363,7 +363,10 @@ the `save` method acts as an alias for `update` and returns the same `ResultSetH
 
 ## deletes
 
-the `delete` method removes records from the table. for safety, the framework requires at least one where clause to be present before executing a delete. calling `delete` without conditions will throw an exception to prevent accidental table truncation.
+the `delete` method removes records from the table.
+
+> [!IMPORTANT]
+> at least one where condition is required before executing `delete()`. calling `delete()` without constraints throws an exception to prevent accidental table truncation.
 
 ```javascript
 const result = await DB.table('users')

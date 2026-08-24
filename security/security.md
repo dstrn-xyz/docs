@@ -125,8 +125,8 @@ when a limiter rejects, it sends a `429` and never calls `next()`, so the second
 **both limiters increment on success**
 when a limiter allows a request through, it increments its own counter and calls `next()`. so a request that passes both layers bumps the count on both buckets.
 
-**do not reuse the same instance across layers**
-if you pass the same `RateLimiter` reference to both the group and the route, every successful request increments the shared `hits` map twice (once for each `next()` call in the chain). the effective limit becomes `max / 2`, which is almost certainly not what you want. construct a separate `new RateLimiter(...)` per layer.
+> [!WARNING]
+> do not reuse the same `RateLimiter` instance across both a group and an inner route. sharing an instance causes each request to increment the hit count twice, halving the effective rate limit to `max / 2`. construct separate limiter instances per layer.
 
 if you need a stricter cap on a specific route inside an already rate limited group, prefer either tightening the existing per ip limit at the route layer (a smaller `max`, a custom `keyGenerator` that includes `req.user.id`, or both) or removing the group limiter for that route. layering two limiters with the same key tends to produce surprising budget behavior because the layers interleave increments without coordination.
 

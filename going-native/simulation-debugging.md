@@ -63,7 +63,8 @@ requirements:
 
 the emulator may take up to a minute to boot. the framework waits for the device to become ready before installing and launching your application.
 
-android maps `localhost` to `10.0.2.2` automatically. your development server must be accessible at this address from within the emulator.
+> [!NOTE]
+> android emulators map `localhost` to `10.0.2.2`. development servers must be accessible at this host address from within the emulator.
 
 <a name="desktop-simulation"></a>
 

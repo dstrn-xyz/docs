@@ -87,7 +87,10 @@ const referer = req.header('referrer'); // handles both referer and referrer
 
 ## csrf management
 
-the request object handles generating and verifying csrf tokens. the route compiler automatically inserts verification logic for all mutating routes unless explicitly disabled, so you rarely call these methods manually.
+the request object handles generating and verifying csrf tokens.
+
+> [!NOTE]
+> the route compiler automatically inserts verification logic for all mutating routes (`POST`, `PUT`, `PATCH`, `DELETE`) unless explicitly disabled, so you rarely call these methods manually.
 
 ```javascript
 // generate a new token valid for 6 hours

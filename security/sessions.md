@@ -94,6 +94,7 @@ dframework abstracts away the complexity of session storage behind simple driver
 
 ### stealth mode
 
-dframework includes a highly unique `stealth` session driver. when stealth mode is enabled, session data is completely stateless on the server side. instead, the entire session payload is encrypted using aes-256-gcm and stored directly inside the user's secure http only session cookie.
+dframework includes a `stealth` session driver.
 
-this entirely eliminates the need for database lookups or memory overhead during session validation, allowing for extreme performance scaling while guaranteeing absolute data integrity and tamper detection.
+> [!NOTE]
+> when stealth mode is enabled, session data is completely stateless on the server side. the entire session payload is encrypted using aes-256-gcm and stored directly inside the user's secure http only cookie, eliminating database lookups and server memory overhead entirely.

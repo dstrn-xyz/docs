@@ -146,4 +146,7 @@ const value = await Storage.disk('secure').get('keys/api-key.txt', 'utf8');
 
 ## disk space protection
 
-to prevent the application from crashing due to disk exhaustion, the storage service performs active health checks before writing data. before any `put` operation, the framework verifies that the target disk has sufficient space for the payload plus a one hundred megabyte safety buffer. if space is insufficient, the operation is safely aborted.
+to prevent the application from crashing due to disk exhaustion, the storage service performs active health checks before writing data.
+
+> [!NOTE]
+> before writing data with `put()`, the storage service verifies that the target disk has sufficient capacity for the payload plus a 100 megabyte safety buffer. if space is insufficient, the operation is safely aborted.

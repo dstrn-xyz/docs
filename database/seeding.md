@@ -35,6 +35,7 @@ export async function run({ table }) {
 
 ## automatic safety checks
 
-the seeder runner is designed for safety in production environments. before executing an insert statement within a seeder, the framework performs a database count on the target table. if the table is not empty, the framework intercepts the insert, logs a warning, and safely skips the remainder of that specific seeder file.
+the seeder runner is designed for safety in production environments.
 
-this behavior ensures that you can safely rerun your entire seeder suite multiple times without risking duplicate data or primary key collisions on established tables.
+> [!NOTE]
+> before executing an insert statement within a seeder, the framework performs a database count on the target table. if records exist, the insert is safely skipped, allowing seeder suites to run repeatedly without primary key collisions or duplicate rows.

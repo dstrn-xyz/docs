@@ -338,7 +338,10 @@ ruby('日本[にほん]語[ご]');
 
 ## response helpers
 
-these helpers are shortcuts for calling methods on the current request context's response object. they can only be used inside a request context (controllers, middleware, etc.).
+these helpers are shortcuts for calling methods on the current request context's response object.
+
+> [!NOTE]
+> response helpers operate on the active request context and can only be used inside controllers, middleware, and route handlers.
 
 | helper                         | description                      |
 | ------------------------------ | -------------------------------- |

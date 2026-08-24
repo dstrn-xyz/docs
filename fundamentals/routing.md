@@ -262,16 +262,15 @@ Route.domain('{tenant}.myapp.com', (app) => {
 
 ### overlapping route names across domains
 
-route names registered with `.name()` reside in a global lookup table. if two routes on different domains define the exact same `.name()` attribute (for example two separate `.name('dashboard')` calls), the later definition will overwrite the earlier entry in the `route()` helper map.
-
-to avoid collisions when creating named routes across domain boundaries prefix your route names with the target domain or section name (for example `admin.dashboard` and `app.dashboard`).
+> [!WARNING]
+> route names registered with `.name()` reside in a global lookup table. if two routes on different domains share the exact same name, the later definition overwrites the earlier entry. always prefix route names with the target domain or section name (e.g. `admin.dashboard` and `app.dashboard`).
 
 ```javascript
 Route.domain('admin.example.com').get('/dashboard', 'AdminController@dash').name('admin.dashboard');
 Route.domain('app.example.com').get('/dashboard', 'AppController@dash').name('app.dashboard');
 
-// route('admin.dashboard') -> '//admin.example.com/dashboard'
-// route('app.dashboard') -> '//app.example.com/dashboard'
+// route('admin.dashboard') // '//admin.example.com/dashboard'
+// route('app.dashboard') // '//app.example.com/dashboard'
 ```
 
 when generating a url for a domain bound route using `route(name, params)`, the framework automatically returns a protocol relative absolute url (such as `//admin.example.com/dashboard`), filling in any domain parameters from the supplied `params` object.

@@ -66,7 +66,10 @@ dstrn serve
 
 internally the framework utilizes a central application instance. this instance controls everything from the router to the view engine and the database connection. it automatically detects the environment and configures the request pipeline accordingly.
 
-when the application boots it registers the database connection initializes the logger and prepares the request handlers. during the booting process the framework also resolves the native socket router and the background queue workers. you never instantiate these components manually. they are managed exclusively by the framework runtime.
+when the application boots it registers the database connection initializes the logger and prepares the request handlers. during the booting process the framework also resolves the native socket router and the background queue workers.
+
+> [!NOTE]
+> you never instantiate database connections, loggers, socket routers, or queue workers manually. they are resolved and managed exclusively by the framework runtime.
 
 <br />
 
@@ -99,8 +102,5 @@ export default {
   },
 };
 ```
-
-> \[!IMPORTANT]
-> applications are expected to follow framework structure exactly. configurations are available when they reinforce this philosophy.
 
 for full detail on environment configuration see the dedicated [configuration documentation](configuration.md) 

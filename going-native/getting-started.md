@@ -58,7 +58,8 @@ if you omit the `name` field, the framework uses [`Config('app.name')`](configur
 
 ### application identity
 
-the `identifier` field must follow reverse domain notation and uniquely identifies your application on each platform. this value cannot be changed after distribution without creating a new app listing.
+> [!IMPORTANT]
+> the `identifier` in `config/native.js` must follow reverse domain notation (e.g. `com.example.myapp`). this value cannot be changed after distribution without publishing a new app listing.
 
 ```javascript
 export default {

@@ -290,7 +290,8 @@ obtain a new let's encrypt certificate for one or more domains:
 dstrn cert:obtain --domain=api.example.com --email=admin@example.com
 ```
 
-for testing with let's encrypt staging ca (avoids rate limits):
+> [!TIP]
+> test certificate generation with `--staging` before production issuance to avoid hitting let's encrypt rate limits during deployment validation.
 
 ```bash
 dstrn cert:obtain --domain=api.example.com --email=admin@example.com --staging
@@ -385,7 +386,8 @@ AmbientCapabilities=CAP_NET_BIND_SERVICE
 WantedBy=multi-user.target
 ```
 
-the `AmbientCapabilities=CAP_NET_BIND_SERVICE` setting allows the service to bind privileged low ports (80 and 443) while running as a standard non root user.
+> [!NOTE]
+> `AmbientCapabilities=CAP_NET_BIND_SERVICE` allows the systemd service to bind privileged low ports (80 and 443) while running under an unprivileged user account.
 
 <a name="certificate-renewal-timer-unit"></a>
 

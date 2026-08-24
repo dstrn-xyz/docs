@@ -111,7 +111,8 @@ the built in rules cover the most common validation scenarios:
 
 ## file validation
 
-to validate uploaded files, you must pass the entire `req` object to the validator instead of `req.body`. the framework reads the uploaded files from `req.files` automatically.
+> [!IMPORTANT]
+> when validating uploaded files, pass the full `req` object to `validate(req, rules)` rather than `req.body` so the validator can inspect `req.files`.
 
 file sizes can be specified in bytes, or with shorthand suffixes (`kb`, `mb`, `gb`).
 

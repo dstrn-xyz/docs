@@ -141,7 +141,8 @@ import { SqlHelpers } from 'dframework';
 await DB.table('users').update({ updated_at: SqlHelpers.raw('NOW()') }, { id: 1 });
 ```
 
-to maintain strict security and prevent injection, the `raw` helper operates against an allowlist. it currently only accepts the following static functions: `CURRENT_TIMESTAMP`, `CURRENT_DATE`, `CURRENT_TIME`, and `NOW()`. passing any other string, especially one containing user input, instantly throws an exception.
+> [!IMPORTANT]
+> to prevent sql injection, `SqlHelpers.raw()` operates against an allowlist accepting only `CURRENT_TIMESTAMP`, `CURRENT_DATE`, `CURRENT_TIME`, and `NOW()`. passing any other expression throws an immediate exception.
 
 | helper | arguments | returns |
 | --- | --- | --- |

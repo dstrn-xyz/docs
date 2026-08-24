@@ -141,7 +141,8 @@ the `@t()` directive is syntactic sugar for calling the `t()` helper with the cu
 
 ### fallback behavior
 
-if a translation key is not found, the `t()` function returns the fallback value if one was provided. if no fallback was given, it returns the raw key string itself. this ensures your application never displays blank text due to a missing translation.
+> [!NOTE]
+> if a translation key is missing and no fallback string is provided, `t()` returns the raw key path rather than empty text.
 
 ```javascript
 await t(req, 'common.missing_key');

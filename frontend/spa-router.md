@@ -420,7 +420,8 @@ when the user navigates away, the interval is automatically cleared. no manual c
 
 for standard page views and swapped content, you can write regular `<script>` tags. all inline and external scripts inside swapped regions are automatically managed and scoped by the router.
 
-on the very first full page load (hard refresh or initial visit), the browser runs standard `<script>` tags immediately in global scope before `dstrn` finishes initializing. if you have a layout script that needs to wait until the websocket connection is established and run inside the managed scope from initial boot, mark it with `type="text/dspa"`.
+> [!TIP]
+> on the initial hard page load, use `type="text/dspa"` for layout scripts that need access to the managed scope and active websocket connection. regular views navigated via dspa execute scripts inside managed scopes automatically.
 
 ```html
 <script type="text/dspa">
@@ -543,7 +544,8 @@ by default, the router scrolls to the top of the page after every navigation. if
 
 when clicking a link pointing to a `#hash` on the current page (such as `/#layers` while already on `/`), the router intercepts the navigation, skips the unnecessary network fetch, updates the browser history, and smoothly scrolls the target element into view.
 
-for section links in persistent layouts, always write the full route URL with the hash (such as `{{ route('home') }}#native`) rather than relative hash fragments (`#native`), ensuring links work whether clicked from the home page or from a different route.
+> [!TIP]
+> for section links in persistent layouts, use full route urls with the hash (e.g. `{{ route('home') }}#native`) instead of relative hash fragments (`#native`) so navigation works from any page.
 
 you disable scrolling per navigation by adding the `preserve-scroll` attribute to a `<d-link>` or by passing `preserveScroll: true` to `dSPA.navigate()`.
 

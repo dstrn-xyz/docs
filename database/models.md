@@ -355,7 +355,8 @@ export default class User extends Model {
 }
 ```
 
-by default, the framework hides `password`, `token`, `secret`, `api_key`, and `remember_token`.
+> [!NOTE]
+> by default, the framework automatically hides `password`, `token`, `secret`, `api_key`, and `remember_token` when serializing models with `toJSON()`.
 
 <a name="mutations"></a>
 

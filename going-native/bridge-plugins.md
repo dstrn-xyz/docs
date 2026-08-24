@@ -432,9 +432,11 @@ native/plugins/barcode/
 
 three rules govern this layout:
 
-- `index.js` is **required**. the framework refuses to register a plugin without it, because the javascript impl is what makes the plugin usable on the web and serves as the fallback when a native impl is missing or fails. there is no exception.
+> [!IMPORTANT]
+> `index.js` is mandatory for every plugin. it serves as the reference implementation, the source of truth for method names, and the automatic fallback whenever native implementations are absent or fail.
+
 - `Plugin.swift`, `Plugin.kt`, `Plugin.rs` are all optional. ship whichever native languages your team can support. missing files mean the plugin falls back to the javascript impl on that platform.
-- method names are matched across languages by string equality. if `index.js` exports `barcode.scan`, then `Plugin.swift` must have a `case "scan":` branch, `Plugin.kt` must have a `"scan" ->` branch, and `Plugin.rs` must dispatch on `"scan"`. nothing else needs to align — parameter shapes and return shapes are each language's own concern, as long as the values you send across the bridge can be json encoded.
+- method names are matched across languages by string equality. if `index.js` exports `barcode.scan`, then `Plugin.swift` must have a `case "scan":` branch, `Plugin.kt` must match on `"scan"`, and `Plugin.rs` must dispatch on `"scan"`. parameter shapes and return shapes are each language's own concern, as long as the values sent across the bridge are json encodable.
 
 <a name="the-javascript-reference-implementation"></a>
 
