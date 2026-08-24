@@ -551,25 +551,43 @@ await Session.flash('status', 'saved successfully');
 
 ### auth
 
-the `Auth` facade provides access to the current user and authentication actions.
+the `Auth` facade provides access to authenticated users, guards, and authentication actions.
 
-| method                              | description                                     |
-| ----------------------------------- | ----------------------------------------------- |
-| `Auth.user()`                       | returns the authenticated user object or `null` |
-| `Auth.check()`                      | returns `true` if a user is authenticated       |
-| `Auth.login(user, data, permanent)` | log in a user and create a session              |
-| `Auth.logout()`                     | destroy the current session                     |
+| method                              | description                                           |
+| ----------------------------------- | ----------------------------------------------------- |
+| `Auth.user()`                       | returns the authenticated user object or `null`       |
+| `Auth.check()`                      | returns `true` if a user is authenticated             |
+| `Auth.id()`                         | returns the authenticated user id or `null`           |
+| `Auth.guard(name)`                  | returns guard specific auth methods (`user`, `check`) |
+| `Auth.login(user, data, permanent)` | log in a user on the default guard                    |
+| `Auth.logout()`                     | log out of the default guard                          |
+| `Auth.flush()`                      | clear all guard states and session data               |
 
 ```javascript
 if (Auth.check()) {
   const user = Auth.user();
+  const userId = Auth.id();
+}
+
+// using guards
+if (Auth.guard('admin').check()) {
+  const admin = Auth.guard('admin').user();
 }
 
 await Auth.login(user, { role: 'admin' });
+await Auth.guard('admin').login(adminUser);
+
+// log out of default guard only
 await Auth.logout();
+
+// log out of admin guard only
+await Auth.guard('admin').logout();
+
+// flush all guards and sessions
+await Auth.flush();
 ```
 
-`Auth.login()` accepts an optional third argument. when set to `true`, the session uses a long-lived cookie instead of a browser session cookie.
+`Auth.login()` and `Auth.guard().login()` accept an optional third argument. when set to `true`, the session uses a long-lived cookie instead of a browser session cookie.
 
 <a name="db"></a>
 

@@ -81,7 +81,8 @@ export default {
   key: Env.value('APP_KEY'),
 
   shield: Env.value('SHIELD_ENABLED', true),
-  session_driver: Env.value('SESSION_DRIVER', 'memory'),
+  sessionDriver: Env.value('SESSION_DRIVER', 'memory'),
+  sessionCookie: Env.value('SESSION_COOKIE', 'sid'),
 
   objectPoolSize: Env.value('OBJECT_POOL_SIZE', 2000),
 
@@ -118,12 +119,31 @@ the `env` value must be either `local` or `production`. any other value will def
 
 ### config/auth.js
 
-the authentication config registers the model the framework uses to resolve authenticated users. by default it points to the `User` model.
+the authentication config registers the models the framework uses to resolve authenticated users. for single model setups, specify `model`:
 
 ```javascript
 // config/auth.js
 export default {
   model: 'User'
+};
+```
+
+for multi guard setups with independent user entities (e.g. users and admins), define the `guards` object:
+
+```javascript
+// config/auth.js
+export default {
+  default: 'web',
+  guards: {
+    web: {
+      model: 'User',
+      sessionKey: 'userId'
+    },
+    admin: {
+      model: 'Admin',
+      sessionKey: 'adminId'
+    }
+  }
 };
 ```
 

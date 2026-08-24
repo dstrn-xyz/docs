@@ -2,11 +2,17 @@
 
 - [authentication](#authentication)
   - [introduction](#introduction)
+  - [configuration](#configuration)
   - [authenticating users](#authenticating-users)
     - [logging in](#logging-in)
     - [logging out](#logging-out)
     - [checking authentication state](#checking-authentication-state)
     - [retrieving the authenticated user](#retrieving-the-authenticated-user)
+    - [retrieving user id](#retrieving-user-id)
+  - [multi guard authentication](#multi-guard-authentication)
+    - [defining guards](#defining-guards)
+    - [using guards](#using-guards)
+    - [flushing all guards](#flushing-all-guards)
   - [hashing](#hashing)
     - [standard hashing](#standard-hashing)
     - [deterministic fast hashing](#deterministic-fast-hashing)
@@ -16,6 +22,28 @@
 ## introduction
 
 dframework makes implementing authentication extremely simple. the global `Auth` facade provides a simple, unified api for managing user sessions and authentication state across your application.
+
+<a name="configuration"></a>
+
+## configuration
+
+authentication settings live in `config/auth.js`. by default, a single model authentication configuration points to `User`:
+
+```javascript
+// config/auth.js
+export default {
+  model: 'User'
+};
+```
+
+the session cookie name can be customized in `config/app.js` via `sessionCookie` or the `SESSION_COOKIE` environment variable (defaults to `sid`):
+
+```javascript
+// config/app.js
+export default {
+  sessionCookie: Env.value('SESSION_COOKIE', 'sid'),
+};
+```
 
 <a name="authenticating-users"></a>
 
@@ -51,7 +79,7 @@ export async function authenticate(req, res) {
 
 ### logging out
 
-to log the user out, use the `logout` method. this clears the user's session data entirely.
+to log the user out of the default guard, use the `logout` method. this clears the default guard's session key while preserving other active guard sessions.
 
 ```javascript
 await Auth.logout();
@@ -81,6 +109,77 @@ const user = Auth.user();
 if (user) {
   Log.info(`welcome back, ${user.name}`);
 }
+```
+
+<a name="retrieving-user-id"></a>
+
+### retrieving user id
+
+to quickly retrieve the authenticated user id without accessing properties manually, use the `id` method:
+
+```javascript
+const userId = Auth.id();
+```
+
+<a name="multi-guard-authentication"></a>
+
+## multi guard authentication
+
+when your application needs independent authentication for multiple distinct entity types (for example, regular users and administrators), you can define guards in `config/auth.js`.
+
+<a name="defining-guards"></a>
+
+### defining guards
+
+guards are registered under the `guards` object in `config/auth.js`. each guard specifies its model and optional custom session key (which defaults to `${guardName}Id`):
+
+```javascript
+// config/auth.js
+export default {
+  default: 'web',
+  guards: {
+    web: {
+      model: 'User',
+      sessionKey: 'userId'
+    },
+    admin: {
+      model: 'Admin',
+      sessionKey: 'adminId'
+    }
+  }
+};
+```
+
+<a name="using-guards"></a>
+
+### using guards
+
+to perform authentication actions on a specific guard, use the `guard` method on the `Auth` facade:
+
+```javascript
+// check if an admin is logged in
+if (Auth.guard('admin').check()) {
+  const admin = Auth.guard('admin').user();
+  const adminId = Auth.guard('admin').id();
+}
+
+// log in an admin (preserves active user sessions on other guards)
+await Auth.guard('admin').login(adminUser);
+
+// log out admin only
+await Auth.guard('admin').logout();
+```
+
+all guard reads (`user()`, `check()`, `id()`) are completely synchronous during requests.
+
+<a name="flushing-all-guards"></a>
+
+### flushing all guards
+
+to completely clear all active guard logins and wipe session data in one call, use `flush`:
+
+```javascript
+await Auth.flush();
 ```
 
 <a name="hashing"></a>
