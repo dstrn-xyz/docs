@@ -21,6 +21,7 @@
     - [classes](#classes)
     - [timing](#timing)
   - [data functions](#data-functions)
+    - [escaping](#escaping)
     - [type checking](#type-checking)
     - [array utilities](#array-utilities)
     - [extras](#extras)
@@ -322,6 +323,13 @@ await sleep(300);  // promise based delay
 <a name="data-functions"></a>
 
 ## data functions
+
+### escaping
+
+```javascript
+escapeHtml(v)               // escapes html entities (&, <, >, ", ')
+escapeJs(v)                 // escapes quotes, backticks, backslashes, dollar signs, control chars, and </script> tags
+```
 
 ### type checking
 

@@ -164,6 +164,17 @@ escapeHtml(null);   // ""
 
 this function uses a single pass algorithm on large strings. the view engine's `{{ }}` syntax calls this function automatically.
 
+**`escapeJs(value)`**
+
+escapes characters for safe usage inside javascript string literals and template strings. escapes `\`, `'`, `"`, `` ` ``, `$`, control characters (newlines, carriage returns, tabs, null bytes, backspaces, form feeds), `/` (to prevent `</script>` tag breakout), and unicode line/paragraph separators (`\u2028` and `\u2029`). returns an empty string for `null` and `undefined`.
+
+```javascript
+escapeJs('hello "world", it\'s `cool` </script>');
+// "hello \\\"world\\\", it\\\'s \\\`cool\\\` <\\/script>"
+
+escapeJs(null);   // ""
+```
+
 **`emptyImage()`**
 
 returns a data uri for a transparent 1x1 gif image. useful as a placeholder src attribute.
