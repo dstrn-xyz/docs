@@ -189,55 +189,57 @@ benchmark results and methodology:
 
 ## fundamentals
 
-- [getting started](/getting-started/getting-started.md)
-- [project structure](/getting-started/project-structure.md)
-- [routing](/fundamentals/routing.md)
-- [controllers](/fundamentals/controllers.md)
-- [middleware](/fundamentals/middlewares.md)
-- [request lifecycle](/fundamentals/request-lifecycle.md)
-- [views](/fundamentals/views.md)
+- [getting started](getting-started/getting-started.md)
+- [release notes](getting-started/release-notes.md)
+- [changelog](changelog.md)
+- [project structure](getting-started/project-structure.md)
+- [routing](fundamentals/routing.md)
+- [controllers](fundamentals/controllers.md)
+- [middleware](fundamentals/middlewares.md)
+- [request lifecycle](fundamentals/request-lifecycle.md)
+- [views](fundamentals/views.md)
 
 ## data management
 
-- [database & models](/database/database.md)
-- [migrations](/database/migrations.md)
-- [query builder](/database/query-builder.md)
-- [storage](/database/storage.md)
+- [database & models](database/database.md)
+- [migrations](database/migrations.md)
+- [query builder](database/query-builder.md)
+- [storage](database/storage.md)
 
 ## frontend development
 
-- [spa router](/frontend/spa-router.md)
-- [websockets](/asynchronous/websockets.md)
-- [components](/frontend/frontend-components.md)
-- [reactivity](/frontend/reactivity.md)
-- [frontend utilities](/frontend/frontend-utilities.md)
-- [frontend pipeline](/frontend/frontend-pipeline.md)
+- [spa router](frontend/spa-router.md)
+- [websockets](asynchronous/websockets.md)
+- [components](frontend/frontend-components.md)
+- [reactivity](frontend/reactivity.md)
+- [frontend utilities](frontend/frontend-utilities.md)
+- [frontend pipeline](frontend/frontend-pipeline.md)
 
 ## asynchronous processing
 
-- [jobs and queues](/asynchronous/jobs-and-queues.md)
-- [scheduling and commands](/asynchronous/scheduling-and-commands.md)
+- [jobs and queues](asynchronous/jobs-and-queues.md)
+- [scheduling and commands](asynchronous/scheduling-and-commands.md)
 
 ## other
 
-- [cli](/other/cli.md)
-- [localization](/other/localization.md)
-- [logging and errors](/other/logging-and-errors.md)
-- [deployment](/other/deployment.md)
+- [cli](other/cli.md)
+- [localization](other/localization.md)
+- [logging and errors](other/logging-and-errors.md)
+- [deployment](other/deployment.md)
 
 ## security
 
-- [security](/security/security.md)
-- [authentication](/security/authentication.md)
-- [sessions](/security/sessions.md)
-- [validation](/security/validation.md)
+- [security](security/security.md)
+- [authentication](security/authentication.md)
+- [sessions](security/sessions.md)
+- [validation](security/validation.md)
 
 ## native applications
 
-- [getting started](/going-native/getting-started.md)
-- [bridge plugins](/going-native/bridge-plugins.md)
-- [build and distribution](/going-native/build-distribution.md)
-- [simulation and debugging](/going-native/simulation-debugging.md)
+- [getting started](going-native/getting-started.md)
+- [bridge plugins](going-native/bridge-plugins.md)
+- [build and distribution](going-native/build-distribution.md)
+- [simulation and debugging](going-native/simulation-debugging.md)
 
 <a name="contributing"></a>
 
