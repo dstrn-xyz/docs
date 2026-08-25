@@ -139,4 +139,4 @@ dstrn serve
 
 ### breaking change notices
 
-when moving between major releases (such as 0.21 to 0.22), review the [changelog](../changelog.md) for breaking change notices and migration steps before updating production systems.
+when moving between major releases (such as 0.21 to 0.22), review the [changelog](changelog.md) for breaking change notices and migration steps before updating production systems.

@@ -191,7 +191,7 @@ benchmark results and methodology:
 
 - [getting started](getting-started/getting-started.md)
 - [release notes](getting-started/release-notes.md)
-- [changelog](changelog.md)
+- [changelog](getting-started/changelog.md)
 - [project structure](getting-started/project-structure.md)
 - [routing](fundamentals/routing.md)
 - [controllers](fundamentals/controllers.md)
