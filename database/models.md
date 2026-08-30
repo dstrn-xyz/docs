@@ -303,6 +303,21 @@ const profile = await user.profile(); // Profile | null
 const posts = await user.posts();      // Array<Post>
 ```
 
+you can also await the property directly without calling it as a function:
+
+```javascript
+const posts = await user.posts;
+```
+
+### automatic in memory caching and lazy fetching
+
+the framework automatically caches eager loaded relations and handles lazy loading transparently when awaited:
+
+- if the relation was eager loaded with `with('posts')` or `load('posts')`, `await user.posts` (or `await user.posts()`) resolves immediately in memory with zero database queries.
+- if the relation was not eager loaded, `await user.posts` executes a single database query on demand.
+
+because relation properties are callable proxies (enabling both in memory collection access and fluent query chaining like `user.posts().where(...)`), `Array.isArray(user.posts)` will return `false`. you do not need manual `Array.isArray` branches to optimize data access; simply `await user.posts` to get the hydrated collection whether it was preloaded or not.
+
 <a name="eager-loading"></a>
 
 ### eager loading

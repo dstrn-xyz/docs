@@ -494,19 +494,9 @@ the router provides a declarative way to highlight the currently active navigati
 </d-link>
 ```
 
-`d-nav-url` specifies the url path this element corresponds to. the router compares the current `window.location.pathname` against this value. if the path starts with the value, the classes listed in `d-nav-active` are added. if it does not match, the classes are removed.
+`d-nav-url` specifies the url path this element corresponds to. if omitted on elements with `href` (such as `<d-link>` or `<a d-link>`), the router falls back to reading `href`. leading and trailing slashes are normalized automatically, so `/library/`, `library`, and `/library` all match consistently.
 
-by default, the matching is prefix based. a `d-nav-url` of `/home` will also match `/home/settings`. to require an exact match, add the `d-nav-exact` attribute.
-
-```html
-<d-link
-  href="/home"
-  d-nav-url="/home"
-  d-nav-active="d-link-active"
-  d-nav-exact>
-  home
-</d-link>
-```
+by default, the matching is prefix based on path segments. a `d-nav-url` of `/home` will match `/home` and `/home/settings` while ignoring `/home-feed`. to require an exact match, add the `d-nav-exact` attribute.
 
 the active state is recalculated after every spa navigation automatically.
 
