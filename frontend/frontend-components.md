@@ -339,6 +339,13 @@ menu.close();
 
 // toggle context menu
 menu.toggle();
+
+// listen to item selection (e.detail is the clicked element)
+listen(menu, 'click', (e) => {
+  const target = e.target;
+  const action = target.closest('[data-action]')?.getAttribute('data-action');
+  if (action) handleAction(action);
+});
 ```
 
 #### events
@@ -353,6 +360,7 @@ menu.toggle();
 - calculates menu dimensions and automatically bounds coordinates so the menu never overflows parent or screen edges.
 - clicking outside closes the menu immediately without triggering click actions or links on underlying elements.
 - automatically closes any other open context menus before opening.
+- when creating dynamically in javascript, listen to `'click'` directly on the component element; item wrappers are created during component mount in the next animation frame.
 
 ---
 
@@ -1277,6 +1285,9 @@ dComponent.define(dCounter);
 | `render()`                      | on state/prop change | performs surgical DOM node updates                    |
 | `onPropChanged(name, old, new)` | on prop mutation     | reacts to specific property changes                   |
 | `destroy()`                     | on disconnection     | teardown hook called when element is removed from DOM |
+
+> [!NOTE]
+> `mount()` and `template()` initialization are batched via `requestAnimationFrame` upon DOM connection. attach event listeners to the component element or inside lifecycle hooks rather than querying child DOM immediately after synchronous `appendChild()`.
 
 <a name="rendering-strategy-and-surgical-updates"></a>
 
