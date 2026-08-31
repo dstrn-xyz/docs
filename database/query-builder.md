@@ -11,7 +11,7 @@
     - [getting all rows](#getting-all-rows)
     - [getting a single row](#getting-a-single-row)
     - [plucking values](#plucking-values)
-    - [counting results](#counting-results)
+    - [aggregates (count, sum, avg, min, max)](#aggregates)
 
   - [selects](#selects)
 
@@ -21,6 +21,13 @@
     - [or statements](#or-statements)
     - [additional where clauses](#additional-where-clauses)
     - [column comparisons](#column-comparisons)
+
+  - [joins](#joins)
+
+    - [inner join](#inner-join)
+    - [left join / right join](#left-join--right-join)
+    - [cross join](#cross-join)
+    - [raw joins](#raw-joins)
 
   - [ordering, grouping, and limits](#ordering-grouping-and-limits)
 
@@ -73,6 +80,11 @@ each of these returns the same `TableQuery` instance for chaining.
 | `whereBetween(column, [min, max])` / `whereNotBetween(...)` | range check, requires exactly two values |
 | `whereColumn(column, operator?, otherColumn)` | compare two columns in the same row |
 | `whereHashed(column, operator?, value)` / `orWhereHashed(...)` | compare against the fast hash of a value |
+| `join(table, first, operator?, second)` | inner join on another table |
+| `leftJoin(table, first, operator?, second)` | left outer join on another table |
+| `rightJoin(table, first, operator?, second)` | right outer join on another table |
+| `crossJoin(table)` | cross join on another table |
+| `joinRaw(expression, bindings?)` | raw join clause with parameter bindings |
 | `groupBy(...columns)` | grouping columns |
 | `orderBy(column, direction='ASC')` | sort, direction is `'ASC'` or `'DESC'` |
 | `limit(n)` / `offset(n)` | numeric row cap and skip count |
@@ -87,7 +99,11 @@ these return a promise and execute the underlying query.
 | `get()` | none | `Promise<Array<object>>` of matching rows; `[]` when none match |
 | `first(where?)` | optional `{ column: value }` object | `Promise<object\|null>` (first matching row, or null) |
 | `latest(count?, column?)` | `null` or number; optional column name | `null` count: `Promise<object\|null>`; numeric count: `Promise<Array<object>>` |
-| `count()` | none | `Promise<number>` (matching row count; group by returns the number of groups) |
+| `count(column?)` | optional column name (defaults to `*`) | `Promise<number>` (matching row count; group by returns the number of groups) |
+| `sum(column)` | column name | `Promise<number>` (sum of values; 0 when no rows) |
+| `avg(column)` | column name | `Promise<number\|null>` (average value; null when no rows) |
+| `min(column)` | column name | `Promise<any>` (minimum value; null when no rows) |
+| `max(column)` | column name | `Promise<any>` (maximum value; null when no rows) |
 | `pluck(column)` | column name | `Promise<Array>` of that column's values across the matching rows (empty `[]` when none) |
 | `getWithCount()` | none | `Promise<{ rows: Array<object>, total: number }>`; rows have the internal `_total_count` field stripped |
 | `insert(data)` | row object, or array of row objects | single row: mysql2 `ResultSetHeader` (`insertId`, `affectedRows`); array of rows: `Array<number>` of generated ids (empty `[]` for an empty input array) |
@@ -159,15 +175,34 @@ const titles = await DB.table('posts').pluck('title');
 // titles: Array. one entry per matching row, in the order returned by the database.
 ```
 
-<a name="counting-results"></a>
+<a name="aggregates"></a>
 
-### counting results
+### aggregates
 
-to determine the total number of records matching your criteria, use the `count` method. it executes a raw count aggregation and returns an integer.
+the query builder provides helper methods for aggregating data: `count`, `sum`, `avg`, `min`, and `max`.
 
 ```javascript
-const total = await DB.table('orders').where('status', 'pending').count();
-// total: number. 0 when no rows match.
+const totalOrders = await DB.table('orders').where('status', 'pending').count();
+// totalOrders: number. 0 when no rows match.
+
+const totalRevenue = await DB.table('orders').where('status', 'completed').sum('amount');
+// totalRevenue: number. 0 when no rows match.
+
+const avgPrice = await DB.table('products').where('category_id', 4).avg('price');
+// avgPrice: number | null. null when no rows match.
+
+const cheapest = await DB.table('products').min('price');
+const priciest = await DB.table('products').max('price');
+```
+
+all aggregates automatically respect joined tables, table aliases, and where constraints:
+
+```javascript
+const totalDuration = await DB.table('track_interactions')
+  .join('tracks', 'track_interactions.track_id', '=', 'tracks.id')
+  .where('track_interactions.user_id', 1)
+  .where('track_interactions.type', 'like')
+  .sum('tracks.duration');
 ```
 
 <a name="selects"></a>
@@ -282,6 +317,89 @@ use the `whereColumn` method to compare the values of two different columns with
 
 ```javascript
 await DB.table('users').whereColumn('updated_at', '>', 'created_at').get();
+```
+
+<a name="joins"></a>
+
+## joins
+
+the query builder supports joining multiple tables using inner joins, left/right outer joins, cross joins, and raw join expressions.
+
+<a name="inner-join"></a>
+
+### inner join
+
+to perform a basic inner join, call the `join` method. you can specify the target table, the first column, an optional operator (defaults to `=`), and the second column.
+
+```javascript
+const users = await DB.table('users')
+  .join('contacts', 'users.id', '=', 'contacts.user_id')
+  .select('users.*', 'contacts.phone')
+  .get();
+```
+
+when only three arguments are passed, the operator defaults to `=`:
+
+```javascript
+await DB.table('users')
+  .join('contacts', 'users.id', 'contacts.user_id')
+  .get();
+```
+
+<a name="left-join--right-join"></a>
+
+### left join / right join
+
+to perform a `LEFT JOIN` or `RIGHT JOIN`, use `leftJoin` or `rightJoin`:
+
+```javascript
+const tracks = await DB.table('tracks')
+  .leftJoin('genres', 'tracks.genre_id', '=', 'genres.id')
+  .select('tracks.*', 'genres.name as genre_name')
+  .get();
+```
+
+you can chain multiple joins together to traverse relationships:
+
+```javascript
+const tracks = await DB.table('tracks')
+  .leftJoin('track_artists', 'tracks.id', '=', 'track_artists.track_id')
+  .leftJoin('artists', 'track_artists.artist_id', '=', 'artists.id')
+  .select('tracks.*')
+  .orderBy('artists.name', 'ASC')
+  .get();
+```
+
+table aliases are supported in the table argument:
+
+```javascript
+await DB.table('tracks')
+  .leftJoin('artists as a', 'tracks.artist_id', '=', 'a.id')
+  .get();
+```
+
+<a name="cross-join"></a>
+
+### cross join
+
+to perform a cartesian product, use the `crossJoin` method:
+
+```javascript
+const combos = await DB.table('sizes')
+  .crossJoin('colors')
+  .get();
+```
+
+<a name="raw-joins"></a>
+
+### raw joins
+
+for complex join conditions or subqueries in joins, use `joinRaw`:
+
+```javascript
+await DB.table('users')
+  .joinRaw('LEFT JOIN contacts ON contacts.user_id = users.id AND contacts.status = ?', ['active'])
+  .get();
 ```
 
 <a name="ordering-grouping-and-limits"></a>
