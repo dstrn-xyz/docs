@@ -27,7 +27,7 @@ dframework provides a database abstraction layer built on top of mysql2. the cor
 
 ## configuration
 
-database configuration is managed through environment variables and resolved via the `Config` facade under the `app.database` namespace. the framework expects the `host`, `user`, `pass`, and `name` values to be defined.
+database configuration is managed through environment variables and resolved via the `Config` facade under the `app.database` namespace. the framework expects `host`, `port`, `user`, `pass`, and `name` values (`port` defaults to `3306` when omitted).
 
 the connection pool is configured automatically when the application boots. by default the framework maintains a pool of up to ten connections, utilizing connection keep alive and strict idle timeout management to prevent memory leaks and dropped connections. the pool is created lazily on the first query (no upfront connection is established during boot), so a misconfigured database does not prevent the process from starting.
 

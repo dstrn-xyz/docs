@@ -45,6 +45,7 @@ QUEUE_MAX_WORKERS=4
 OPTIMIZE_CSS=true
 
 DB_HOST=localhost
+DB_PORT=3306
 DB_USER=root
 DB_PASS=
 DB_NAME=dframework
@@ -103,6 +104,7 @@ export default {
 
   database: {
     host: Env.value('DB_HOST', 'localhost'),
+    port: Env.value('DB_PORT', 3306),
     user: Env.value('DB_USER', 'root'),
     pass: Env.value('DB_PASS', ''),
     name: Env.value('DB_NAME', 'dframework'),
