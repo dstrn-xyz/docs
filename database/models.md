@@ -119,7 +119,7 @@ every method that runs a query returns a `Promise`. the result column lists what
 | `instance.load(...relations)` | relation names | `Promise<Model>` (the same instance, with relations populated) |
 | `instance.toJSON()` | none | plain object with hidden keys removed and relations serialized |
 
-the `where` chainable builder exposes the same constraint and aggregate methods as the fluent query builder (`where`, `whereIn`, `whereNull`, `whereBetween`, `whereColumn`, `whereHashed`, `join`, `leftJoin`, `rightJoin`, `crossJoin`, `joinRaw`, `count`, `sum`, `avg`, `min`, `max`, etc.). it is also thenable (`await builder`) and async iterable (`for await (const m of builder)`).
+the `where` chainable builder exposes the same constraint, closure grouping, conditional (`when`, `unless`), subquery (`whereExists`, `whereIn`, `selectSub`), and aggregate methods as the fluent query builder (`where`, `whereIn`, `whereNull`, `whereBetween`, `whereColumn`, `whereHashed`, `whereExists`, `when`, `unless`, `selectSub`, `join`, `leftJoin`, `rightJoin`, `crossJoin`, `joinRaw`, `count`, `sum`, `avg`, `min`, `max`, etc.). it is also thenable (`await builder`) and async iterable (`for await (const m of builder)`).
 
 <a name="magic-finders"></a>
 
