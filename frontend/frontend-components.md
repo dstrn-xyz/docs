@@ -63,32 +63,32 @@
       - [attributes and properties](#attributes-and-properties-12)
       - [programmatic api](#programmatic-api-11)
       - [events](#events-9)
-      - [behavior](#behavior-11)
+      - [behavior and styling boundaries](#behavior-and-styling-boundaries)
     - [d-morph](#d-morph)
       - [attributes and properties](#attributes-and-properties-13)
       - [programmatic api (`window.dMotion`)](#programmatic-api-windowdmotion)
-      - [behavior](#behavior-12)
+      - [behavior](#behavior-11)
     - [d-notification](#d-notification)
       - [attributes and properties](#attributes-and-properties-14)
       - [programmatic api](#programmatic-api-12)
-      - [behavior](#behavior-13)
+      - [behavior](#behavior-12)
     - [d-skeleton](#d-skeleton)
       - [attributes and properties](#attributes-and-properties-15)
     - [d-slider](#d-slider)
       - [attributes and properties](#attributes-and-properties-16)
       - [programmatic api](#programmatic-api-13)
       - [events](#events-10)
-      - [behavior](#behavior-14)
+      - [behavior](#behavior-13)
     - [d-text-input](#d-text-input)
       - [attributes and properties](#attributes-and-properties-17)
       - [programmatic api](#programmatic-api-14)
       - [events](#events-11)
-      - [behavior](#behavior-15)
+      - [behavior](#behavior-14)
     - [d-toggle](#d-toggle)
       - [attributes and properties](#attributes-and-properties-18)
       - [programmatic api](#programmatic-api-15)
       - [events](#events-12)
-      - [behavior](#behavior-16)
+      - [behavior](#behavior-15)
   - [overriding built in components](#overriding-built-in-components)
     - [immutable base class](#immutable-base-class)
   - [dComponent (base class)](#dcomponent-base-class)
@@ -794,8 +794,8 @@ loader.destroy();
 modal dialog container with page scroll locking and backdrop dismiss protection.
 
 ```html
-<d-modal id="confirm-modal">
-  <div class="flex-column g-1 p-2">
+<d-modal id="confirm-modal" persistent>
+  <div class="flex-column g-1">
     <h3>confirm deletion</h3>
     <p class="text-content-l">this action cannot be undone.</p>
     <div class="flex-row justify-end g-1 mt-1">
@@ -808,9 +808,10 @@ modal dialog container with page scroll locking and backdrop dismiss protection.
 
 #### attributes and properties
 
-| attribute | property | type      | default | form | description                            |
-| :-------- | :------- | :-------- | :------ | :--- | :------------------------------------- |
-| `opened`  | `opened` | `boolean` | `false` | no   | whether the modal is currently visible |
+| attribute    | property     | type      | default | form | description                                                           |
+| :----------- | :----------- | :-------- | :------ | :--- | :-------------------------------------------------------------------- |
+| `opened`     | `opened`     | `boolean` | `false` | no   | whether the modal is currently visible                                |
+| `persistent` | `persistent` | `boolean` | `false` | no   | whether the element remains in the dom when closed via backdrop click |
 
 #### programmatic api
 
@@ -823,7 +824,7 @@ modal.open();
 // close modal (runs exit animation and unlocks body scroll)
 modal.close();
 
-// close, await exit transition, and remove element from DOM
+// close, await exit transition, and remove element from dom
 await modal.destroy();
 ```
 
@@ -834,10 +835,13 @@ await modal.destroy();
 | `open`  | none   | no      | dispatched when modal opens  |
 | `close` | none   | no      | dispatched when modal closes |
 
-#### behavior
+#### behavior and styling boundaries
 
 - displays an overlay dialog and prevents page scrolling while visible.
-- dismisses when clicking the backdrop outside the dialog card.
+- when `persistent` is omitted (or `false`), clicking the backdrop closes and destroys the element (`destroy()`), removing it from the dom.
+- when `persistent` is present (`<d-modal persistent>`), clicking the backdrop closes the dialog (`close()`) without removing the element from the dom, allowing it to be reopened.
+- `<d-modal>` automatically injects `.d-modal-wrapper` (which provides `var(--container-l)` background, border, radius, shadow, and padding) and `.d-modal-content` (flex container with scroll management).
+- to customize or restyle the modal appearance, target `d-modal .d-modal-wrapper` or `d-modal .d-modal-content` in your css.
 
 ---
 
@@ -945,7 +949,7 @@ toast.show();
 // hide toast
 toast.hide();
 
-// hide, wait for animation to finish, and remove from DOM
+// hide, wait for animation to finish, and remove from dom
 await toast.destroy();
 ```
 
@@ -1198,7 +1202,7 @@ all custom elements and overrides extend `dComponent`. unlike UI components, `dC
 
 ## dComponent (base class)
 
-`dComponent` is the authoring base class for all custom web components in dframework. it provides property reflection, reactive proxy state, form integration, surgical DOM rendering, and automatic memory cleanup.
+`dComponent` is the authoring base class for all custom web components in dframework. it provides property reflection, reactive proxy state, form integration, surgical dom rendering, and automatic memory cleanup.
 
 ```javascript
 class dCounter extends dComponent {
@@ -1233,7 +1237,7 @@ class dCounter extends dComponent {
 
   render() {
     // called automatically on prop or state changes
-    // use for surgical DOM updates only (never mutate this.state here)
+    // use for surgical dom updates only (never mutate this.state here)
     this.refs('.value')[0].textContent = this.state.value ?? this.value;
     this.refs('button.dec')[0].disabled = this.disabled;
     this.refs('button.inc')[0].disabled = this.disabled;
@@ -1279,21 +1283,21 @@ dComponent.define(dCounter);
 
 | method                          | timing               | description                                           |
 | :------------------------------ | :------------------- | :---------------------------------------------------- |
-| `template()`                    | before mount         | returns initial HTML string to populate inner DOM     |
+| `template()`                    | before mount         | returns initial HTML string to populate inner dom     |
 | `mount()`                       | on first connection  | initializes component logic and registers effects     |
 | `connected()`                   | on every connection  | called whenever element is attached to document       |
-| `render()`                      | on state/prop change | performs surgical DOM node updates                    |
+| `render()`                      | on state/prop change | performs surgical dom node updates                    |
 | `onPropChanged(name, old, new)` | on prop mutation     | reacts to specific property changes                   |
-| `destroy()`                     | on disconnection     | teardown hook called when element is removed from DOM |
+| `destroy()`                     | on disconnection     | teardown hook called when element is removed from dom |
 
 > [!NOTE]
-> `mount()` and `template()` initialization are batched via `requestAnimationFrame` upon DOM connection. attach event listeners to the component element or inside lifecycle hooks rather than querying child DOM immediately after synchronous `appendChild()`.
+> `mount()` and `template()` initialization are batched via `requestAnimationFrame` upon dom connection. attach event listeners to the component element or inside lifecycle hooks rather than querying child dom immediately after synchronous `appendChild()`.
 
 <a name="rendering-strategy-and-surgical-updates"></a>
 
 ### rendering strategy and surgical updates
 
-`dComponent` avoids virtual DOM overhead. DOM nodes are created once in `template()` or `mount()`, while dynamic updates are applied surgically inside `render()`.
+`dComponent` avoids virtual dom overhead. dom nodes are created once in `template()` or `mount()`, while dynamic updates are applied surgically inside `render()`.
 
 > [!IMPORTANT]
 > `this.state` must never be modified inside `render()`. state mutations inside `render()` are blocked to prevent infinite update loops.
@@ -1334,7 +1338,7 @@ this.effect(() => {
 
 ### automatic cleanup apis
 
-these methods automatically clean up listeners, timers, and animation frame requests when the component is removed from the DOM:
+these methods automatically clean up listeners, timers, and animation frame requests when the component is removed from the dom:
 
 ```javascript
 // event listener with auto cleanup
@@ -1358,7 +1362,7 @@ this.requestAnimationFrame((time) => this.draw(time));
 
 ### dom caching and refs
 
-`this.refs(selector)` caches queried element arrays between renders to eliminate repeated DOM query overhead:
+`this.refs(selector)` caches queried element arrays between renders to eliminate repeated dom query overhead:
 
 ```javascript
 const [inputEl] = this.refs('input.search');
@@ -1368,7 +1372,7 @@ const [inputEl] = this.refs('input.search');
 
 ### inner content capture
 
-access original light DOM nodes passed into the custom element before `template()` execution:
+access original light dom nodes passed into the custom element before `template()` execution:
 
 ```javascript
 this.originalChildren // array of cloned child nodes

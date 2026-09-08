@@ -189,9 +189,8 @@ the view engine integrates with the framework `Paginator` class returned by mode
     <div>{{ user.name }}</div>
 @endforeach
 
-<!-- renders standard pagination controls -->
+<!-- renders standard pagination controls (standalone directive) -->
 @pagination(users)
-@endpagination
 ```
 
 alternatively, you can render links directly using unescaped output:
@@ -207,7 +206,6 @@ by default, links render as standard anchors for full page navigation. to enable
 ```html
 <!-- enables spa navigation -->
 @pagination(users, true)
-@endpagination
 ```
 
 to update a specific container instead of a full page transition, pass a css selector as the third argument:
@@ -215,7 +213,6 @@ to update a specific container instead of a full page transition, pass a css sel
 ```html
 <!-- updates the #user-list container via spa -->
 @pagination(users, true, '#user-list')
-@endpagination
 ```
 
 ### custom pagination html

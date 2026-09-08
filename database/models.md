@@ -318,6 +318,17 @@ the framework automatically caches eager loaded relations and handles lazy loadi
 
 because relation properties are callable proxies (enabling both in memory collection access and fluent query chaining like `user.posts().where(...)`), `Array.isArray(user.posts)` will return `false`. you do not need manual `Array.isArray` branches to optimize data access; simply `await user.posts` to get the hydrated collection whether it was preloaded or not.
 
+### relationship property assignment and mutation
+
+relation properties support both getters and setters. you can directly assign eager loaded collections or related models on a model instance:
+
+```javascript
+user.posts = [customPostA, customPostB];
+user.profile = new Profile({ bio: 'updated bio' });
+```
+
+mutating relation properties updates the internal `_relations` state and is preserved across serialization with `user.toJSON()`.
+
 <a name="eager-loading"></a>
 
 ### eager loading
