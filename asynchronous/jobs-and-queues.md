@@ -18,6 +18,7 @@
   - [job lifecycle](#job-lifecycle)
     - [bootstrapping](#bootstrapping)
     - [database access](#database-access)
+    - [broadcasting from jobs](#broadcasting-from-jobs)
     - [error handling](#error-handling)
   - [configuration](#configuration)
 
@@ -202,6 +203,35 @@ export default class CleanupExpiredSessionsJob {
   }
 }
 ```
+
+<a name="broadcasting-from-jobs"></a>
+
+### broadcasting from jobs
+
+jobs can dispatch real time websocket events and update component state on connected clients using the global `Socket` facade. because jobs run inside dedicated worker threads, `Socket.broadcast()` and `Socket.setState()` automatically relay messages over the internal worker channel to the main process, which broadcasts them to connected browsers.
+
+```javascript
+export default class GenerateReportJob {
+  async handle(payload) {
+    Socket.broadcast('report:progress', { percent: 25 });
+
+    const report = await this.generate(payload.reportId);
+    Socket.broadcast('report:progress', { percent: 100 });
+
+    Socket.broadcast('report:ready', {
+      reportId: report.id,
+      downloadUrl: `/reports/${report.id}/download`
+    });
+
+    Socket.setState('#report-banner', {
+      status: 'complete',
+      reportId: report.id
+    });
+  }
+}
+```
+
+no external message brokers (such as redis) are required. the worker thread communicates directly with the primary server instance.
 
 <a name="error-handling"></a>
 

@@ -265,6 +265,14 @@ Socket.on('chat:send', (req, res, ws) => {
 
 the third argument is the websocket connection to exclude from the broadcast. passing the current `ws` prevents the sender from receiving their own message.
 
+you can also call `Socket.broadcast()` and `Socket.setState()` directly from background jobs in `jobs/`. worker threads automatically relay socket events to the main process without requiring external brokers like redis.
+
+```javascript
+// inside any background job
+Socket.broadcast('task:complete', { taskId: 42 });
+Socket.setState('#task-status', { done: true });
+```
+
 <a name="the-socket-facade"></a>
 
 ## the socket facade
