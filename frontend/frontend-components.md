@@ -94,7 +94,9 @@
   - [dComponent (base class)](#dcomponent-base-class)
     - [component definition and registration](#component-definition-and-registration)
     - [lifecycle methods](#lifecycle-methods)
+    - [fragment caching and batch mounting](#fragment-caching-and-batch-mounting)
     - [rendering strategy and surgical updates](#rendering-strategy-and-surgical-updates)
+    - [batched microtask update queue](#batched-microtask-update-queue)
     - [reactive state](#reactive-state)
     - [effects and dependency tracking](#effects-and-dependency-tracking)
     - [automatic cleanup apis](#automatic-cleanup-apis)
@@ -1291,7 +1293,21 @@ dComponent.define(dCounter);
 | `destroy()`                     | on disconnection     | teardown hook called when element is removed from dom |
 
 > [!NOTE]
-> `mount()` and `template()` initialization are batched via `requestAnimationFrame` upon dom connection. attach event listeners to the component element or inside lifecycle hooks rather than querying child dom immediately after synchronous `appendChild()`.
+> `mount()` initialization is batched via `requestAnimationFrame` upon initial dom connection. this guarantees that all child nodes parsed in the light dom are present and available before `mount()` executes. for template components, template markup is preparsed on definition and stamped via cached `cloneNode(true)`. subsequent property and state updates are batched into a static 3 phase microtask flush.
+
+<a name="fragment-caching-and-batch-mounting"></a>
+
+### fragment caching and batch mounting
+
+for maximum throughput when generating dynamic content or lists of components, `dComponent` provides static utilities backed by an internal template lru cache:
+
+```javascript
+// parse html into a cached template fragment (avoids repeated innerHTML string parsing)
+const frag = dComponent.fragment('<div class="list-item"><span>title</span></div>');
+
+// append multiple nodes, fragments, or html strings in a single dom operation
+dComponent.appendMany(container, frag1, frag2, '<div class="extra">item</div>');
+```
 
 <a name="rendering-strategy-and-surgical-updates"></a>
 
@@ -1301,6 +1317,22 @@ dComponent.define(dCounter);
 
 > [!IMPORTANT]
 > `this.state` must never be modified inside `render()`. state mutations inside `render()` are blocked to prevent infinite update loops.
+
+<a name="batched-microtask-update-queue"></a>
+
+### batched microtask update queue
+
+property modifications and state mutations are automatically coalesced across all active components into a static 3 phase microtask flush:
+
+1. **phase 1 (attribute sync):** synchronizes observed html attributes for changed properties.
+2. **phase 2 (rendering):** clears transient render listeners and executes `render()` once per updated component.
+3. **phase 3 (effects & form sync):** reevaluates reactive effects, invalidates refs caches, synchronizes form internals, and dispatches an aggregated debugbar event.
+
+```javascript
+// multiple synchronous state mutations trigger exactly one render cycle in the next microtask
+this.state.title = 'new title';
+this.state.count = 42;
+```
 
 <a name="reactive-state"></a>
 

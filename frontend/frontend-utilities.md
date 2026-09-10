@@ -19,6 +19,7 @@
     - [selection](#selection)
     - [events](#events)
     - [classes](#classes)
+    - [fragments and mounting](#fragments-and-mounting)
     - [timing](#timing)
   - [data functions](#data-functions)
     - [escaping](#escaping)
@@ -311,6 +312,18 @@ addClass('active', el)
 removeClass('hidden', el)
 toggleClass('open', el, state) // state is optional
 hasClass('disabled', el)  // returns boolean
+```
+
+<a name="fragments-and-mounting"></a>
+
+### fragments and mounting
+
+```javascript
+// parse html into a cached template fragment
+const frag = createFragment('<div class="card"><span>title</span></div>');
+
+// batch append multiple nodes, fragments, or html strings in a single dom operation
+appendMany(container, frag, '<div class="item">text</div>', customNode);
 ```
 
 ### timing
