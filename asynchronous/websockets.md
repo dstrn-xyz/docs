@@ -18,6 +18,12 @@
     - [cookies](#cookies)
   - [target restrictions](#target-restrictions)
   - [broadcasting](#broadcasting)
+  - [targeted delivery](#targeted-delivery)
+    - [sending to a specific user](#sending-to-a-specific-user)
+    - [sending to multiple users](#sending-to-multiple-users)
+    - [sending to a session](#sending-to-a-session)
+    - [fluent targeting](#fluent-targeting)
+    - [multi guard targeting](#multi-guard-targeting)
   - [the socket facade](#the-socket-facade)
   - [client side usage](#client-side-usage)
     - [connecting](#connecting)
@@ -273,6 +279,85 @@ Socket.broadcast('task:complete', { taskId: 42 });
 Socket.setState('#task-status', { done: true });
 ```
 
+<a name="targeted-delivery"></a>
+
+## targeted delivery
+
+when you need to send messages to specific clients instead of broadcasting to everyone, dframework provides targeted methods on the `Socket` facade. connections automatically track authenticated user identities and session ids upon connection and during authenticated socket requests.
+
+<a name="sending-to-a-specific-user"></a>
+
+### sending to a specific user
+
+the `Socket.toUser()` method sends an event to all open websocket connections belonging to a user id or user model instance.
+
+```javascript
+// using numeric user id
+Socket.toUser(42, 'notification:new', { text: 'you received a payment' });
+
+// using model instance
+Socket.toUser(user, 'notification:new', { text: 'profile updated' });
+```
+
+you can also target component state updates to a specific user:
+
+```javascript
+Socket.toUser(42).setState('#cart-count', { count: 3 });
+```
+
+<a name="sending-to-multiple-users"></a>
+
+### sending to multiple users
+
+the `Socket.toUsers()` method dispatches an event to a list of user ids or user model instances:
+
+```javascript
+Socket.toUsers([1, 2, 3], 'room:update', { active: true });
+```
+
+<a name="sending-to-a-session"></a>
+
+### sending to a session
+
+the `Socket.toSession()` method targets all connections matching a specific session id:
+
+```javascript
+Socket.toSession(sessionId, 'session:revoked', { reason: 'logged in from new device' });
+```
+
+<a name="fluent-targeting"></a>
+
+### fluent targeting
+
+the `Socket.to()` helper offers flexible targeting for websocket instances, user ids, arrays, or session strings:
+
+```javascript
+// target websocket instance directly
+Socket.to(ws).emit('direct:message', { ok: true });
+
+// target by user id or session
+Socket.to(42).emit('user:alert', { priority: 'high' });
+Socket.to('session-token-xyz').emit('session:ping', {});
+```
+
+<a name="multi-guard-targeting"></a>
+
+### multi guard targeting
+
+if your application defines multiple authentication guards in `config/auth.js` (for example `web`, `admin`, `partner`), connections automatically track identities across all configured guards.
+
+`Socket.toUser(id)` delivers to connections matching that user id on any guard (or the default guard). to target a specific guard explicitly, scope the dispatch using `Socket.guard()`:
+
+```javascript
+// target user 5 specifically on the admin guard
+Socket.guard('admin').toUser(5, 'admin:alert', { text: 'server restart scheduled' });
+
+// fluent chaining on custom guard
+Socket.guard('admin').toUser(5).setState('#admin-panel', { status: 'maintenance' });
+```
+
+all targeted methods (`toUser`, `toUsers`, `toSession`, `sendTo`, `guard`) work seamlessly across http controllers, wire handlers, and background jobs.
+
 <a name="the-socket-facade"></a>
 
 ## the socket facade
@@ -283,7 +368,7 @@ the `Socket` global is a proxy facade that delegates all method calls to the app
 import { Socket } from 'dframework';
 ```
 
-the facade exposes all `SocketRouter` methods: `on()`, `group()`, `middleware()`, `broadcast()`, and `liveNotify()`.
+the facade exposes all methods: `on()`, `group()`, `middleware()`, `broadcast()`, `setState()`, `toUser()`, `toUsers()`, `toSession()`, `sendTo()`, `to()`, and `liveNotify()`.
 
 <a name="client-side-usage"></a>
 
