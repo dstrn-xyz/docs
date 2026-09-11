@@ -12,6 +12,7 @@
     - [log file rotation](#log-file-rotation)
   - [the global log facade](#the-global-log-facade)
   - [debug bar integration](#debug-bar-integration)
+    - [query profiling and n+1 detection](#query-profiling-and-n1-detection)
   - [configuration](#configuration)
   - [the error handler](#the-error-handler)
     - [error pages](#error-pages)
@@ -140,7 +141,20 @@ dstrn logs:clear --preview
 
 ## debug bar integration
 
-in the `local` environment with debug mode enabled, log messages are automatically captured by the request context and included in the debug bar response. each log entry records its level, message (with colors stripped), and timestamp. this allows you to see every log message that was generated during a specific request directly in the browser's debug panel.
+in the `local` environment with debug mode enabled, log messages and performance telemetry are automatically captured by the request context and included in the debug bar response. each log entry records its level, message (with colors stripped), and timestamp.
+
+<a name="query-profiling-and-n1-detection"></a>
+
+### query profiling and n+1 detection
+
+the debug bar tracks every database query executed during the request lifecycle, measuring execution latency and highlighting repeated queries.
+
+when three or more queries with identical normalized shapes execute in a single request, the debug bar displays an indicator badge. clicking the badge opens a diagnostic modal displaying:
+
+- the number of duplicate executions and total query execution time
+- the application callsite file and line number
+- the normalized sql query pattern
+- recommended eager loading solutions using `Model.with()` or `instance.load()`
 
 <a name="configuration"></a>
 

@@ -70,16 +70,17 @@ the table builder contains a variety of column types that you may use when build
 
 in addition to the column types listed above, there are several column modifiers you may use while adding a column to a database table.
 
-| Type                                                 | Description                 |     |
-| ---------------------------------------------------- | --------------------------- | --- |
-| `table.string('email').nullable();`                  | allows null values          |
-| `table.string('title').notNullable();`               | prevents null values        |
-| `table.integer('votes').unsigned();`                 | makes integer unsigned      |
-| `table.integer('status').defaultTo(1);`              | sets default value          |
-| `table.string('email').unique();`                    | adds unique index           |
-| `table.string('slug').index();`                      | adds basic index            |
-| `table.integer('id').primary();`                     | explicitly adds primary key |
-| `table.string('status').comment('the user status');` | adds column comment         |
+| type                                                  | description                 |
+| ----------------------------------------------------- | --------------------------- |
+| `table.string('email').nullable();`                   | allows null values          |
+| `table.string('title').notNullable();`                | prevents null values        |
+| `table.integer('votes').unsigned();`                  | makes integer unsigned      |
+| `table.integer('status').defaultTo(1);`               | sets default value          |
+| `table.string('email').unique();`                     | adds unique index           |
+| `table.string('slug').index();`                       | adds basic index            |
+| `table.index(['user_id', 'status'], 'idx_user_stat');`| adds composite named index  |
+| `table.integer('id').primary();`                      | explicitly adds primary key |
+| `table.string('status').comment('the user status');`  | adds column comment         |
 
 <a name="foreign-keys"></a>
 
@@ -104,13 +105,20 @@ export async function up({ Schema }) {
 
 ## modifying tables
 
-the `table` method on the `Schema` facade allows you to update existing tables.
+the `table` method on the `Schema` facade allows you to update existing tables, add or drop columns, and create or remove indexes.
 
 ```javascript
 export async function up({ Schema }) {
   await Schema.table('users', table => {
     table.string('phone').nullable();
     table.index('phone');
+    table.index(['organization_id', 'role'], 'idx_users_org_role');
+  });
+}
+
+export async function down({ Schema }) {
+  await Schema.table('users', table => {
+    table.dropIndex('idx_users_org_role');
   });
 }
 ```

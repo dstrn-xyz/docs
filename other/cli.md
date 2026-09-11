@@ -12,9 +12,10 @@
   - [creating a project](#creating-a-project)
   - [running the server](#running-the-server)
   - [tinker](#tinker)
+  - [database advisor](#database-advisor)
   - [user commands](#user-commands)
-    - [creating a command](#creating-a-command)
-    - [running a command](#running-a-command)
+  - [creating a command](#creating-a-command)
+  - [running a command](#running-a-command)
   - [logs management](#logs-management)
   - [deployment and certificates](#deployment-and-certificates)
     - [deploying applications](#deploying-applications)
@@ -58,15 +59,16 @@ dstrn help
 
 ### database
 
-| command                      | description                         |
-| ---------------------------- | ----------------------------------- |
-| `dstrn migrate`              | run all pending migrations          |
-| `dstrn migrate:status`       | display migration status            |
-| `dstrn migrate:rollback`     | rollback the last migration batch   |
-| `dstrn migrate:make <table>` | create a new migration template     |
-| `dstrn seed`                 | run all seeders                     |
-| `dstrn seed:make <Name>`     | create a new seeder template        |
-| `dstrn drop`                 | drop the database with confirmation |
+| command                      | description                                             |
+| ---------------------------- | ------------------------------------------------------- |
+| `dstrn migrate`              | run all pending migrations                              |
+| `dstrn migrate:status`       | display migration status                                |
+| `dstrn migrate:rollback`     | rollback the last migration batch                       |
+| `dstrn migrate:make <table>` | create a new migration template                         |
+| `dstrn seed`                 | run all seeders                                         |
+| `dstrn seed:make <Name>`     | create a new seeder template                            |
+| `dstrn drop`                 | drop the database with confirmation                     |
+| `dstrn advisor [--apply]`    | inspect unindexed relationships and generate migrations |
 
 <a name="generators"></a>
 
@@ -168,6 +170,34 @@ dframework> await User.where('role', 'admin').get();
 ```
 
 the shell persists command history to `.tinker_history` in your project root. all framework facades (`DB`, `Config`, `Session`, `Auth`, `Log`, etc.) are available in the context.
+
+<a name="database-advisor"></a>
+
+## database advisor
+
+the `advisor` command inspects your database schema and model definitions to detect missing indexes on foreign keys, junction tables, and frequently filtered column pairs.
+
+```bash
+dstrn advisor
+```
+
+```
+  ADVISOR  analyzing 12 tables...
+
+  WARN  tracks: unindexed foreign key 'album_id'
+        CREATE INDEX idx_tracks_album_id ON tracks (album_id);
+
+  WARN  track_artists: unindexed junction pair '(track_id, artist_id)'
+        CREATE INDEX idx_track_artists_track_id_artist_id ON track_artists (track_id, artist_id);
+```
+
+to automatically scaffold and execute a migration with all recommended indexes, pass the `--apply` flag:
+
+```bash
+dstrn advisor --apply
+```
+
+this creates a timestamped migration file exporting `up` and `down` functions with `table.index()` and `table.dropIndex()` calls, then immediately runs `dstrn migrate`.
 
 <a name="user-commands"></a>
 

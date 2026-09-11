@@ -351,6 +351,9 @@ you can eager load nested relationships using dot notation.
 const users = await User.with('posts.comments').get();
 ```
 
+> [!TIP]
+> during local development, the debug bar automatically detects repeated queries from missing eager loading and displays an interactive modal with the recommended `with()` syntax for the active callsite.
+
 <a name="lazy-eager-loading"></a>
 
 ### lazy eager loading
