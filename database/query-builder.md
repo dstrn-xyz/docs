@@ -44,6 +44,8 @@
 
   - [updates](#updates)
 
+    - [increment and decrement](#increment-and-decrement)
+
   - [deletes](#deletes)
 
   - [auto hashing](#auto-hashing)
@@ -120,6 +122,8 @@ these return a promise and execute the underlying query.
 | `getWithCount()` | none | `Promise<{ rows: Array<object>, total: number }>`; rows have the internal `_total_count` field stripped |
 | `insert(data)` | row object, or array of row objects | single row: mysql2 `ResultSetHeader` (`insertId`, `affectedRows`); array of rows: `Array<number>` of generated ids (empty `[]` for an empty input array) |
 | `update(data, where?)` | column/value object; optional where object | `Promise<object>` mysql2 `ResultSetHeader` |
+| `increment(column, amount?, extra?, where?)` | column name; optional numeric amount (default 1); optional extra column/values object; optional where object | `Promise<object>` mysql2 `ResultSetHeader` |
+| `decrement(column, amount?, extra?, where?)` | column name; optional numeric amount (default 1); optional extra column/values object; optional where object | `Promise<object>` mysql2 `ResultSetHeader` |
 | `save(data)` | alias for `update(data)` | `Promise<object>` mysql2 `ResultSetHeader` |
 | `delete(where?)` | optional where object (or chained `where`) | `Promise<object>` mysql2 `ResultSetHeader`; throws when no where is set |
 
@@ -608,6 +612,26 @@ const result = await DB.table('users')
 ```
 
 the `save` method acts as an alias for `update` and returns the same `ResultSetHeader`.
+
+<a name="increment-and-decrement"></a>
+
+### increment and decrement
+
+the query builder also provides convenient methods for incrementing or decrementing the value of a numeric column. both methods accept at least one argument: the column to modify. a second argument may be passed to control the amount by which the column should be incremented or decremented (defaults to `1`). an optional third argument allows passing an object of extra columns to update in the same statement.
+
+```javascript
+// increment votes by 1
+await DB.table('users').where('id', 1).increment('votes');
+
+// increment credits by 5
+await DB.table('users').where('id', 1).increment('credits', 5);
+
+// increment credits by 10 and update a timestamp in the same statement
+await DB.table('users').where('id', 1).increment('credits', 10, { updated_at: '2026-09-14' });
+
+// decrement credits by 2
+await DB.table('users').where('id', 1).decrement('credits', 2);
+```
 
 <a name="deletes"></a>
 

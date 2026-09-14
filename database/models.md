@@ -16,6 +16,7 @@
 
     - [mass assignment](#mass-assignment)
     - [first or create](#first-or-create)
+    - [increment and decrement](#increment-and-decrement)
   - [deleting models](#deleting-models)
   - [relationships](#relationships)
 
@@ -114,6 +115,8 @@ every method that runs a query returns a `Promise`. the result column lists what
 | `Model.create(data)` | column/value object | `Promise<Model>` (reloaded from the database using the primary key) |
 | `instance.save(newData?)` | optional object to merge before saving | `Promise<void>` |
 | `instance.update(data)` | column/value object | `Promise<void>` |
+| `instance.increment(column, amount?, extra?)` | column name, optional amount (default 1), optional extra columns object | `Promise<object>` (mutates instance attribute in place and executes increment UPDATE) |
+| `instance.decrement(column, amount?, extra?)` | column name, optional amount (default 1), optional extra columns object | `Promise<object>` (mutates instance attribute in place and executes decrement UPDATE) |
 | `instance.delete()` | none | `Promise<void>` |
 | `instance.hash(field)` | attribute name on the instance | `Promise<void>` (mutates the instance in place) |
 | `instance.load(...relations)` | relation names | `Promise<Model>` (the same instance, with relations populated) |
@@ -221,6 +224,25 @@ const user = await User.firstOrCreate(
 ```
 
 the `updateOrCreate` method is also available. it returns the existing instance with the update applied, or a new instance if none matched.
+
+<a name="increment-and-decrement"></a>
+
+### increment and decrement
+
+to increment or decrement a column on an existing model instance, use the `increment` and `decrement` methods. these methods update the instance attribute in memory and immediately execute an atomic database update statement scoped to the model primary key.
+
+```javascript
+const user = await User.find(1);
+
+// increment total_listens by 1 (default)
+await user.increment('total_listens');
+
+// increment credits by 10 with extra columns
+await user.increment('credits', 10, { updated_at: '2026-09-14' });
+
+// decrement credits by 5
+await user.decrement('credits', 5);
+```
 
 <a name="deleting-models"></a>
 
