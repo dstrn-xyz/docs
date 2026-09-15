@@ -65,7 +65,7 @@ dstrn help
 | `dstrn migrate:status`       | display migration status                                |
 | `dstrn migrate:rollback`     | rollback the last migration batch                       |
 | `dstrn migrate:make <table>` | create a new migration template                         |
-| `dstrn seed`                 | run all seeders                                         |
+| `dstrn seed [name]`          | run database seeders                                    |
 | `dstrn seed:make <Name>`     | create a new seeder template                            |
 | `dstrn drop`                 | drop the database with confirmation                     |
 | `dstrn advisor [--apply]`    | inspect unindexed relationships and generate migrations |

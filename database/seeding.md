@@ -3,6 +3,7 @@
 - [seeding](#seeding)
   - [introduction](#introduction)
   - [writing seeders](#writing-seeders)
+  - [running seeders](#running-seeders)
   - [automatic safety checks](#automatic-safety-checks)
 
 <a name="introduction"></a>
@@ -29,6 +30,23 @@ export async function run({ table }) {
     }
   ]);
 }
+```
+
+<a name="running-seeders"></a>
+
+## running seeders
+
+to execute all available seeders in sequence, execute the seed command:
+
+```bash
+dstrn seed
+```
+
+to run a specific individual seeder, pass the seeder name as an argument:
+
+```bash
+dstrn seed UserSeeder
+dstrn seed 001_UserSeeder
 ```
 
 <a name="automatic-safety-checks"></a>
