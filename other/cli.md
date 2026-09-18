@@ -50,9 +50,9 @@ dstrn help
 
 | command                   | description                                          |
 | ------------------------- | ---------------------------------------------------- |
-| `dstrn init <dir> [--ai]` | scaffold a minimal project with optional ai helpers  |
+| `dstrn init <dir>`        | scaffold a minimal project                           |
 | `dstrn serve`             | run the server in the current directory              |
-| `dstrn tinker`            | open an interactive repl shell with models preloaded |
+| `dstrn tinker [code]`     | open an interactive repl shell or execute code directly |
 | `dstrn key:generate`      | generate a random encryption key                     |
 
 <a name="database"></a>
@@ -97,7 +97,6 @@ dstrn help
 | `dstrn cert:renew`                     | renew expiring ssl certificates                                               |
 | `dstrn cert:status`                    | display certificate validity and expiration details                           |
 | `dstrn docs:publish`                   | publish framework documentation to your project                               |
-| `dstrn ai:publish`                     | publish agentic documentation helpers                                         |
 
 <a name="native"></a>
 
@@ -134,12 +133,6 @@ the `init` command scaffolds a new project with the standard directory structure
 dstrn init my-app
 ```
 
-passing the `--ai` flag includes agentic documentation helpers in the generated project.
-
-```bash
-dstrn init my-app --ai
-```
-
 <a name="running-the-server"></a>
 
 ## running the server
@@ -156,7 +149,11 @@ this loads the application configuration, imports all route files, boots the soc
 
 ## tinker
 
-the `tinker` command opens an interactive shell with the full application context loaded. all models are automatically imported and available as globals.
+the `tinker` command provides an interactive repl shell or executes inline code directly with the full application context and all models preloaded.
+
+### interactive shell
+
+start an interactive session by running the command without arguments:
 
 ```bash
 dstrn tinker
@@ -169,7 +166,20 @@ dframework> users.length
 dframework> await User.where('role', 'admin').get();
 ```
 
-the shell persists command history to `.tinker_history` in your project root. all framework facades (`DB`, `Config`, `Session`, `Auth`, `Log`, etc.) are available in the context.
+the shell persists command history to `.tinker_history` in your project root. all framework facades (`DB`, `Config`, `Session`, `Auth`, `Log`, etc.) and models are available in the context.
+
+### inline code execution
+
+pass code directly as a positional argument or use the `--execute` (`-e`) flag to evaluate code and output the formatted result immediately without starting an interactive session:
+
+```bash
+dstrn tinker "await User.count()"
+dstrn tinker "await DB.table('users').where('status', 'active').get()"
+dstrn tinker --execute="await User.find(1)"
+dstrn tinker -e "const u = await User.first(); return u.email;"
+```
+
+inline execution supports top level await expressions and multi statement blocks. all models in `models/` are loaded into global scope before execution starts.
 
 <a name="database-advisor"></a>
 
