@@ -6,6 +6,7 @@
 
     - [table names](#table-names)
     - [primary keys](#primary-keys)
+    - [attribute casting](#attribute-casting)
   - [retrieving models](#retrieving-models)
 
     - [methods overview](#methods-overview)
@@ -23,6 +24,7 @@
     - [one to one](#one-to-one)
     - [one to many](#one-to-many)
     - [belongs to](#belongs-to)
+    - [many to many](#many-to-many)
     - [eager loading](#eager-loading)
     - [lazy eager loading](#lazy-eager-loading)
   - [serialization](#serialization)
@@ -75,6 +77,55 @@ export default class User extends Model {
 ```
 
 composite primary keys are automatically supported if they are defined in the schema.
+
+<a name="attribute-casting"></a>
+
+### attribute casting
+
+attribute casting provides automatic conversion between database columns and javascript data types. define a static `casts` object on your model to configure casting for specific columns.
+
+```javascript
+export default class User extends Model {
+  static casts = {
+    metadata: 'json',
+    tags: 'array',
+    options: 'object',
+    is_active: 'boolean',
+    login_count: 'int',
+    score: 'float',
+    joined_at: 'datetime',
+    display_name: 'string'
+  };
+}
+```
+
+#### supported cast types
+
+| cast type | description |
+| :--- | :--- |
+| `json`, `array`, `object` | parses stringified json into javascript objects or arrays on hydration and stringifies objects or arrays during `save()` and `create()`. |
+| `boolean`, `bool` | casts values to boolean (`true` or `false`), handling `'1'`, `'0'`, `'true'`, `'false'`, `1`, `0`. |
+| `int`, `integer` | casts values to integer using `parseInt()`. |
+| `float`, `double`, `real` | casts values to floating point numbers using `parseFloat()`. |
+| `date`, `datetime`, `timestamp` | casts values to `Date` objects on hydration and formats to standard sql timestamp format on save. |
+| `string` | casts values to primitive strings. |
+
+#### mutating json attributes in place
+
+when attributes are cast to `json`, `array`, or `object`, you can mutate the object directly in memory and persist the changes with `save()`.
+
+```javascript
+const user = await User.find(1);
+
+// mutate nested properties directly
+user.metadata.theme = 'dark';
+user.metadata.notifications = true;
+
+// save persists the stringified json payload to the database
+await user.save();
+```
+
+subclasses automatically inherit and merge static `casts` from parent model classes up the prototype chain.
 
 <a name="retrieving-models"></a>
 
@@ -309,6 +360,79 @@ export default class Post extends Model {
     return this.belongsTo(User, 'user_id');
   }
 }
+```
+
+<a name="many-to-many"></a>
+
+### many to many
+
+a many to many relationship is defined using the `belongsToMany` method. by convention, the framework automatically infers the pivot table name by sorting both model names alphabetically in snake_case (e.g. `role_user`), and derives foreign pivot keys as `${singular}_id` (e.g. `user_id` and `role_id`).
+
+```javascript
+import Role from './Role.js';
+
+export default class User extends Model {
+  roles() {
+    return this.belongsToMany(Role);
+  }
+}
+```
+
+you can optionally pass explicit pivot table and key arguments if your schema uses custom names:
+
+```javascript
+return this.belongsToMany(Role, 'user_roles', 'usr_id', 'role_id', 'id', 'id');
+```
+
+#### retrieving pivot data and withPivot
+
+when querying or eager loading a `belongsToMany` relationship, pivot table attributes are automatically attached to `model.pivot` on each related instance without polluting the primary model's own attributes.
+
+to load additional columns from the pivot table, chain `withPivot`:
+
+```javascript
+export default class User extends Model {
+  roles() {
+    return this.belongsToMany(Role).withPivot('expires_at', 'level');
+  }
+}
+
+const user = await User.with('roles').first();
+console.log(user.roles[0].pivot.level); // 99
+```
+
+#### attaching, detaching, and syncing pivot records
+
+the relationship query builder provides convenient helpers to manage intermediate pivot records:
+
+```javascript
+const user = await User.find(1);
+
+// attach a single id with optional pivot attributes
+await user.roles().attach(2, { level: 'admin' });
+
+// attach multiple ids
+await user.roles().attach([3, 4]);
+
+// attach multiple ids with individual attributes
+await user.roles().attach({
+  5: { level: 'manager' },
+  6: { level: 'viewer' }
+});
+
+// detach a single id or multiple ids
+await user.roles().detach(2);
+await user.roles().detach([3, 4]);
+
+// detach all related records
+await user.roles().detach();
+
+// sync associations (detaches missing ids, attaches new ones, updates existing attributes)
+const diff = await user.roles().sync({
+  1: { level: 'admin' },
+  5: { level: 'editor' }
+});
+// diff: { attached: ['5'], detached: ['6'], updated: ['1'] }
 ```
 
 once a relationship is defined, you can query it by calling the method, which returns a `ModelQueryBuilder`.

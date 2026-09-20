@@ -105,12 +105,28 @@ export async function up({ Schema }) {
 
 ## modifying tables
 
-the `table` method on the `Schema` facade allows you to update existing tables, add or drop columns, and create or remove indexes.
+the `table` method on the `Schema` facade allows you to update existing tables: adding columns, modifying column definitions, renaming columns, dropping columns, and managing indexes or foreign keys.
 
 ```javascript
 export async function up({ Schema }) {
   await Schema.table('users', table => {
+    // add a new column
     table.string('phone').nullable();
+
+    // modify an existing column definition (fluent syntax)
+    table.string('email', 150).nullable().modify();
+
+    // modify an existing column definition (direct syntax)
+    table.modify('bio', 'TEXT', { nullable: true });
+
+    // rename a column
+    table.renameColumn('username', 'handle');
+
+    // drop a single column or multiple columns
+    table.dropColumn('temp_token');
+    table.dropColumns('old_field_a', 'old_field_b');
+
+    // add indexes
     table.index('phone');
     table.index(['organization_id', 'role'], 'idx_users_org_role');
   });
@@ -118,7 +134,9 @@ export async function up({ Schema }) {
 
 export async function down({ Schema }) {
   await Schema.table('users', table => {
+    table.dropForeign('fk_users_org_id');
     table.dropIndex('idx_users_org_role');
+    table.renameColumn('handle', 'username');
   });
 }
 ```
