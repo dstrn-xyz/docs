@@ -4,6 +4,7 @@
 - [the request context](#the-request-context)
 - [request identity](#request-identity)
 - [input and parameters](#input-and-parameters)
+- [streaming requests](#streaming-requests)
 - [headers](#headers)
 - [csrf management](#csrf-management)
 
@@ -71,6 +72,21 @@ const page = req.page;
 ```
 
 as detailed in the [controllers documentation](controllers.md), `req.body` and `req.files` are populated automatically for mutating requests (`POST`, `PUT`, `PATCH`, `DELETE`) by the route compiler.
+
+<a name="streaming-requests"></a>
+
+## streaming requests
+
+to consume or pipe the raw incoming request payload directly without accumulating chunks in memory, you can obtain a readable stream:
+
+```javascript
+const stream = req.createReadableStream();
+if (stream) {
+  for await (const chunk of stream) {
+    // process chunk
+  }
+}
+```
 
 <a name="headers"></a>
 
