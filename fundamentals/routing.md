@@ -362,11 +362,12 @@ Route.get('/feed', 'app.FeedController@index').profile({ needsSession: true, nee
 
 ### basic auth
 
-you can protect a specific route with http basic authentication by chaining `.basicAuth()`. it accepts explicit credentials, a custom validator callback, or defaults to values configured in `config/auth.js` (`auth.basic`).
+you can protect a specific route with http basic authentication by chaining `.basicAuth()`. it accepts explicit credentials, a custom validator callback, an options object with custom realm, or defaults to values configured in `config/auth.js` (`auth.basic`).
 
 ```javascript
 Route.get('/secret', 'app.SecretController@show').basicAuth('admin', 'secret');
 Route.get('/admin', 'app.AdminController@index').basicAuth();
+Route.get('/users', 'app.UserController@index').basicAuth(async (user, pass) => user === 'admin' && pass === 'secret');
 ```
 
 <a name="controller-string-syntax"></a>

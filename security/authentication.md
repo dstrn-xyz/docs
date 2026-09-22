@@ -223,3 +223,78 @@ const hashedToken = Hash.fast(token);
 // querying the database for the exact hashed token
 const record = await TokenModel.where('token', Hash.fast('provided-token')).first();
 ```
+
+<a name="basic-authentication"></a>
+
+## basic authentication
+
+dframework provides built in support for http basic authentication directly via the `Route` facade. you can protect routes or entire route groups using chainable route builders, route modifiers, group options, or shorthand groups.
+
+credentials can be configured globally in `config/auth.js` under `auth.basic` (or via `BASIC_AUTH_USER` and `BASIC_AUTH_PASS` environment variables) or supplied directly on the route.
+
+### route modifier
+
+chain `.basicAuth()` directly onto any route definition:
+
+```javascript
+// using credentials configured in config/auth.js
+Route.get('/metrics', 'app.MetricsController@show').basicAuth();
+
+// with explicit credentials and custom realm
+Route.get('/metrics', 'app.MetricsController@show').basicAuth('admin', 'secret123', 'internal area');
+```
+
+### chainable builder
+
+place `.basicAuth()` before route definitions in any order alongside `.domain()`, `.port()`, or `.middleware()`:
+
+```javascript
+Route.basicAuth('admin', 'secret123', 'internal area')
+  .port(8080)
+  .get('/metrics', 'app.MetricsController@show');
+```
+
+### dynamic validator
+
+pass an async validator callback to verify credentials against the database or custom storage:
+
+```javascript
+Route.basicAuth(async (username, password) => {
+  const admin = await Admin.where('username', username).first();
+  if (!admin) return false;
+  return await Hash.verify(password, admin.password);
+}).get('/dashboard', 'app.DashboardController@index');
+
+// with a custom realm
+Route.basicAuth({
+  validator: async (username, password) => {
+    const admin = await Admin.where('username', username).first();
+    if (!admin) return false;
+    return await Hash.verify(password, admin.password);
+  },
+  realm: 'Admin Area'
+}).get('/dashboard', 'app.DashboardController@index');
+```
+
+### route groups
+
+protect multiple routes with basic auth using group options or the group shorthand:
+
+```javascript
+// group options using config defaults
+Route.group({ basicAuth: true }, (admin) => {
+  admin.get('/dashboard', 'admin.AdminController@index');
+});
+
+// group shorthand with explicit credentials
+Route.basicAuth('admin', 'secret', (admin) => {
+  admin.get('/settings', 'admin.SettingsController@index');
+});
+
+// group shorthand with custom validator
+Route.basicAuth(async (user, pass) => user === 'admin' && pass === 'secret', (admin) => {
+  admin.get('/panel', 'admin.PanelController@index');
+});
+```
+
+

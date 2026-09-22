@@ -165,14 +165,30 @@ Route.group({ basicAuth: { user: 'admin', pass: 'secret', realm: 'Admin Area' } 
   admin.get('/settings', 'admin.SettingsController@index');
 });
 
-// as a chainable before routes
-Route.basicAuth('admin', 'secret').get('/metrics', 'app.MetricsController@index');
+// group shorthand with credentials
+Route.basicAuth('admin', 'secret', (admin) => {
+  admin.get('/reports', 'admin.ReportController@index');
+});
+
+// as a chainable before routes (placeable in any order)
+Route.basicAuth('admin', 'secret')
+  .port(8080)
+  .get('/metrics', 'app.MetricsController@index');
 
 // on a single route modifier
 Route.get('/secret', 'app.SecretController@show').basicAuth('admin', 'secret');
 
-// with a custom validator callback
-Route.basicAuth((user, pass) => user === 'admin' && pass === 'secret').get('/custom', 'app.CustomController@index');
+// with a custom validator callback (e.g. database query)
+Route.basicAuth(async (user, pass) => {
+  const account = await User.where('email', user).first();
+  return account && await Hash.verify(pass, account.password);
+}).get('/custom', 'app.CustomController@index');
+
+// with custom validator and custom realm object
+Route.basicAuth({
+  validator: async (user, pass) => user === 'admin' && pass === 'secret',
+  realm: 'Secure API'
+}).get('/secure', 'app.SecureController@index');
 ```
 
 when credentials are missing or invalid the framework immediately responds with `401 Unauthorized` and sets the `WWW-Authenticate` header with the configured realm. credential comparisons use constant time comparisons to prevent timing attacks.
