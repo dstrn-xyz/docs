@@ -337,6 +337,7 @@ dstrn graph
 ```
 
 ```
+http routes
 get /users (users.index)
  └─ AuthMiddleware
  └─ UserController (User)
@@ -347,6 +348,7 @@ post /users (users.store)
  └─ UserController (User)
      └─ store()
 
+socket routes
 chat:message
  └─ AuthMiddleware
  └─ ChatController (Message)
