@@ -99,7 +99,7 @@ desktop builds produce platform specific installers. on macos, the output is a d
 dstrn build --target ios
 ```
 
-the build process compiles swift code, generates all required icon sizes, injects your configuration, and archives the application. the output appears in [`native/builds/ios/`](native-getting-started.md#project-structure).
+the build process compiles swift code, generates all required icon sizes, injects your configuration, and archives the application. the output appears in [`native/builds/ios/`](getting-started.md#project-structure).
 
 for physical device testing, the build must be signed with a development certificate. xcode handles this automatically if you open the generated archive and select your development team.
 
@@ -113,7 +113,7 @@ for app store submission, build with a distribution certificate and upload using
 dstrn build --target android
 ```
 
-this produces an unsigned apk in [`native/builds/android/`](native-getting-started.md#project-structure). you can install unsigned builds directly on physical devices with usb debugging enabled:
+this produces an unsigned apk in [`native/builds/android/`](getting-started.md#project-structure). you can install unsigned builds directly on physical devices with usb debugging enabled:
 
 ```bash
 adb install native/builds/android/app-release.apk
@@ -132,7 +132,7 @@ dstrn build --target desktop
 the tauri build process compiles rust code and generates installers for your current platform. builds take several minutes on first run as dependencies are compiled.
 
 output location depends on your operating system:
-- macos: dmg and app bundle in [`native/builds/desktop/`](native-getting-started.md#project-structure)
+- macos: dmg and app bundle in [`native/builds/desktop/`](getting-started.md#project-structure)
 - windows: msi installer and standalone exe
 - linux: deb package and appimage
 
@@ -208,7 +208,7 @@ for wider distribution, consider:
 
 ## version management
 
-increment the version number and build number in [`config/native.js`](native-getting-started.md#application-identity) before each release:
+increment the version number and build number in [`config/native.js`](getting-started.md#application-identity) before each release:
 
 ```javascript
 export default {

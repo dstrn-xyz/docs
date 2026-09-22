@@ -40,7 +40,7 @@ dframework ships with a fully integrated socket layer built on top of the `ws` l
 
 on the client side, the framework's frontend runtime exposes a global `Socket` facade that manages the connection, event emission, and event listening. the socket connection is established automatically when the spa router initializes.
 
-for information on `d-wire` and `d-live` reactive elements that build on top of this socket layer, see the [reactivity](/documentation/reactivity) documentation.
+for information on `d-wire` and `d-live` reactive elements that build on top of this socket layer, see the [reactivity](../frontend/reactivity.md) documentation.
 
 <a name="how-it-works"></a>
 

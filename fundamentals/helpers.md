@@ -528,7 +528,7 @@ fields with `null` or `undefined` values are omitted from the result.
 
 **`t(req, key, fallback)`**
 
-retrieves a translated string for the current locale. see the [localization](/documentation/localization) documentation for full details.
+retrieves a translated string for the current locale. see the [localization](../other/localization.md) documentation for full details.
 
 ```javascript
 const welcome = await t(req, 'common.welcome');
@@ -619,7 +619,7 @@ await DB.raw('SELECT * FROM users WHERE id = ?', [1]);
 
 ### job
 
-the `Job` facade dispatches background jobs to the worker pool. see the [jobs and queues](/documentation/jobs-and-queues) documentation for full details.
+the `Job` facade dispatches background jobs to the worker pool. see the [jobs and queues](../asynchronous/jobs-and-queues.md) documentation for full details.
 
 ```javascript
 Job.dispatch('SendEmailJob', { to: 'user@example.com', template: 'welcome' });
@@ -629,7 +629,7 @@ Job.dispatch('SendEmailJob', { to: 'user@example.com', template: 'welcome' });
 
 ### log
 
-the `Log` facade provides global access to the application logger. see the [logging and errors](/documentation/logging-and-errors) documentation for full details.
+the `Log` facade provides global access to the application logger. see the [logging and errors](../other/logging-and-errors.md) documentation for full details.
 
 ```javascript
 Log.debug('processing started');

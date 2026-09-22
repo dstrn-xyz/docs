@@ -96,7 +96,7 @@ simulation and production modes differ in several critical ways:
 | debugging | console output enabled | minimal logging |
 | networking | localhost/10.0.2.2 | production endpoints |
 
-the most important distinction is url resolution. simulators receive the development server url via `DSTRN_DEV_URL` environment variable. production builds use the url configured in [`config/native.js`](native-getting-started.md#url-configuration) or fall back to your app config.
+the most important distinction is url resolution. simulators receive the development server url via `DSTRN_DEV_URL` environment variable. production builds use the url configured in [`config/native.js`](getting-started.md#url-configuration) or fall back to your app config.
 
 if your production builds show a white screen, verify that the configured url is reachable and returns valid html. see [common issues](#white-screen-on-launch) for troubleshooting steps.
 
@@ -198,9 +198,9 @@ export default {
 };
 ```
 
-if `index` is null, verify that [`Config('app.url')`](configuration.md#app-config) and [`Config('app.port')`](configuration.md#app-config) point to your production server.
+if `index` is null, verify that [`Config('app.url')`](../getting-started/configuration.md#app-config) and [`Config('app.port')`](../getting-started/configuration.md#app-config) point to your production server.
 
-if your server requires network connectivity, consider implementing a [static fallback](native-getting-started.md#static-fallback) so the app can function offline.
+if your server requires network connectivity, consider implementing a [static fallback](getting-started.md#static-fallback) so the app can function offline.
 
 <a name="network-requests-failing"></a>
 

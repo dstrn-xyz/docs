@@ -270,7 +270,7 @@ const logs = await AuditLog.paginate(10, 'log_page');
 
 ## validation
 
-the global `validate()` helper is available inside any controller method. you pass it either the request body object or the full `req` object when validating file uploads. see the [validation documentation](validation.md) for the complete list of available rules.
+the global `validate()` helper is available inside any controller method. you pass it either the request body object or the full `req` object when validating file uploads. see the [validation documentation](../security/validation.md) for the complete list of available rules.
 
 ```javascript
 export default class UserProfileController {

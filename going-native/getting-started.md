@@ -41,7 +41,7 @@ each runtime includes automatic network adaptation, javascript polyfills, and a 
 
 ### basic setup
 
-native configuration lives in [`config/native.js`](config/native.js) at your project root. the framework merges your configuration with sensible defaults.
+native configuration lives in [`config/native.js`](../getting-started/configuration.md#config-native) at your project root. the framework merges your configuration with sensible defaults.
 
 ```javascript
 export default {
@@ -52,7 +52,7 @@ export default {
 };
 ```
 
-if you omit the `name` field, the framework uses [`Config('app.name')`](configuration.md#app-config) as the fallback.
+if you omit the `name` field, the framework uses [`Config('app.name')`](../getting-started/configuration.md#app-config) as the fallback.
 
 <a name="application-identity"></a>
 
@@ -75,7 +75,7 @@ the `version` string is user facing. the `build` number must increment with ever
 
 ### url configuration
 
-by default, native apps load content from [`Config('app.url')`](configuration.md#app-config) plus [`Config('app.port')`](configuration.md#app-config). you can override this behavior by setting the `index` field.
+by default, native apps load content from [`Config('app.url')`](../getting-started/configuration.md#app-config) plus [`Config('app.port')`](../getting-started/configuration.md#app-config). you can override this behavior by setting the `index` field.
 
 ```javascript
 export default {
@@ -100,7 +100,7 @@ export default {
 };
 ```
 
-the static site has full access to the bundled dframework css and javascript runtime. place your static files in the [`native/static/`](project-structure.md#native-static) directory. the framework copies this directory into the native bundle during build.
+the static site has full access to the bundled dframework css and javascript runtime. place your static files in the [`native/static/`](../getting-started/project-structure.md#native-static) directory. the framework copies this directory into the native bundle during build.
 
 a minimal fallback page might display a network error with a reload button:
 
@@ -152,7 +152,7 @@ press `r` to refresh the native app. press `q` to quit.
 
 ### building
 
-the `build` command compiles a production ready binary for distribution. builds are written to [`native/builds/`](project-structure.md#native-builds) organized by platform.
+the `build` command compiles a production ready binary for distribution. builds are written to [`native/builds/`](../getting-started/project-structure.md#native-builds) organized by platform.
 
 ```bash
 dstrn build --target ios
@@ -160,9 +160,9 @@ dstrn build --target android
 dstrn build --target desktop
 ```
 
-production builds use the configured `index` url. if you have not set an explicit value, the framework uses your production api endpoint from [`config/app.js`](configuration.md#app-config).
+production builds use the configured `index` url. if you have not set an explicit value, the framework uses your production api endpoint from [`config/app.js`](../getting-started/configuration.md#app-config).
 
-builds require platform specific toolchains. see the [build and distribution documentation](native-build-distribution.md) for environment setup instructions.
+builds require platform specific toolchains. see the [build and distribution documentation](build-distribution.md) for environment setup instructions.
 
 <a name="project-structure"></a>
 
