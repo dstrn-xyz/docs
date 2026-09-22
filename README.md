@@ -95,7 +95,7 @@ dstrn build --ios
 # quick start
 
 ```bash
-npm install -g dframework
+npm install -g @dstrn/framework
 dstrn init my-app
 cd my-app
 dstrn serve

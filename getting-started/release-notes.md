@@ -126,7 +126,7 @@ native shell runtimes (ios swift, android kotlin, and desktop tauri rust) are in
 to upgrade an existing application to the latest patch release within your current series, update the package version in `package.json` and reinstall dependencies:
 
 ```bash
-npm install dframework@latest
+npm install dframework@npm:@dstrn/framework@latest
 ```
 
 after updating, restart the application server to compile assets and verify runtime operation:

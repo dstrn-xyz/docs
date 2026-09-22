@@ -29,10 +29,10 @@ modern development increasingly relies on fragmented tooling layered abstraction
 
 ### installing the framework
 
-to begin you must install the global framework binary. you do this by installing the dframework package globally via npm. this provides the command line tool required to initialize and manage applications.
+to begin you must install the global framework binary. you do this by installing the @dstrn/framework package globally via npm. this provides the command line tool required to initialize and manage applications.
 
 ```bash
-npm install -g dframework
+npm install -g @dstrn/framework
 ```
 
 <a name="initializing-a-project"></a>
