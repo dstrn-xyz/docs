@@ -459,10 +459,11 @@ const posts = await user.posts;
 
 the framework automatically caches eager loaded relations and handles lazy loading transparently when awaited:
 
-- if the relation was eager loaded with `with('posts')` or `load('posts')`, `await user.posts` (or `await user.posts()`) resolves immediately in memory with zero database queries.
-- if the relation was not eager loaded, `await user.posts` executes a single database query on demand.
+- if the relation was eager loaded with `with('posts')` or `load('posts')`, `await user.posts` (or `await user.posts()`, or concurrent `Promise.all([user.profile(), user.posts()])`) resolves immediately in memory with zero database queries.
+- if the relation was not eager loaded, awaiting the relation executes a single database query on demand.
+- if the model has a null foreign or local key (e.g. unassigned relationship), unconstrained relation queries resolve immediately to `null` or `[]` without querying the database.
 
-because relation properties are callable proxies (enabling both in memory collection access and fluent query chaining like `user.posts().where(...)`), `Array.isArray(user.posts)` will return `false`. you do not need manual `Array.isArray` branches to optimize data access; simply `await user.posts` to get the hydrated collection whether it was preloaded or not.
+because relation properties are callable proxies (enabling both in memory collection access and fluent query chaining like `user.posts().where('status', 'active')`), `Array.isArray(user.posts)` will return `false`. you do not need manual `Array.isArray` branches to optimize data access; simply `await user.posts` or `await user.posts()` to get the hydrated collection whether it was preloaded or not.
 
 ### relationship property assignment and mutation
 
@@ -473,7 +474,7 @@ user.posts = [customPostA, customPostB];
 user.profile = new Profile({ bio: 'updated bio' });
 ```
 
-mutating relation properties updates the internal `_relations` state and is preserved across serialization with `user.toJSON()`.
+mutating relation properties updates relation state and is preserved across serialization with `user.toJSON()`.
 
 <a name="eager-loading"></a>
 
