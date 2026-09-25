@@ -295,7 +295,7 @@ sudo dstrn deploy --domain=api.example.com --email=admin@example.com --install
 | `--email=<email>`    | acme registration email for let's encrypt certificates                        |
 | `--proxy`            | generate caddy reverse proxy configuration instead of direct tls              |
 | `--edge`             | generate plain http configuration with cloudflare guidance                    |
-| `--port=<port>`      | custom application port (default 825 or 443 for direct tls)                   |
+| `--port=<port>`      | custom application port (default 8250 or 443 for direct tls)                  |
 | `--user=<user>`      | system user for systemd service (default current user)                        |
 | `--dir=<dir>`        | working directory path                                                        |
 | `--dry-run`          | preview generated configurations in console without writing to disk           |

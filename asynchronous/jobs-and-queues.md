@@ -166,9 +166,14 @@ the maximum worker count is configurable through the `queue.maxWorkers` configur
 
 <a name="automatic-queuing"></a>
 
-### automatic queuing
+### automatic queuing and persistent worker pool
 
-when the worker pool is at capacity, additional dispatched jobs are automatically buffered in an internal queue. as each worker completes its job and exits, the next job in the queue is dequeued and a new worker is spawned to handle it. this ensures jobs are never lost and are always processed in the order they were dispatched.
+when the worker pool is at capacity, additional dispatched jobs are automatically buffered in an internal queue. workers in dframework operate within a persistent worker thread pool:
+
+1. lazy warming: the framework checks the application `jobs/` directory at startup. if no jobs exist, zero worker threads are spawned, ensuring applications with no background jobs incur zero memory or performance overhead.
+2. persistent execution: when jobs exist, worker threads boot the application environment and database pool once and stay alive in the idle pool. subsequent jobs are picked up immediately by warm workers without thread creation or isolate boot delay.
+3. automatic dequeuing: as each worker finishes its job, it picks up the next buffered job from the internal queue, or returns to the idle pool ready for future dispatches.
+4. fault recovery: if an unhandled fatal error or process crash occurs inside a worker thread, the worker cleans up and exits, and a replacement worker is spawned to continue processing pending tasks.
 
 <a name="job-lifecycle"></a>
 
@@ -178,16 +183,16 @@ when the worker pool is at capacity, additional dispatched jobs are automaticall
 
 ### bootstrapping
 
-when a worker thread starts, it performs the following steps in order:
+when a persistent worker thread boots, it performs the following steps:
 
 1. loads environment variables and configuration files from the project
-2. creates a minimal application instance with database connection and global facades
-3. imports the job class from the `jobs` directory using the job name provided at dispatch time
-4. instantiates the job class and validates that it has a `handle` method
-5. calls `handle(payload)` with the serialized payload and waits for completion
-6. reports success or failure with execution duration back to the main thread
-7. runs cleanup to close database connections and clear global references
-8. exits the worker thread cleanly
+2. initializes an application instance with database connection and global facades
+3. signals readiness to the main process and waits for dispatched jobs
+4. upon receiving a job, imports the job class from the `jobs` directory
+5. instantiates the job class and validates the `handle` method
+6. invokes `handle(payload)` with the serialized payload
+7. reports success or failure with execution duration back to the main thread
+8. returns to the idle worker pool to immediately accept subsequent jobs
 
 <a name="database-access"></a>
 

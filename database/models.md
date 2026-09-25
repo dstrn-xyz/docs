@@ -173,7 +173,7 @@ every method that runs a query returns a `Promise`. the result column lists what
 | `instance.load(...relations)` | relation names | `Promise<Model>` (the same instance, with relations populated) |
 | `instance.toJSON()` | none | plain object with hidden keys removed and relations serialized |
 
-the `where` chainable builder exposes the same constraint, closure grouping, conditional (`when`, `unless`), subquery (`whereExists`, `whereIn`, `selectSub`), and aggregate methods as the fluent query builder (`where`, `whereIn`, `whereNull`, `whereBetween`, `whereColumn`, `whereHashed`, `whereExists`, `when`, `unless`, `selectSub`, `join`, `leftJoin`, `rightJoin`, `crossJoin`, `joinRaw`, `count`, `sum`, `avg`, `min`, `max`, etc.). it is also thenable (`await builder`) and async iterable (`for await (const m of builder)`).
+the `where` chainable builder exposes the same constraint, closure grouping, conditional (`when`, `unless`), subquery (`whereExists`, `whereIn`, `selectSub`), single entity lookup (`find`, `first`), and aggregate methods as the fluent query builder (`where`, `whereIn`, `whereNull`, `whereBetween`, `whereColumn`, `whereHashed`, `whereExists`, `when`, `unless`, `selectSub`, `join`, `leftJoin`, `rightJoin`, `crossJoin`, `joinRaw`, `count`, `sum`, `avg`, `min`, `max`, etc.). it is also thenable (`await builder`) and async iterable (`for await (const m of builder)`).
 
 <a name="magic-finders"></a>
 
@@ -485,6 +485,9 @@ when you access a relationship as a property, the framework will read the preloa
 ```javascript
 const users = await User.with('profile', 'posts').limit(10).get();
 // users: Array<User>. each user already has _relations populated.
+
+const user = await User.with('profile').find(1);
+// user: User | null. loaded with profile relation populated.
 
 for (const user of users) {
   // accessing user.posts does not trigger an additional query

@@ -67,10 +67,10 @@ benefits:
 
 ### reverse proxy with caddy
 
-in reverse proxy mode, a dedicated web server such as caddy receives public https traffic on port 443 and proxies plain http requests over local loopback (`127.0.0.1:825`) to dframework.
+in reverse proxy mode, a dedicated web server such as caddy receives public https traffic on port 443 and proxies plain http requests over local loopback (`127.0.0.1:8250`) to dframework.
 
 ```
-[ client ] --( https:443 )--> [ caddy ] --( loopback:825 )--> [ dframework ]
+[ client ] --( https:443 )--> [ caddy ] --( loopback:8250 )--> [ dframework ]
 ```
 
 when to choose a reverse proxy:
@@ -241,7 +241,7 @@ configure `/etc/caddy/Caddyfile`:
 
 ```caddy
 api.example.com {
-    reverse_proxy 127.0.0.1:825
+    reverse_proxy 127.0.0.1:8250
 }
 ```
 

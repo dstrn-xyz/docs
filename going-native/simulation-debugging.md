@@ -174,13 +174,13 @@ symptom: the app launches but displays only a white screen with no content.
 verify your development server is running and accessible:
 
 ```bash
-curl http://localhost:825
+curl http://localhost:8250
 ```
 
 for android, test the emulator mapping:
 
 ```bash
-adb shell curl http://10.0.2.2:825
+adb shell curl http://10.0.2.2:8250
 ```
 
 if the curl succeeds but the app shows white, check the browser console for javascript errors.

@@ -83,7 +83,7 @@ export default {
   env: Env.value('APP_ENV', 'production'),
   debug: Env.value('APP_DEBUG', false),
   url: Env.value('APP_URL', 'http://localhost'),
-  port: Env.value('APP_PORT', 825),
+  port: Env.value('APP_PORT', 8250),
   locale: Env.value('APP_LOCALE', 'en'),
   key: Env.value('APP_KEY'),
   shield: Env.value('SHIELD_ENABLED', true),

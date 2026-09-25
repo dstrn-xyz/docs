@@ -586,15 +586,16 @@ const result = await DB.table('users').insert({
 
 ### bulk inserts
 
-if you pass an array of objects to the `insert` method, the query builder will execute a single, highly optimized bulk insert statement and return an array of generated ids.
+if you pass an array of objects to the `insert` method, the query builder will execute a single, highly optimized bulk insert statement and return the database driver's `ResultSetHeader`.
 
 ```javascript
-const ids = await DB.table('users').insert([
+const result = await DB.table('users').insert([
   { email: 'tarou@example.com', name: 'tarou' },
   { email: 'satou@example.com', name: 'satou' }
 ]);
-// ids: Array<number>. one generated id per inserted row, in order.
-// pass an empty array to get [] back without executing any query.
+// result: mysql2 ResultSetHeader
+// result.affectedRows indicates total inserted rows.
+// result.insertId indicates the first inserted auto increment id.
 ```
 
 <a name="updates"></a>
@@ -654,9 +655,9 @@ const result = await DB.table('users')
 
 ## auto hashing
 
-the query builder is aware of sensitive columns and automatically hashes their values using bcrypt during inserts and updates. by default, any column named `password` or `secret` triggers this behavior.
+the query builder is aware of sensitive columns and automatically hashes their values using bcrypt during inserts and updates. by default, only columns named `password` trigger this behavior.
 
-you can override the default fields for a specific query using the `setHashFields` method.
+you can declare application wide auto hashed fields in `config/app.js` using `app.hashFields` (or the `HASH_FIELDS` environment variable as a comma separated list), or override them for a specific query using `setHashFields`.
 
 ```javascript
 await DB.table('tokens')

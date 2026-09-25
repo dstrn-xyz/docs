@@ -36,7 +36,8 @@ APP_LOCALE=en
 APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://localhost
-APP_PORT=0825
+APP_PORT=8250
+HASH_FIELDS=password
 
 SHIELD_ENABLED=false
 SESSION_DRIVER=memory
@@ -77,7 +78,8 @@ export default {
   env: Env.value('APP_ENV', 'production'),
   debug: Env.value('APP_DEBUG', false),
   url: Env.value('APP_URL', 'http://localhost'),
-  port: Env.value('APP_PORT', 825),
+  port: Env.value('APP_PORT', 8250),
+  hashFields: (Env.value('HASH_FIELDS') || 'password').split(',').map(s => s.trim()).filter(Boolean),
   locale: Env.value('APP_LOCALE', 'en'),
   key: Env.value('APP_KEY'),
 
@@ -194,7 +196,7 @@ inside your config files you use `Env.value()` to read from the parsed `.env` fi
 ```javascript
 import { Env } from 'dframework';
 
-const port = Env.value('APP_PORT', 825);
+const port = Env.value('APP_PORT', 8250);
 const dbHost = Env.value('DB_HOST', 'localhost');
 ```
 
