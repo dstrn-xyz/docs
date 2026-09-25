@@ -30,6 +30,26 @@ if (req.verifyCsrfToken(submittedToken)) {
 }
 ```
 
+### disabling csrf on routes and groups
+
+for public webhooks or external callbacks that cannot supply session tokens, disable csrf verification on individual routes or across an entire group:
+
+```javascript
+// single route
+Route.post('/webhooks/stripe', 'WebhookController@handle').csrf(false);
+
+// route group
+Route.group({ prefix: '/webhooks', csrf: false }, (hooks) => {
+  hooks.post('/stripe', 'StripeController@handle');
+  hooks.post('/github', 'GitHubController@handle');
+});
+
+// fluent chaining
+Route.prefix('/webhooks').csrf(false).group((hooks) => {
+  hooks.post('/stripe', 'StripeController@handle');
+});
+```
+
 <a name="rotating-tokens"></a>
 
 ### rotating tokens

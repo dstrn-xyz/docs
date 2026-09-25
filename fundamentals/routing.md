@@ -135,17 +135,44 @@ Route.group({ middleware: ['AuthMiddleware@requireAuth'] }, (auth) => {
 
 ### combined attributes
 
-prefix and middleware can be used together in a single group definition.
+prefix, middleware, shield, and csrf options can be configured together in a single group definition.
 
 ```javascript
-Route.group({ prefix: '/admin', middleware: ['AuthMiddleware@requireAuth', 'AdminMiddleware@requireAdmin'] }, (admin) => {
+Route.group({
+  prefix: '/admin',
+  middleware: ['AuthMiddleware@requireAuth', 'AdminMiddleware@requireAdmin'],
+  shield: true,
+  csrf: true
+}, (admin) => {
   admin.get('/', 'admin.AdminController@index').name('admin.index');
   admin.get('/:entity', 'admin.AdminController@list').name('admin.list');
   admin.post('/:entity', 'admin.AdminController@store').name('admin.store');
 });
 ```
 
-groups can be nested. an inner group inherits all attributes of its parent and may add its own on top.
+### shield and csrf group deactivation
+
+for webhook endpoints, public apis, or third party callbacks, you can disable shield and csrf verification across all routes in a group:
+
+```javascript
+Route.group({ prefix: '/webhooks', csrf: false, shield: false }, (hooks) => {
+  hooks.post('/stripe', 'StripeController@handle');
+  hooks.post('/github', 'GitHubController@handle');
+});
+```
+
+you can also use fluent chainable builders:
+
+```javascript
+Route.prefix('/webhooks')
+  .shield(false)
+  .csrf(false)
+  .group((hooks) => {
+    hooks.post('/stripe', 'StripeController@handle');
+  });
+```
+
+groups can be nested. an inner group inherits shield and csrf settings from its parent and can explicitly override them if needed.
 
 ```javascript
 Route.group({ middleware: ['AuthMiddleware@requireAuth'] }, (auth) => {
