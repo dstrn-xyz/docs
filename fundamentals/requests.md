@@ -48,6 +48,9 @@ if (req.isAjax) {
   return abort(422, 'validation failed');
 }
 
+// returns client ip address (honors X-Forwarded-For / X-Real-IP when app.trustProxy is enabled)
+const clientIp = req.ip;
+
 // returns true specifically for the framework's client side spa router
 if (req.isSPA) {
   return json({ component: 'Home' });
