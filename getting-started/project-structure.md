@@ -127,7 +127,7 @@ export default class IndexController {
 the `database` directory holds all of your database related files including your migrations and seeders. the framework utilizes this directory when executing schema building commands allowing you to track database changes across environments.
 
 ```javascript
-// database/migrations/0001_create_users_table.js
+// database/migrations/2026_01_01_000000_create_users_table.js
 export async function up() {
   await Schema.create('users', table => {
     table.increments();

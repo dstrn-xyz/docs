@@ -1299,7 +1299,7 @@ dComponent.define(dCounter);
 
 ### fragment caching and batch mounting
 
-for maximum throughput when generating dynamic content or lists of components, `dComponent` provides static utilities backed by an internal template lru cache:
+for maximum throughput and xss safety when generating dynamic content, setting inner markup, or mounting lists of components, `dComponent` provides template caching utilities and safe dom replacement:
 
 ```javascript
 // parse html into a cached template fragment (avoids repeated innerHTML string parsing)
@@ -1307,6 +1307,9 @@ const frag = dComponent.fragment('<div class="list-item"><span>title</span></div
 
 // append multiple nodes, fragments, or html strings in a single dom operation
 dComponent.appendMany(container, frag1, frag2, '<div class="extra">item</div>');
+
+// safely set or replace element children using cached template fragments or nodes
+this.setChildren('<div class="card"><span class="title"></span></div>');
 ```
 
 <a name="rendering-strategy-and-surgical-updates"></a>
