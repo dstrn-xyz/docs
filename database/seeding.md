@@ -49,6 +49,12 @@ dstrn seed UserSeeder
 dstrn seed 001_UserSeeder
 ```
 
+when executing in production (`APP_ENV=production`), the seed command prompts for confirmation to prevent accidental data changes. use the `--force` flag for automated provisioning pipelines:
+
+```bash
+dstrn seed --force
+```
+
 <a name="automatic-safety-checks"></a>
 
 ## automatic safety checks

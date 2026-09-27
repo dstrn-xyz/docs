@@ -67,7 +67,7 @@ dstrn help
 | `dstrn migrate:make <table>` | create a new migration template                         |
 | `dstrn seed [name]`          | run database seeders                                    |
 | `dstrn seed:make <Name>`     | create a new seeder template                            |
-| `dstrn drop`                 | drop the database with confirmation                     |
+| `dstrn drop`                 | drop all tables in the database with confirmation       |
 | `dstrn advisor [--apply]`    | inspect unindexed relationships and generate migrations |
 
 <a name="generators"></a>

@@ -144,6 +144,22 @@ the `Job` global is a proxy facade that delegates to the application's `Queue` i
 Job.dispatch('JobName', { key: 'value' });
 ```
 
+`Job.dispatch()` accepts an optional third argument for per job execution options:
+
+```javascript
+Job.dispatch('ProcessVideoJob', { videoId: 42 }, {
+  timeout: 30000,
+  tries: 3,
+  backoff: 1000
+});
+```
+
+| option    | type     | default | description                                                                 |
+| --------- | -------- | ------- | --------------------------------------------------------------------------- |
+| `timeout` | `number` | `60000` | execution timeout in milliseconds; workers exceeding this timeout terminate |
+| `tries`   | `number` | `1`     | maximum attempt count before the job is marked as failed                    |
+| `backoff` | `number` | `0`     | exponential backoff base delay in milliseconds between retry attempts       |
+
 if you attempt to use the `Job` facade before the application has initialized, it will throw a descriptive error.
 
 <a name="how-the-worker-pool-works"></a>
@@ -259,8 +275,8 @@ if the worker thread itself crashes (for example due to an out of memory conditi
 
 the queue system reads its configuration from the `app.queue` config namespace.
 
-| key                | type     | default | description                                 |
-| ------------------ | -------- | ------- | ------------------------------------------- |
+| key                    | type     | default | description                                 |
+| ---------------------- | -------- | ------- | ------------------------------------------- |
 | `app.queue.maxWorkers` | `number` | `4`     | maximum number of concurrent worker threads |
 
 ```javascript

@@ -73,59 +73,64 @@ the query builder is built up by chaining constraint calls (which return the bui
 
 each of these returns the same `TableQuery` instance for chaining.
 
-| method | arguments |
-| --- | --- |
-| `select(...columns)` | column names; replaces the current select list |
-| `selectRaw(expression, bindings?)` | raw sql fragment plus optional bindings |
-| `selectSub(query, as)` | scalar subquery expression with alias |
-| `distinct(...columns?)` | mark distinct, optionally replacing the select list |
-| `where(column, operator?, value?)` | column name/value, `{ column: value }` object, or closure `(q) => ...` |
-| `whereNot(...)` | negated form of `where` (supports closure) |
-| `orWhere(...)` | `or` form of `where` (supports closure) |
-| `orWhereNot(...)` | `or` form of `whereNot` (supports closure) |
-| `whereIn(column, values)` | column name plus `Array` of values or subquery closure `(q) => ...` |
-| `whereNotIn(column, values)` | negated `whereIn` (supports subquery closure) |
-| `orWhereIn(...)` / `orWhereNotIn(...)` | `or` forms of the IN clauses |
-| `whereExists(callback)` / `whereNotExists(callback)` | exists / not exists subquery check |
-| `orWhereExists(callback)` / `orWhereNotExists(callback)` | `or` forms of exists checks |
-| `whereNull(column)` / `whereNotNull(column)` | null check |
-| `whereBetween(column, [min, max])` / `whereNotBetween(...)` | range check, requires exactly two values |
-| `whereColumn(column, operator?, otherColumn)` | compare two columns in the same row |
-| `whereHashed(column, operator?, value)` / `orWhereHashed(...)` | compare against the fast hash of a value |
-| `when(value, callback, defaultCallback?)` | apply callback if value is truthy |
-| `unless(value, callback, defaultCallback?)` | apply callback if value is falsy |
-| `join(table, first, operator?, second)` | inner join on another table (supports join closure) |
-| `leftJoin(table, first, operator?, second)` | left outer join on another table (supports join closure) |
-| `rightJoin(table, first, operator?, second)` | right outer join on another table (supports join closure) |
-| `crossJoin(table)` | cross join on another table |
-| `joinRaw(expression, bindings?)` | raw join clause with parameter bindings |
-| `groupBy(...columns)` | grouping columns |
-| `orderBy(column, direction='ASC')` | sort, direction is `'ASC'` or `'DESC'` |
-| `limit(n)` / `offset(n)` | numeric row cap and skip count |
-| `setHashFields(fields)` | override which columns are autohashed on this builder |
+| method                                                         | arguments                                                              |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `select(...columns)`                                           | column names; replaces the current select list                         |
+| `selectRaw(expression, bindings?)`                             | raw sql fragment plus optional bindings                                |
+| `selectSub(query, as)`                                         | scalar subquery expression with alias                                  |
+| `distinct(...columns?)`                                        | mark distinct, optionally replacing the select list                    |
+| `where(column, operator?, value?)`                             | column name/value, `{ column: value }` object, or closure `(q) => ...` |
+| `whereNot(...)`                                                | negated form of `where` (supports closure)                             |
+| `orWhere(...)`                                                 | `or` form of `where` (supports closure)                                |
+| `orWhereNot(...)`                                              | `or` form of `whereNot` (supports closure)                             |
+| `whereIn(column, values)`                                      | column name plus `Array` of values or subquery closure `(q) => ...`    |
+| `whereNotIn(column, values)`                                   | negated `whereIn` (supports subquery closure)                          |
+| `orWhereIn(...)` / `orWhereNotIn(...)`                         | `or` forms of the IN clauses                                           |
+| `whereExists(callback)` / `whereNotExists(callback)`           | exists / not exists subquery check                                     |
+| `orWhereExists(callback)` / `orWhereNotExists(callback)`       | `or` forms of exists checks                                            |
+| `whereNull(column)` / `whereNotNull(column)`                   | null check                                                             |
+| `whereBetween(column, [min, max])` / `whereNotBetween(...)`    | range check, requires exactly two values                               |
+| `whereColumn(column, operator?, otherColumn)`                  | compare two columns in the same row                                    |
+| `whereRaw(sql, bindings?)`                                     | raw sql where condition with optional bindings                         |
+| `orWhereRaw(sql, bindings?)`                                   | raw sql or where condition with optional bindings                      |
+| `whereHashed(column, operator?, value)` / `orWhereHashed(...)` | compare against the fast hash of a value                               |
+| `when(value, callback, defaultCallback?)`                      | apply callback if value is truthy                                      |
+| `unless(value, callback, defaultCallback?)`                    | apply callback if value is falsy                                       |
+| `join(table, first, operator?, second)`                        | inner join on another table (supports join closure)                    |
+| `leftJoin(table, first, operator?, second)`                    | left outer join on another table (supports join closure)               |
+| `rightJoin(table, first, operator?, second)`                   | right outer join on another table (supports join closure)              |
+| `crossJoin(table)`                                             | cross join on another table                                            |
+| `joinRaw(expression, bindings?)`                               | raw join clause with parameter bindings                                |
+| `groupBy(...columns)`                                          | grouping columns                                                       |
+| `having(column, operator?, value?)`                            | having condition on grouped results                                    |
+| `havingRaw(sql, bindings?)`                                    | raw sql having condition with optional bindings                        |
+| `orderBy(column, direction='ASC')`                             | sort, direction is `'ASC'` or `'DESC'`                                 |
+| `orderByRaw(sql)`                                              | raw sql order by expression                                            |
+| `limit(n)` / `offset(n)`                                       | numeric row cap and skip count                                         |
+| `setHashFields(fields)`                                        | override which columns are autohashed on this builder                  |
 
 ### terminal methods
 
 these return a promise and execute the underlying query.
 
-| method | arguments | returns |
-| --- | --- | --- |
-| `get()` | none | `Promise<Array<object>>` of matching rows; `[]` when none match |
-| `first(where?)` | optional `{ column: value }` object | `Promise<object\|null>` (first matching row, or null) |
-| `latest(count?, column?)` | `null` or number; optional column name | `null` count: `Promise<object\|null>`; numeric count: `Promise<Array<object>>` |
-| `count(column?)` | optional column name (defaults to `*`) | `Promise<number>` (matching row count; group by returns the number of groups) |
-| `sum(column)` | column name | `Promise<number>` (sum of values; 0 when no rows) |
-| `avg(column)` | column name | `Promise<number\|null>` (average value; null when no rows) |
-| `min(column)` | column name | `Promise<any>` (minimum value; null when no rows) |
-| `max(column)` | column name | `Promise<any>` (maximum value; null when no rows) |
-| `pluck(column)` | column name | `Promise<Array>` of that column's values across the matching rows (empty `[]` when none) |
-| `getWithCount()` | none | `Promise<{ rows: Array<object>, total: number }>`; rows have the internal `_total_count` field stripped |
-| `insert(data)` | row object, or array of row objects | single row: mysql2 `ResultSetHeader` (`insertId`, `affectedRows`); array of rows: `Array<number>` of generated ids (empty `[]` for an empty input array) |
-| `update(data, where?)` | column/value object; optional where object | `Promise<object>` mysql2 `ResultSetHeader` |
-| `increment(column, amount?, extra?, where?)` | column name; optional numeric amount (default 1); optional extra column/values object; optional where object | `Promise<object>` mysql2 `ResultSetHeader` |
-| `decrement(column, amount?, extra?, where?)` | column name; optional numeric amount (default 1); optional extra column/values object; optional where object | `Promise<object>` mysql2 `ResultSetHeader` |
-| `save(data)` | alias for `update(data)` | `Promise<object>` mysql2 `ResultSetHeader` |
-| `delete(where?)` | optional where object (or chained `where`) | `Promise<object>` mysql2 `ResultSetHeader`; throws when no where is set |
+| method                                       | arguments                                                                                                    | returns                                                                                                                                                  |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `get()`                                      | none                                                                                                         | `Promise<Array<object>>` of matching rows; `[]` when none match                                                                                          |
+| `first(where?)`                              | optional `{ column: value }` object                                                                          | `Promise<object\|null>` (first matching row, or null)                                                                                                    |
+| `latest(count?, column?)`                    | `null` or number; optional column name                                                                       | `null` count: `Promise<object\|null>`; numeric count: `Promise<Array<object>>`                                                                           |
+| `count(column?)`                             | optional column name (defaults to `*`)                                                                       | `Promise<number>` (matching row count; group by returns the number of groups)                                                                            |
+| `sum(column)`                                | column name                                                                                                  | `Promise<number>` (sum of values; 0 when no rows)                                                                                                        |
+| `avg(column)`                                | column name                                                                                                  | `Promise<number\|null>` (average value; null when no rows)                                                                                               |
+| `min(column)`                                | column name                                                                                                  | `Promise<any>` (minimum value; null when no rows)                                                                                                        |
+| `max(column)`                                | column name                                                                                                  | `Promise<any>` (maximum value; null when no rows)                                                                                                        |
+| `pluck(column)`                              | column name                                                                                                  | `Promise<Array>` of that column's values across the matching rows (empty `[]` when none)                                                                 |
+| `getWithCount()`                             | none                                                                                                         | `Promise<{ rows: Array<object>, total: number }>`; rows have the internal `_total_count` field stripped                                                  |
+| `insert(data)`                               | row object, or array of row objects                                                                          | single row: mysql2 `ResultSetHeader` (`insertId`, `affectedRows`); array of rows: `Array<number>` of generated ids (empty `[]` for an empty input array) |
+| `update(data, where?)`                       | column/value object; optional where object                                                                   | `Promise<object>` mysql2 `ResultSetHeader`                                                                                                               |
+| `increment(column, amount?, extra?, where?)` | column name; optional numeric amount (default 1); optional extra column/values object; optional where object | `Promise<object>` mysql2 `ResultSetHeader`                                                                                                               |
+| `decrement(column, amount?, extra?, where?)` | column name; optional numeric amount (default 1); optional extra column/values object; optional where object | `Promise<object>` mysql2 `ResultSetHeader`                                                                                                               |
+| `save(data)`                                 | alias for `update(data)`                                                                                     | `Promise<object>` mysql2 `ResultSetHeader`                                                                                                               |
+| `delete(where?)`                             | optional where object (or chained `where`)                                                                   | `Promise<object>` mysql2 `ResultSetHeader`; throws when no where is set                                                                                  |
 
 the builder itself is thenable and async iterable, so you can `await DB.table('users')` or `for await (const row of DB.table('users'))` directly. both forms execute the select and consume the same `Array<object>` shape.
 
@@ -384,6 +389,16 @@ verifies that a column's value lies within two bounds. you must provide an array
 await DB.table('users').whereBetween('votes', [1, 100]).get();
 ```
 
+**whereRaw / orWhereRaw**
+injects a raw sql where clause into the query using parameterized bindings:
+
+```javascript
+await DB.table('orders')
+  .whereRaw('price > IF(state = "tx", ?, 100)', [200])
+  .orWhereRaw('status = ?', ['pending'])
+  .get();
+```
+
 <a name="where-exists"></a>
 
 ### where exists and where not exists
@@ -558,6 +573,28 @@ await DB.table('users')
   .get();
 ```
 
+the `having` and `havingRaw` methods filter grouped results:
+
+```javascript
+await DB.table('orders')
+  .groupBy('account_id')
+  .having('total', '>', 500)
+  .get();
+
+await DB.table('orders')
+  .groupBy('account_id')
+  .havingRaw('SUM(price) > ?', [2500])
+  .get();
+```
+
+the `orderByRaw` method allows arbitrary sorting expressions:
+
+```javascript
+await DB.table('users')
+  .orderByRaw('FIELD(status, "active", "pending", "banned")')
+  .get();
+```
+
 the `limit` and `offset` methods restrict the number of records returned and specify the starting point.
 
 ```javascript
@@ -612,6 +649,15 @@ const result = await DB.table('users')
 // result.affectedRows tells you how many rows actually changed.
 ```
 
+`update()` also honors chained `.limit(n)` clauses to constrain updates to a specific batch of rows:
+
+```javascript
+await DB.table('users')
+  .where('status', 'pending')
+  .limit(100)
+  .update({ status: 'processing' });
+```
+
 the `save` method acts as an alias for `update` and returns the same `ResultSetHeader`.
 
 <a name="increment-and-decrement"></a>
@@ -638,7 +684,7 @@ await DB.table('users').where('id', 1).decrement('credits', 2);
 
 ## deletes
 
-the `delete` method removes records from the table.
+the `delete` method removes records from the table. `delete()` supports chained `.limit(n)` clauses to constrain deletions to a specific batch size.
 
 > [!IMPORTANT]
 > at least one where condition is required before executing `delete()`. calling `delete()` without constraints throws an exception to prevent accidental table truncation.
@@ -646,10 +692,14 @@ the `delete` method removes records from the table.
 ```javascript
 const result = await DB.table('users')
   .where('status', 'inactive')
+  .limit(500)
   .delete();
 // result: mysql2 ResultSetHeader
 // result.affectedRows tells you how many rows were removed.
 ```
+
+> [!NOTE]
+> `update()` and `delete()` also support `.join()` clauses. note that mysql prohibits combining `LIMIT` with multi table `JOIN` operations in `UPDATE` or `DELETE` statements; doing so will throw an error.
 
 <a name="auto-hashing"></a>
 

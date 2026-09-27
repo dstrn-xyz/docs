@@ -52,7 +52,7 @@ DB_PASS=
 DB_NAME=dframework
 ```
 
-the framework parses this file on startup. string values of `true` and `false` are cast to booleans. numeric strings are cast to numbers. values are immediately available via `Env.value()` throughout your config files.
+the framework parses this file on startup. unquoted integer strings (such as `8250` or `-5`) are cast to safe integers. unquoted values of `true`, `false`, and `null` are cast to their boolean and null primitives. quoted values (wrapped in single or double quotes) are always preserved strictly as strings, protecting numeric passwords, hashes, tokens, or strings with leading zeros from being coerced. values are immediately available via `Env.value()` throughout your config files.
 
 > \[!IMPORTANT]
 > if you change the `.env` file while the application is running in the `local` environment the framework will restart the server entirely to pick up the new values.
@@ -92,6 +92,7 @@ export default {
   staticFileCache: {
     maxFiles: Env.value('STATIC_FILE_CACHE_MAX_FILES', 100),
     maxSize: Env.value('STATIC_FILE_CACHE_MAX_SIZE', 1024 * 1024),
+    maxTotalBytes: Env.value('STATIC_FILE_CACHE_MAX_TOTAL_BYTES', 32 * 1024 * 1024),
   },
 
   maxCompiledCacheSize: Env.value('MAX_COMPILED_CACHE_SIZE', 500),

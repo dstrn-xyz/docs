@@ -256,7 +256,7 @@ searchable, extensible select combobox with automatic floating placement, keyboa
 | `horizontal`   | `isHorizontal` | `boolean` | `false` | no   | switches option layout from vertical list to horizontal chips |
 | `name`         | `name`         | `string`  | `""`    | no   | form field name                                               |
 | `id`           | `id`           | `string`  | `""`    | no   | component id                                                  |
-| `options`      | `options`      | `array`   | `[]`    | no   | array of `{value, text, content}` objects                     |
+| `options`      | `options`      | `array`   | `[]`    | no   | array of `{value, text, content, html}` objects (set `html: true` for rich content) |
 
 #### programmatic api
 
@@ -1104,6 +1104,7 @@ input.disabled = false;
 
 | event    | detail       | bubbles | description                      |
 | :------- | :----------- | :------ | :------------------------------- |
+| `input`  | string value | yes     | dispatched on keystroke input    |
 | `change` | string value | yes     | dispatched on input modification |
 
 #### behavior

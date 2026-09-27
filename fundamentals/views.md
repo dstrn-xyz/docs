@@ -142,6 +142,8 @@ you can define a master layout and extend it from child views. use `@yield` to m
 @endsection
 ```
 
+nested sections are resolved up to a maximum recursion depth (defaults to 30, configurable via `view.maxYieldDepth` in configuration).
+
 you can include partials using the `@include` directive.
 
 ```html

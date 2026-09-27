@@ -126,6 +126,23 @@ uniquify([1, 2, 2, 3, 3]);  // [1, 2, 3]
 uniquify('aabbcc');           // "abc"
 ```
 
+**`pascalCase(str)`**
+
+converts a snake_case, kebab-case, camelCase, or space separated string into PascalCase.
+
+```javascript
+pascalCase('user_profile');    // "UserProfile"
+pascalCase('send-email-job');  // "SendEmailJob"
+```
+
+**`snakeCase(str)`**
+
+converts a camelCase or PascalCase string into snake_case.
+
+```javascript
+snakeCase('UserProfile');      // "user_profile"
+```
+
 <a name="random-and-time"></a>
 
 ## random and time
@@ -547,18 +564,22 @@ dframework provides global facades for core services. these facades are availabl
 
 the `Session` facade provides access to the current request's session store.
 
-| method                       | description                                                        |
-| ---------------------------- | ------------------------------------------------------------------ |
-| `Session.get(key, fallback)` | retrieve a value from the session                                  |
-| `Session.set(key, value)`    | store a value in the session                                       |
-| `Session.forget(key)`        | remove a value (or destroy the entire session if no key is passed) |
-| `Session.flash(key, value)`  | store a value for only the next request                            |
-| `Session.permanent(data)`    | store data with a long lived cookie (10 years)                     |
+| method                             | description                                                        |
+| ---------------------------------- | ------------------------------------------------------------------ |
+| `Session.get(key, fallback)`       | retrieve a value from the session                                  |
+| `Session.set(key, value)`          | store a value in the session                                       |
+| `Session.forget(key)`              | remove a value (or destroy the entire session if no key is passed) |
+| `Session.flash(key, value)`        | store a value for only the next request                            |
+| `Session.permanent(data)`          | store data with a long lived cookie (10 years)                     |
+| `Session.id(newId)`                | returns or sets the active session id                              |
+| `Session.regenerate(preserveData)` | regenerates the session id (preserves data by default)             |
 
 ```javascript
 await Session.set('theme', 'dark');
 const theme = await Session.get('theme', 'light');
 await Session.flash('status', 'saved successfully');
+await Session.regenerate();
+const sid = Session.id();
 ```
 
 <a name="auth"></a>

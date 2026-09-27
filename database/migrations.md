@@ -96,7 +96,8 @@ export async function up({ Schema }) {
     
     table.foreign('user_id')
          .references('id', 'users')
-         .onDelete('cascade');
+         .onDelete('cascade')
+         .onUpdate('cascade');
   });
 }
 ```
@@ -162,12 +163,28 @@ await Schema.dropIfExists('users');
 
 ## running migrations
 
+to execute pending migrations, run the `migrate` command:
+
+```bash
+dstrn migrate
+```
+
 the framework runs migrations sequentially in alphabetical order based on the filenames in your migrations directory. a database table named `migrations` is automatically generated to track which migrations have already been executed, organizing them into batches.
 
-this ensures that only pending migrations are executed, avoiding duplicate table creations.
+when running in production (`APP_ENV=production`), the command requires confirmation before applying changes. pass the `--force` flag to run migrations non interactively in automated deployment pipelines:
+
+```bash
+dstrn migrate --force
+```
 
 <a name="rolling-back"></a>
 
 ### rolling back
 
-if you need to revert the latest database changes, the framework allows you to roll back the most recent migration batch. it queries the `migrations` table to identify the last batch number and executes the `down` function for those specific files in reverse chronological order.
+if you need to revert the latest database changes, run:
+
+```bash
+dstrn migrate:rollback
+```
+
+the framework queries the `migrations` table to identify the last batch number and executes the `down` function for those specific files in reverse chronological order.

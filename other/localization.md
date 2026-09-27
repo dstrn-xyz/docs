@@ -226,7 +226,7 @@ both `ruby()` and furigana annotated translations output safe html when rendered
 dframework detects the user's locale automatically using the following priority:
 
 1. **locale cookie** — if a `locale` cookie is present and contains a valid locale code (2-10 alphanumeric characters), it is used immediately
-2. **accept-language header** — if no cookie is found, the framework parses the `Accept-Language` http header and uses the primary language code
+2. **accept-language header** — if no cookie is found, the framework parses the `Accept-Language` http header, matching regional locale codes (e.g. `en-US`, `zh-CN`) if supported in `lang/`, or falling back to the base language code (`en`, `zh`)
 3. **default locale** — if neither source provides a valid locale, the configured default locale is used
 
 this detection happens automatically during request processing. the detected locale is stored on the request object as `req.locale`.

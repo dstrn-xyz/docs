@@ -8,6 +8,7 @@
     - [storing data](#storing-data)
     - [flash data](#flash-data)
     - [deleting data](#deleting-data)
+    - [session id and regeneration](#session-id-and-regeneration)
   - [session drivers](#session-drivers)
     - [stealth mode](#stealth-mode)
 
@@ -79,6 +80,27 @@ await Session.forget('key');
 
 // destroy the entire session
 await Session.forget();
+```
+
+<a name="session-id-and-regeneration"></a>
+
+### session id and regeneration
+
+to retrieve the active session identifier or set a custom one, use the `id` method.
+
+```javascript
+// retrieve the current session id
+const sessionId = Session.id();
+```
+
+to prevent session fixation attacks when user privilege changes (such as during login or password reset), use the `regenerate` method. by default, it preserves existing session data while issuing a new session id and cookie. to clear all data and issue a fresh session, pass `false`.
+
+```javascript
+// regenerate session id while keeping existing session data
+await Session.regenerate();
+
+// regenerate session id and clear all existing session data
+await Session.regenerate(false);
 ```
 
 <a name="session-drivers"></a>

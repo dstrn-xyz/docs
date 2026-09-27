@@ -16,6 +16,7 @@
   - [inserting and updating](#inserting-and-updating)
 
     - [mass assignment](#mass-assignment)
+    - [lifecycle hooks](#lifecycle-hooks)
     - [first or create](#first-or-create)
     - [increment and decrement](#increment-and-decrement)
   - [deleting models](#deleting-models)
@@ -239,15 +240,48 @@ await user.save();
 
 ### mass assignment
 
-alternatively, you can use the static `create` method to insert a new record and retrieve the instantiated model in a single line. there is no mass assignment protection configuration required; the framework inherently trusts server side model interactions.
+dframework provides mass assignment protection via `fillable` and `guarded` static model properties. by default, all attributes are fillable (`guarded = []`). you may restrict mass assignable attributes by specifying `fillable` as an array of allowed column names, or `guarded` as an array of protected column names (or `['*']` to guard all attributes).
+
+```javascript
+export default class User extends Model {
+  static fillable = ['name', 'email'];
+  // or: static guarded = ['is_admin', 'role'];
+}
+```
+
+when using `create()` or `update()`, only attributes allowed by `fillable` and not protected by `guarded` will be assigned:
 
 ```javascript
 const user = await User.create({
   name: 'tarou',
-  email: 'tarou@example.com'
+  email: 'tarou@dstrn.xyz',
+  is_admin: 1 // not assigned
 });
-// user: User. reloaded from the database after insert, so it carries
-// the generated primary key and any column defaults.
+```
+
+<a name="lifecycle-hooks"></a>
+
+### lifecycle hooks
+
+models support lifecycle hooks executed during record mutations:
+
+- `creating(instance)` / `created(instance)`: fired before and after an insert
+- `updating(instance)` / `updated(instance)`: fired before and after an update
+- `saving(instance)` / `saved(instance)`: fired before and after both inserts and updates
+- `deleting(instance)` / `deleted(instance)`: fired before and after record deletion
+
+returning `false` from a before hook (`creating`, `updating`, `saving`, `deleting`) aborts the operation and prevents database writes.
+
+```javascript
+export default class User extends Model {
+  creating() {
+    if (!this.email) return false;
+  }
+
+  created() {
+    // executed after record is inserted
+  }
+}
 ```
 
 to update a model, you can either mutate its properties and call `save`, or use the `update` method directly.
