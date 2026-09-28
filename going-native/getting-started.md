@@ -155,9 +155,9 @@ press `r` to refresh the native app. press `q` to quit.
 the `build` command compiles a production ready binary for distribution. builds are written to [`native/builds/`](../getting-started/project-structure.md#native-builds) organized by platform.
 
 ```bash
-dstrn build --target ios
-dstrn build --target android
-dstrn build --target desktop
+dstrn build --ios
+dstrn build --android
+dstrn build --desktop
 ```
 
 production builds use the configured `index` url. if you have not set an explicit value, the framework uses your production api endpoint from [`config/app.js`](../getting-started/configuration.md#app-config).

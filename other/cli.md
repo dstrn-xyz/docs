@@ -48,12 +48,12 @@ dstrn help
 
 ### scaffolding
 
-| command                   | description                                          |
-| ------------------------- | ---------------------------------------------------- |
-| `dstrn init <dir>`        | scaffold a minimal project                           |
-| `dstrn serve`             | run the server in the current directory              |
-| `dstrn tinker [code]`     | open an interactive repl shell or execute code directly |
-| `dstrn key:generate`      | generate a random encryption key                     |
+| command               | description                                             |
+| --------------------- | ------------------------------------------------------- |
+| `dstrn init <dir>`    | scaffold a minimal project                              |
+| `dstrn serve`         | run the server in the current directory                 |
+| `dstrn tinker [code]` | open an interactive repl shell or execute code directly |
+| `dstrn key:generate`  | generate a random encryption key                        |
 
 <a name="database"></a>
 
@@ -105,7 +105,7 @@ dstrn help
 | command                             | description                             |
 | ----------------------------------- | --------------------------------------- |
 | `dstrn simulate --<platform>`       | run in a platform simulator             |
-| `dstrn build --target <platform>`   | build a production binary               |
+| `dstrn build --<platform>`          | build a production binary               |
 | `dstrn make:plugin <Name>`          | scaffold a cross platform native plugin |
 | `dstrn native:status`               | display native config and readiness     |
 | `dstrn native:doctor`               | full environment diagnostic             |

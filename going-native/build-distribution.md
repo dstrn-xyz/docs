@@ -96,7 +96,7 @@ desktop builds produce platform specific installers. on macos, the output is a d
 ### ios builds
 
 ```bash
-dstrn build --target ios
+dstrn build --ios
 ```
 
 the build process compiles swift code, generates all required icon sizes, injects your configuration, and archives the application. the output appears in [`native/builds/ios/`](getting-started.md#project-structure).
@@ -110,7 +110,7 @@ for app store submission, build with a distribution certificate and upload using
 ### android builds
 
 ```bash
-dstrn build --target android
+dstrn build --android
 ```
 
 this produces an unsigned apk in [`native/builds/android/`](getting-started.md#project-structure). you can install unsigned builds directly on physical devices with usb debugging enabled:
@@ -126,7 +126,7 @@ for play store submission, sign the apk with your release keystore using the jar
 ### desktop builds
 
 ```bash
-dstrn build --target desktop
+dstrn build --desktop
 ```
 
 the tauri build process compiles rust code and generates installers for your current platform. builds take several minutes on first run as dependencies are compiled.
