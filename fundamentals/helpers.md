@@ -568,6 +568,7 @@ the `Session` facade provides access to the current request's session store.
 | ---------------------------------- | ------------------------------------------------------------------ |
 | `Session.get(key, fallback)`       | retrieve a value from the session                                  |
 | `Session.set(key, value)`          | store a value in the session                                       |
+| `Session.has(key)`                 | determine if a key exists in the session                           |
 | `Session.forget(key)`              | remove a value (or destroy the entire session if no key is passed) |
 | `Session.flash(key, value)`        | store a value for only the next request                            |
 | `Session.permanent(data)`          | store data with a long lived cookie (10 years)                     |
@@ -577,6 +578,7 @@ the `Session` facade provides access to the current request's session store.
 ```javascript
 await Session.set('theme', 'dark');
 const theme = await Session.get('theme', 'light');
+const hasTheme = await Session.has('theme');
 await Session.flash('status', 'saved successfully');
 await Session.regenerate();
 const sid = Session.id();

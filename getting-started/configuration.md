@@ -242,9 +242,13 @@ dframework provides a global `Config` facade available in every context. you ret
 const env = Config.get('app.env');
 const dbName = Config.get('database.name');
 const authModel = Config.get('auth.model', 'User');
+
+if (Config.has('database.host')) {
+  // configuration key is defined
+}
 ```
 
-the second argument to `Config.get` is an optional fallback returned when the key does not exist. if no fallback is provided and the key is missing the method returns `null`.
+the second argument to `Config.get` is an optional fallback returned when the key does not exist. if no fallback is provided and the key is missing the method returns `null`. use `Config.has` to check whether a configuration key is defined.
 
 <a name="accessing-environment-values"></a>
 

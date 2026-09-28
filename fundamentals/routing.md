@@ -349,16 +349,24 @@ csrf verification is enabled by default on all `post`, `put`, and `delete` route
 
 ```javascript
 Route.post('/magic/:token', 'auth.AuthController@magicConsume').csrf(false);
+
+Route.csrf(false, (hooks) => {
+  hooks.post('/stripe/webhook', 'StripeController@handle');
+});
 ```
 
 <a name="shield"></a>
 
 ### shield
 
-when the shield security system is active it validates incoming mutation requests. you can opt a route out by chaining `.shield(false)`.
+when the shield security system is active it validates incoming mutation requests. you can opt a route out by chaining `.shield(false)` or wrapping routes in `Route.shield(false, callback)`.
 
 ```javascript
 Route.post('/magic/:token', 'auth.AuthController@magicConsume').shield(false);
+
+Route.shield(false, (publicApi) => {
+  publicApi.post('/api/external', 'ExternalController@handle');
+});
 ```
 
 <a name="log"></a>
