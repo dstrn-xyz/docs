@@ -27,7 +27,7 @@ dframework provides a database abstraction layer built on top of mysql2. the cor
 
 ## configuration
 
-database configuration is managed through environment variables and resolved via the `Config` facade under the `app.database` namespace. the framework expects `host`, `port`, `user`, `pass`, and `name` values (`port` defaults to `3306` when omitted).
+database configuration is managed through environment variables and resolved via the `Config` facade under the `database` namespace in `config/database.js`. the framework expects `host`, `port`, `user`, `pass`, and `name` values (`port` defaults to `3306` when omitted).
 
 the connection pool is configured automatically when the application boots. by default the framework maintains a pool of up to ten connections, utilizing connection keep alive and strict idle timeout management to prevent memory leaks and dropped connections. the pool is created lazily on the first query (no upfront connection is established during boot), so a misconfigured database does not prevent the process from starting.
 
@@ -50,7 +50,7 @@ the `DB` facade exposes the following methods. the `returns` column reflects the
 | `DB.insert(table, data)` | table name; column/value object | mysql2 `ResultSetHeader` (use `result.insertId`) |
 | `DB.transaction(fn)` | `async (conn) => result` | whatever the `fn` callback resolves to; rethrows after rollback |
 | `DB.databaseExists()` | none | `Promise<boolean>` |
-| `DB.ensureDatabaseExists()` | none | `Promise<void>`; throws a diagnostic error when `app.database.name` is missing |
+| `DB.ensureDatabaseExists()` | none | `Promise<void>`; throws a diagnostic error when `database.name` is missing |
 | `DB.ensureTableExists(table)` | table name | `Promise<void>`; throws when the table is absent (used internally by the query builder) |
 | `DB.close()` | none | `Promise<void>`; ends the pool and clears the shared query cache |
 
@@ -95,7 +95,7 @@ the `ttl` parameter defines the cache lifespan in milliseconds. the default is f
 
 the caching system parses your raw sql to extract referenced table names. when you execute an `INSERT`, `UPDATE`, or `DELETE` against a table, the framework automatically flushes any cached select queries that reference that table. this keeps subsequent reads consistent without manual invalidation.
 
-the cache is LRU and capped at `app.queryCache.maxEntries` entries per request (default `200`). promote hot queries to most recently used simply by reading them; you do not need to evict cold entries manually. see [configuration > performance tuning keys](../getting-started/configuration.md#config-tuning) for details.
+the cache is LRU and capped at `database.queryCache.maxEntries` entries per request (default `200`). promote hot queries to most recently used simply by reading them; you do not need to evict cold entries manually. see [configuration > performance tuning keys](../getting-started/configuration.md#config-tuning) for details.
 
 <a name="return-contract"></a>
 

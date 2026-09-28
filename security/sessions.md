@@ -3,6 +3,7 @@
 - [sessions](#sessions)
   - [introduction](#introduction)
   - [configuration](#configuration)
+    - [session lifetime](#session-lifetime)
   - [interacting with the session](#interacting-with-the-session)
     - [retrieving data](#retrieving-data)
     - [storing data](#storing-data)
@@ -22,7 +23,24 @@ since http driven applications are stateless, sessions provide a way to store in
 
 ## configuration
 
-your application's session driver configuration is determined by the `app.sessionDriver` property. by default, the framework may use memory, database, or stealth drivers to persist session state.
+all session configuration is defined exclusively in `config/session.js`. the session driver is determined by `driver` (`memory`, `database`, or `stealth`), and the session cookie name is defined by `cookie` (defaults to `sid`).
+
+<a name="session-lifetime"></a>
+
+### session lifetime
+
+the session duration determines how long a session remains active before expiration. you can configure the duration in minutes using `lifetime` (defaults to 120 minutes):
+
+```javascript
+// config/session.js
+import { Env } from 'dframework';
+
+export default {
+  driver: Env.value('SESSION_DRIVER', 'memory'),
+  cookie: Env.value('SESSION_COOKIE', 'sid'),
+  lifetime: Env.value('SESSION_LIFETIME', 120),
+};
+```
 
 <a name="interacting-with-the-session"></a>
 

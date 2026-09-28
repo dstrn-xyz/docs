@@ -535,6 +535,21 @@ you can eager load nested relationships using dot notation.
 const users = await User.with('posts.comments').get();
 ```
 
+you can also constrain eager loaded relationships by passing a query builder closure to filter or sort the related models. any ordering applied in the closure is strictly preserved:
+
+```javascript
+// single relation with query constraint closure
+const users = await User.with('posts', (query) => {
+  query.where('published', true).orderBy('views', 'desc');
+}).get();
+
+// multiple relations with constraints using object syntax
+const authors = await Author.with({
+  articles: (query) => query.where('status', 'live').orderBy('created_at', 'desc'),
+  comments: (query) => query.orderBy('id', 'asc')
+}).get();
+```
+
 > [!TIP]
 > during local development, the debug bar automatically detects repeated queries from missing eager loading and displays an interactive modal with the recommended `with()` syntax for the active callsite.
 

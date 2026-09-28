@@ -8,6 +8,9 @@
 
   - [config/app.js](#config-app)
   - [config/auth.js](#config-auth)
+  - [config/database.js](#config-database)
+  - [config/session.js](#config-session)
+  - [config/storage.js](#config-storage)
   - [config/native.js](#config-native)
   - [performance tuning keys](#config-tuning)
 
@@ -84,8 +87,6 @@ export default {
   key: Env.value('APP_KEY'),
 
   shield: Env.value('SHIELD_ENABLED', true),
-  sessionDriver: Env.value('SESSION_DRIVER', 'memory'),
-  sessionCookie: Env.value('SESSION_COOKIE', 'sid'),
 
   objectPoolSize: Env.value('OBJECT_POOL_SIZE', 2000),
 
@@ -103,17 +104,6 @@ export default {
 
   queue: {
     maxWorkers: Env.value('QUEUE_MAX_WORKERS', 4),
-  },
-
-  database: {
-    host: Env.value('DB_HOST', 'localhost'),
-    port: Env.value('DB_PORT', 3306),
-    user: Env.value('DB_USER', 'root'),
-    pass: Env.value('DB_PASS', ''),
-    name: Env.value('DB_NAME', 'dframework'),
-    queryCache: {
-      maxEntries: Env.value('DB_QUERY_CACHE_MAX_ENTRIES', 200),
-    },
   },
 };
 ```
@@ -152,6 +142,74 @@ export default {
 };
 ```
 
+<a name="config-database"></a>
+
+### config/database.js
+
+the database configuration defines connection settings, pool limits, and query cache parameters:
+
+```javascript
+// config/database.js
+import { Env } from 'dframework';
+
+export default {
+  host: Env.value('DB_HOST', 'localhost'),
+  port: Env.value('DB_PORT', 3306),
+  user: Env.value('DB_USER', 'root'),
+  pass: Env.value('DB_PASS', ''),
+  name: Env.value('DB_NAME', 'dframework'),
+  poolSize: Env.value('DB_POOL_SIZE', '10'),
+  maxIdle: Env.value('DB_POOL_MAX_IDLE', '5'),
+  idleTimeout: Env.value('DB_POOL_IDLE_TIMEOUT', '60000'),
+  queryCache: {
+    maxEntries: Env.value('DB_QUERY_CACHE_MAX_ENTRIES', 200),
+  },
+};
+```
+
+<a name="config-session"></a>
+
+### config/session.js
+
+the session configuration defines the driver, cookie name, and lifetime for user sessions:
+
+```javascript
+// config/session.js
+import { Env } from 'dframework';
+
+export default {
+  driver: Env.value('SESSION_DRIVER', 'memory'),
+  cookie: Env.value('SESSION_COOKIE', 'sid'),
+  lifetime: Env.value('SESSION_LIFETIME', 120),
+};
+```
+
+<a name="config-storage"></a>
+
+### config/storage.js
+
+the storage configuration defines the disks available through the storage facade:
+
+```javascript
+// config/storage.js
+import { Env } from 'dframework';
+
+export default {
+  disks: {
+    local: {
+      root: Env.value('STORAGE_ROOT', './storage'),
+    },
+    public: {
+      root: Env.value('STORAGE_PUBLIC', './storage/public'),
+    },
+    secure: {
+      root: './storage/secure',
+      encryptionKey: Env.value('APP_KEY'),
+    },
+  },
+};
+```
+
 <a name="config-native"></a>
 
 ### config/native.js
@@ -182,7 +240,7 @@ dframework provides a global `Config` facade available in every context. you ret
 
 ```javascript
 const env = Config.get('app.env');
-const dbName = Config.get('app.database.name');
+const dbName = Config.get('database.name');
 const authModel = Config.get('auth.model', 'User');
 ```
 

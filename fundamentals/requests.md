@@ -72,6 +72,13 @@ const locale = req.cookies.locale;
 
 // automatically extracts and ensures 'page' is an integer, defaulting to 1
 const page = req.page;
+
+// retrieve unified input across params, body, and query (priority: params > body > query)
+const name = req.input('name', 'guest');
+const role = req.input('role');
+
+// retrieve all merged inputs
+const allInputs = req.all(); // or req.input()
 ```
 
 as detailed in the [controllers documentation](controllers.md), `req.body` and `req.files` are populated automatically for mutating requests (`POST`, `PUT`, `PATCH`, `DELETE`) by the route compiler.

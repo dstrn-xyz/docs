@@ -36,12 +36,12 @@ export default {
 };
 ```
 
-the session cookie name can be customized in `config/app.js` via `sessionCookie` or the `SESSION_COOKIE` environment variable (defaults to `sid`):
+the session cookie name can be customized in `config/session.js` via `cookie` or the `SESSION_COOKIE` environment variable (defaults to `sid`):
 
 ```javascript
-// config/app.js
+// config/session.js
 export default {
-  sessionCookie: Env.value('SESSION_COOKIE', 'sid'),
+  cookie: Env.value('SESSION_COOKIE', 'sid'),
 };
 ```
 

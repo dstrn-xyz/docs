@@ -161,13 +161,13 @@ this creates `console/commands/PruneOldLogs.js` with the correct boilerplate str
 
 ### running commands
 
-you can execute any command on demand using the `run` cli command.
+you can execute any scheduled command on demand using the `run` cli command:
 
 ```bash
 dstrn run PruneOldLogs
 ```
 
-dframework imports the command class from `console/commands/PruneOldLogs.js`, instantiates it, calls `handle()`, and reports the elapsed time on completion.
+when executed manually via `dstrn run`, additional arguments passed after the command name are forwarded as a string array to `handle(args)`. when triggered by the automated scheduler, `handle()` runs with no arguments. dframework reports elapsed execution time upon completion.
 
 <a name="how-the-scheduler-works"></a>
 

@@ -48,31 +48,9 @@ export default {
   locale: Env.value('APP_LOCALE', 'en'),
   key: Env.value('APP_KEY'),
   shield: Env.value('SHIELD_ENABLED', false),
-  session_driver: Env.value('SESSION_DRIVER', 'memory'),
   queue: {
     maxWorkers: Env.value('QUEUE_MAX_WORKERS', 4),
   },
-  database: {
-    host: Env.value('DB_HOST', 'localhost'),
-    port: Env.value('DB_PORT', 3306),
-    user: Env.value('DB_USER', 'root'),
-    pass: Env.value('DB_PASS', ''),
-    name: Env.value('DB_NAME', 'dframework'),
-  },
-  storage: {
-    disks: {
-      local: {
-        root: Env.value('STORAGE_ROOT', './storage'),
-      },
-      public: {
-        root: Env.value('STORAGE_PUBLIC', './storage/public'),
-      },
-      secure: {
-        root: './storage/secure',
-        encryptionKey: Env.value('APP_KEY'),
-      },
-    },
-  }
 };
 ```
 

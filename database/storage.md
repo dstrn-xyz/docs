@@ -22,13 +22,16 @@ dframework provides a file system abstraction through the `Storage` facade. it a
 
 ## configuration
 
-the storage configuration is defined within the `app.storage.disks` configuration namespace. a typical configuration might include a `local` disk for private files, a `public` disk for assets meant to be publicly accessible, and a `secure` disk for encrypted files.
+the storage configuration is defined within the `storage.disks` configuration namespace in `config/storage.js`. a typical configuration might include a `local` disk for private files, a `public` disk for assets meant to be publicly accessible, and a `secure` disk for encrypted files.
 
 ```javascript
-storage: {
+// config/storage.js
+import { Env } from 'dframework';
+
+export default {
   disks: {
     local: {
-      root: './storage/local', // private files, not web accessible
+      root: './storage/local', // private files
     },
     public: {
       root: './storage/public', // web accessible files
@@ -38,7 +41,7 @@ storage: {
       encryptionKey: Env.value('APP_KEY'), // enables automatic aes-256-gcm encryption
     },
   },
-},
+};
 ```
 
 dframework automatically creates a symbolic link from `public/storage` to `storage/public` upon boot, allowing files stored on the `public` disk to be served directly to the browser.

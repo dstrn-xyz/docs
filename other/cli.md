@@ -211,25 +211,36 @@ this creates a timestamped migration file exporting `up` and `down` functions wi
 
 <a name="user-commands"></a>
 
-## user commands
+## scheduled tasks and manual execution
+
+you can create scheduler commands that live in `console/commands`. these tasks run automatically on configured schedules and can also be executed manually on demand using `dstrn run`.
 
 <a name="creating-a-command"></a>
 
 ### creating a command
 
-scaffold a new command file using the `make:command` generator.
+scaffold a new command file using the `make:command` generator:
 
 ```bash
 dstrn make:command PruneExpiredSessions
 ```
 
-this creates `console/commands/PruneExpiredSessions.js`. the generated file exports a class with a `handle()` method where you write the command logic. the command has access to all framework globals.
+this creates `console/commands/PruneExpiredSessions.js`. the generated file exports a default class with an `async handle(args, options)` method where you write the execution logic. the task has direct access to all framework globals (`DB`, `Log`, `Config`, models):
 
 ```javascript
 export default class PruneExpiredSessions {
-  async handle() {
+  async handle(args, options) {
+    const isDryRun = this.hasOption('dry-run');
+    const batchSize = parseInt(this.option('batch', 500), 10);
+    const targetTable = this.argument(0, 'sessions');
+
+    if (isDryRun) {
+      Log.info(`previewing session cleanup for ${targetTable} in batches of ${batchSize}`);
+      return;
+    }
+
     const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    await DB.table('sessions').where('updated_at', '<', cutoff).delete();
+    await DB.table(targetTable).where('updated_at', '<', cutoff).delete();
     Log.info('expired sessions pruned');
   }
 }
@@ -239,15 +250,34 @@ export default class PruneExpiredSessions {
 
 ### running a command
 
-execute any command from `console/commands` using the `run` command.
+you can execute any command on demand from the terminal using the `run` command:
 
 ```bash
 dstrn run PruneExpiredSessions
 ```
 
-dframework imports the command class, instantiates it, calls `handle()`, and reports the elapsed execution time on completion.
+to pass parameters when running manually, include them after the task name. options and flags can be passed using either `--key value` or `--key=value` format, alongside positional arguments:
 
-commands are also used by the scheduler. any command referenced in `console/Schedule.js` is resolved from the same `console/commands` directory.
+```bash
+dstrn run PruneExpiredSessions sessions --batch=1000 --dry-run
+# or
+dstrn run PruneExpiredSessions sessions --batch 1000 --dry-run
+```
+
+dframework automatically parses the cli arguments and injects helper methods onto the command instance:
+
+| method / property                | description                                                          |
+| -------------------------------- | -------------------------------------------------------------------- |
+| `this.option('name', fallback)`  | retrieves an option value from `--name value` or `--name=value`      |
+| `this.hasOption('name')`         | returns boolean true if a flag like `--dry-run` was passed           |
+| `this.argument(index, fallback)` | retrieves a positional argument by zero-based index                  |
+| `this.options`                   | dictionary containing all parsed options and flags                   |
+| `this.arguments`                 | array containing all positional arguments                            |
+| `options` (2nd parameter)        | the parsed options object passed directly to `handle(args, options)` |
+
+dframework imports the class from `console/commands/PruneExpiredSessions.js`, instantiates it, calls `handle(args, options)`, and reports the elapsed execution time on completion.
+
+tasks in `console/commands` are also used by the scheduler. when scheduled in `console/Schedule.js`, the scheduler calls `handle([], {})` where `this.option()` safely returns the configured fallback values.
 
 <a name="logs-management"></a>
 
