@@ -51,6 +51,35 @@ dstrn make:middleware AuthMiddleware
 
 every middleware method receives the `req` object and a `next` closure. you must call `next()` to pass control to the next middleware in the execution chain. if you do not call `next()` the request halts at that middleware and the framework assumes you have handled the response.
 
+### passing data to controllers and views
+
+you can pass data downstream to both controllers and views by providing an object payload to `next()`, or by chaining `.with()`:
+
+```javascript
+export default class AuthMiddleware {
+  async requireAuth(req, next) {
+    if (!Auth.check()) {
+      return redirect('/login', true);
+    }
+
+    const devices = await Device.where({ user_id: Auth.user().id, revoked: false }).get();
+
+    // passes data to req.devices and merges it into all view templates
+    return next({ devices });
+  }
+}
+```
+
+you can also use the chainable `.with()` syntax:
+
+```javascript
+return next().with({ devices, currentDevice });
+```
+
+any data passed via `next(data)` or `next.with(data)` is automatically:
+- merged onto the `req` object for downstream controllers (accessible as `req.devices`)
+- merged into the view context for view templates (accessible directly as `devices` in `.d` templates)
+
 some middleware may need access to the response object. you can declare `res` as the second argument and `next` as the third.
 
 ```javascript
