@@ -42,8 +42,6 @@ the simplest route accepts a url path and a controller string pointing to the me
 
 ```javascript
 // routes/web.js
-import { Route } from 'dframework';
-
 Route.get('/dashboard', 'app.IndexController@dashboard');
 Route.post('/register', 'auth.AuthController@register');
 Route.put('/profile', 'app.UserProfileController@update');

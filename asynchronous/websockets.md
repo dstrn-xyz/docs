@@ -56,10 +56,6 @@ incoming messages are expected as json objects with an `event` property. the soc
 
 socket events are defined in your route files, typically `routes/wire.js`. you register events using the global `Socket` facade, which delegates to the underlying `SocketRouter` instance.
 
-```javascript
-import { Socket } from 'dframework';
-```
-
 <a name="event-handlers"></a>
 
 ### event handlers

@@ -93,8 +93,6 @@ export default class RegistrationController {
 the `Job` facade is available globally. you can dispatch jobs from controllers, middleware, socket event handlers, other jobs, scheduled commands, or any file that imports it.
 
 ```javascript
-import { Job } from 'dframework';
-
 Job.dispatch('SyncInventoryJob', { warehouseId: 3 });
 ```
 
