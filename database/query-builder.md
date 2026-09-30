@@ -48,6 +48,8 @@
 
   - [deletes](#deletes)
 
+  - [cloning queries](#cloning-queries)
+
   - [auto hashing](#auto-hashing)
 
 <a name="introduction"></a>
@@ -89,7 +91,9 @@ each of these returns the same `TableQuery` instance for chaining.
 | `whereExists(callback)` / `whereNotExists(callback)`           | exists / not exists subquery check                                     |
 | `orWhereExists(callback)` / `orWhereNotExists(callback)`       | `or` forms of exists checks                                            |
 | `whereNull(column)` / `whereNotNull(column)`                   | null check                                                             |
+| `orWhereNull(column)` / `orWhereNotNull(column)`               | `or` forms of null checks                                              |
 | `whereBetween(column, [min, max])` / `whereNotBetween(...)`    | range check, requires exactly two values                               |
+| `orWhereBetween(...)` / `orWhereNotBetween(...)`               | `or` forms of range checks                                             |
 | `whereColumn(column, operator?, otherColumn)`                  | compare two columns in the same row                                    |
 | `whereRaw(sql, bindings?)`                                     | raw sql where condition with optional bindings                         |
 | `orWhereRaw(sql, bindings?)`                                   | raw sql or where condition with optional bindings                      |
@@ -103,10 +107,13 @@ each of these returns the same `TableQuery` instance for chaining.
 | `joinRaw(expression, bindings?)`                               | raw join clause with parameter bindings                                |
 | `groupBy(...columns)`                                          | grouping columns                                                       |
 | `having(column, operator?, value?)`                            | having condition on grouped results                                    |
+| `orHaving(column, operator?, value?)`                          | `or` form of having condition on grouped results                       |
 | `havingRaw(sql, bindings?)`                                    | raw sql having condition with optional bindings                        |
+| `orHavingRaw(sql, bindings?)`                                  | raw sql or having condition with optional bindings                     |
 | `orderBy(column, direction='ASC')`                             | sort, direction is `'ASC'` or `'DESC'`                                 |
 | `orderByRaw(sql)`                                              | raw sql order by expression                                            |
 | `limit(n)` / `offset(n)`                                       | numeric row cap and skip count                                         |
+| `clone()`                                                      | produces an isolated clone of the query builder instance               |
 | `setHashFields(fields)`                                        | override which columns are autohashed on this builder                  |
 
 ### terminal methods
@@ -375,18 +382,24 @@ const customersWithOrders = await DB.table('users')
 // compiles to: WHERE `id` IN (SELECT `user_id` FROM `orders` WHERE `status` = ?)
 ```
 
-**whereNull / whereNotNull**
+**whereNull / whereNotNull / orWhereNull / orWhereNotNull**
 verifies that the value of a column is or is not null.
 
 ```javascript
 await DB.table('users').whereNull('deleted_at').get();
+await DB.table('users').where('status', 'active').orWhereNull('archived_at').get();
+await DB.table('users').whereNotNull('verified_at').orWhereNotNull('confirmed_at').get();
 ```
 
-**whereBetween / whereNotBetween**
+**whereBetween / whereNotBetween / orWhereBetween / orWhereNotBetween**
 verifies that a column's value lies within two bounds. you must provide an array with exactly two values. both values must be defined (use `null` rather than `undefined` to keep a bound as sql null).
 
 ```javascript
 await DB.table('users').whereBetween('votes', [1, 100]).get();
+await DB.table('orders')
+  .whereBetween('total', [50, 200])
+  .orWhereBetween('total', [500, 1000])
+  .get();
 ```
 
 **whereRaw / orWhereRaw**
@@ -573,17 +586,19 @@ await DB.table('users')
   .get();
 ```
 
-the `having` and `havingRaw` methods filter grouped results:
+the `having` and `havingRaw` methods filter grouped results. use `orHaving` and `orHavingRaw` for logical or conditions:
 
 ```javascript
 await DB.table('orders')
   .groupBy('account_id')
   .having('total', '>', 500)
+  .orHaving('item_count', '>=', 10)
   .get();
 
 await DB.table('orders')
   .groupBy('account_id')
   .havingRaw('SUM(price) > ?', [2500])
+  .orHavingRaw('COUNT(id) > ?', [50])
   .get();
 ```
 
@@ -700,6 +715,22 @@ const result = await DB.table('users')
 
 > [!NOTE]
 > `update()` and `delete()` also support `.join()` clauses. note that mysql prohibits combining `LIMIT` with multi table `JOIN` operations in `UPDATE` or `DELETE` statements; doing so will throw an error.
+
+<a name="cloning-queries"></a>
+
+## cloning queries
+
+the `clone` method creates an independent deep copy of the query builder instance. the cloned query inherits all select columns, where clauses, join definitions, group by fields, having clauses, order criteria, limit/offset parameters, bindings, and hash configurations. modifying the cloned instance does not affect the original query.
+
+```javascript
+const activeUsers = DB.table('users').where('status', 'active');
+
+// branch query to compute total count without altering base query
+const totalActive = await activeUsers.clone().count();
+
+// branch query to fetch a paginated slice
+const pageResults = await activeUsers.clone().limit(20).offset(0).get();
+```
 
 <a name="auto-hashing"></a>
 

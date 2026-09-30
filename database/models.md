@@ -7,15 +7,18 @@
     - [table names](#table-names)
     - [primary keys](#primary-keys)
     - [attribute casting](#attribute-casting)
+    - [inspecting casts](#inspecting-casts)
   - [retrieving models](#retrieving-models)
 
     - [methods overview](#methods-overview)
     - [magic finders](#magic-finders)
     - [pagination](#pagination)
     - [latest rows](#latest-rows)
+    - [cloning queries](#cloning-queries)
   - [inserting and updating](#inserting-and-updating)
 
     - [mass assignment](#mass-assignment)
+    - [mass assignment helpers](#mass-assignment-helpers)
     - [lifecycle hooks](#lifecycle-hooks)
     - [first or create](#first-or-create)
     - [increment and decrement](#increment-and-decrement)
@@ -128,6 +131,17 @@ await user.save();
 
 subclasses automatically inherit and merge static `casts` from parent model classes up the prototype chain.
 
+<a name="inspecting-casts"></a>
+
+#### inspecting casts
+
+to inspect the resolved cast definitions for a model, call `getCasts()` on the model class or instance. this method walks the prototype inheritance chain and merges all parent casts:
+
+```javascript
+const casts = User.getCasts();
+// casts: { metadata: 'json', tags: 'array', is_active: 'boolean', ... }
+```
+
 <a name="retrieving-models"></a>
 
 ## retrieving models
@@ -165,6 +179,10 @@ every method that runs a query returns a `Promise`. the result column lists what
 | `Model.firstOrCreate(attributes, values?)` | attributes object; optional extra values | `Promise<Model>` (existing or newly created) |
 | `Model.updateOrCreate(attributes, values?)` | attributes object; optional extra values | `Promise<Model>` (updated or newly created) |
 | `Model.create(data)` | column/value object | `Promise<Model>` (reloaded from the database using the primary key) |
+| `Model.isFillable(key)` | attribute name string | `boolean` (true if attribute is mass assignable) |
+| `Model.filterAttributes(data)` | column/value object | `object` (shallow copy containing only fillable attributes) |
+| `Model.getCasts()` | none | `object` (merged cast definitions resolved across inheritance chain) |
+| `builder.clone()` | none | `ModelQueryBuilder` (isolated copy preserving relations and constraints) |
 | `instance.save(newData?)` | optional object to merge before saving | `Promise<void>` |
 | `instance.update(data)` | column/value object | `Promise<void>` |
 | `instance.increment(column, amount?, extra?)` | column name, optional amount (default 1), optional extra columns object | `Promise<object>` (mutates instance attribute in place and executes increment UPDATE) |
@@ -221,6 +239,22 @@ const recentlyPublished = await Post.latest(10, 'published_at');
 
 calling `latest()` with no arguments returns the single most recent instance (or null). passing a numeric `count` returns that many model instances as an array. the column defaults to `created_at` but may be overridden with the second argument.
 
+<a name="cloning-queries"></a>
+
+### cloning queries
+
+calling `clone()` on a `ModelQueryBuilder` creates an independent copy of the query chain. the cloned instance retains the base table query, active constraint clauses, eager load definitions (`with`), and relationship metadata:
+
+```javascript
+const base = User.where('status', 'active').with('profile');
+
+// branch query for admins
+const admins = await base.clone().where('role', 'admin').get();
+
+// branch query for editors
+const editors = await base.clone().where('role', 'editor').get();
+```
+
 <a name="inserting-and-updating"></a>
 
 ## inserting and updating
@@ -257,6 +291,23 @@ const user = await User.create({
   email: 'tarou@dstrn.xyz',
   is_admin: 1 // not assigned
 });
+```
+
+<a name="mass-assignment-helpers"></a>
+
+#### mass assignment helpers
+
+you can check whether a specific attribute key is mass assignable or filter arbitrary input data using the `isFillable` and `filterAttributes` static methods:
+
+```javascript
+// check if a specific key is fillable
+User.isFillable('name'); // true
+User.isFillable('is_admin'); // false
+
+// filter input data to only fillable attributes
+const payload = { name: 'tarou', email: 'tarou@example.com', is_admin: 1 };
+const safeAttributes = User.filterAttributes(payload);
+// safeAttributes: { name: 'tarou', email: 'tarou@example.com' }
 ```
 
 <a name="lifecycle-hooks"></a>
