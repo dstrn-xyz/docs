@@ -102,6 +102,8 @@ the view engine provides shortcuts for common javascript control structures.
 @endfor
 ```
 
+inside `@foreach` and `@forelse` loops, the loop variables `$index` (zero based index), `$first` (boolean true on first iteration), and `$last` (boolean true on final iteration) are automatically available.
+
 the `@forelse` directive is a convenient way to loop over arrays with a fallback if the array is empty.
 
 ```html
