@@ -122,6 +122,8 @@ scheduler.command('PollExternalApi').every(45000);
 scheduler.command('RotateApiKeys').every(12 * 60 * 60 * 1000);
 ```
 
+intervals cannot exceed 2147483647 milliseconds (approximately 24.8 days) due to node 32 bit integer timeout limits. for intervals exceeding this duration (such as monthly or quarterly jobs), configure a system cron job to run the command on demand using `dstrn run <command>`.
+
 <a name="creating-commands"></a>
 
 ## creating commands
