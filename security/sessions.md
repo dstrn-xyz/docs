@@ -70,9 +70,10 @@ to store data in the session, use the `set` method.
 await Session.set('key', 'value');
 ```
 
-if you need to store data permanently (using a ten year long lived cookie), use the `permanent` method.
+if you need to store data permanently (using a ten year long lived cookie), use the `permanent` method. you may pass key and value pairs or an object.
 
 ```javascript
+await Session.permanent('role', 'admin');
 await Session.permanent({ role: 'admin', accepted_terms: true });
 ```
 

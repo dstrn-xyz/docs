@@ -95,6 +95,7 @@ export default {
     maxWorkers: Env.value('QUEUE_MAX_WORKERS', 4),
   },
   database: {
+    driver: Env.value('DB_DRIVER', 'mysql'),
     host: Env.value('DB_HOST', 'localhost'),
     port: Env.value('DB_PORT', 3306),
     user: Env.value('DB_USER', 'root'),

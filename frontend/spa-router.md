@@ -21,6 +21,7 @@
     - [html responses](#html-responses)
     - [redirect handling](#redirect-handling)
     - [force reload](#force-reload)
+    - [controller response lifecycle](#controller-response-lifecycle)
     - [callbacks](#callbacks)
     - [programmatic submission](#programmatic-submission)
   - [script execution](#script-execution)
@@ -337,6 +338,23 @@ the `force-reload` attribute tells the form to trigger a full page reload under 
 ```
 
 the valid values are `true` (or empty string, which is equivalent), `all`, `success`, and `error`.
+
+<a name="controller-response-lifecycle"></a>
+
+### controller response lifecycle
+
+the following table details how `<d-form>` processes each server controller response, and how `force-reload` alters the default handling:
+
+| controller return                  | status / type                             | default behavior (no force-reload)                                                                                                   | behavior with force-reload                                                                    |
+| :--------------------------------- | :---------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
+| `return json({ data })`            | `200` (`application/json`)                | parses payload, dispatches `d-success` and `d-response`, executes `callback` if defined, leaves form on page without reload          | reloads page if set to `force-reload`, `all`, or `success` (ignored on `error`)               |
+| `return json({ redirect })`        | `200` (`application/json`)                | navigates via `dSPA.navigate(redirect)` without reload (executes full page redirect if `force: true` or `X-Redirect-Force` is set)   | navigates via spa router (or hard redirect if `force: true`)                                  |
+| `return json().withErrors(errors)` | `422` (`application/json`)                | marks inputs with `.error`, injects `.error-message` below fields (or `.error-banner` at top), dispatches `d-error` and `d-response` | reloads page if set to `force-reload`, `all`, or `error` (retains inline errors on `success`) |
+| `validate()` failure               | `422` (`application/json`)                | renders field validation errors inline, dispatches `d-error` and `d-response`, keeps form state intact                               | reloads page if set to `force-reload`, `all`, or `error` (retains inline errors on `success`) |
+| `return abort(status, message)`    | `4xx` or `5xx` (`application/json`)       | displays `.error-banner` at top of form, dispatches `d-error` and `d-response`, reenables form inputs                                | reloads page if set to `force-reload`, `all`, or `error` (displays banner on `success`)       |
+| `return render(view, data)`        | `200` (`text/html`)                       | swaps returned markup into target selector (default `body`), runs scripts, dispatches `d-success` (updates url if `navigate` is set) | reloads page if set to `force-reload`, `all`, or `success` (proceeds with swap on `error`)    |
+| unexpected server error            | `500` (`text/html` or `application/json`) | renders full 500 error page via `document.write` for html (displays error banner for json)                                           | displays 500 error page for html (reloads page for json if set to `all` or `error`)           |
+| unexpected 404 error               | `404` (`text/html` or `application/json`) | swaps target with 404 error template for html (displays error banner for json)                                                       | reloads page if set to `all` or `error` (preserves view on `success`)                         |
 
 <a name="callbacks"></a>
 

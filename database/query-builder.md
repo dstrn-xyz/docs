@@ -115,29 +115,33 @@ each of these returns the same `TableQuery` instance for chaining.
 | `limit(n)` / `offset(n)`                                       | numeric row cap and skip count                                         |
 | `clone()`                                                      | produces an isolated clone of the query builder instance               |
 | `setHashFields(fields)`                                        | override which columns are autohashed on this builder                  |
+| `toSql()`                                                      | returns the compiled select sql string without executing               |
 
 ### terminal methods
 
 these return a promise and execute the underlying query.
 
-| method                                       | arguments                                                                                                    | returns                                                                                                                                                  |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `get()`                                      | none                                                                                                         | `Promise<Array<object>>` of matching rows; `[]` when none match                                                                                          |
-| `first(where?)`                              | optional `{ column: value }` object                                                                          | `Promise<object\|null>` (first matching row, or null)                                                                                                    |
-| `latest(count?, column?)`                    | `null` or number; optional column name                                                                       | `null` count: `Promise<object\|null>`; numeric count: `Promise<Array<object>>`                                                                           |
-| `count(column?)`                             | optional column name (defaults to `*`)                                                                       | `Promise<number>` (matching row count; group by returns the number of groups)                                                                            |
-| `sum(column)`                                | column name                                                                                                  | `Promise<number>` (sum of values; 0 when no rows)                                                                                                        |
-| `avg(column)`                                | column name                                                                                                  | `Promise<number\|null>` (average value; null when no rows)                                                                                               |
-| `min(column)`                                | column name                                                                                                  | `Promise<any>` (minimum value; null when no rows)                                                                                                        |
-| `max(column)`                                | column name                                                                                                  | `Promise<any>` (maximum value; null when no rows)                                                                                                        |
-| `pluck(column)`                              | column name                                                                                                  | `Promise<Array>` of that column's values across the matching rows (empty `[]` when none)                                                                 |
-| `getWithCount()`                             | none                                                                                                         | `Promise<{ rows: Array<object>, total: number }>`; rows have the internal `_total_count` field stripped                                                  |
-| `insert(data)`                               | row object, or array of row objects                                                                          | single row: mysql2 `ResultSetHeader` (`insertId`, `affectedRows`); array of rows: `Array<number>` of generated ids (empty `[]` for an empty input array) |
-| `update(data, where?)`                       | column/value object; optional where object                                                                   | `Promise<object>` mysql2 `ResultSetHeader`                                                                                                               |
-| `increment(column, amount?, extra?, where?)` | column name; optional numeric amount (default 1); optional extra column/values object; optional where object | `Promise<object>` mysql2 `ResultSetHeader`                                                                                                               |
-| `decrement(column, amount?, extra?, where?)` | column name; optional numeric amount (default 1); optional extra column/values object; optional where object | `Promise<object>` mysql2 `ResultSetHeader`                                                                                                               |
-| `save(data)`                                 | alias for `update(data)`                                                                                     | `Promise<object>` mysql2 `ResultSetHeader`                                                                                                               |
-| `delete(where?)`                             | optional where object (or chained `where`)                                                                   | `Promise<object>` mysql2 `ResultSetHeader`; throws when no where is set                                                                                  |
+| method                                       | arguments                                                                                                    | returns                                                                                                                     |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `get()`                                      | none                                                                                                         | `Promise<Array<object>>` of matching rows; `[]` when none match                                                             |
+| `first(where?)`                              | optional `{ column: value }` object                                                                          | `Promise<object\|null>` (first matching row, or null)                                                                       |
+| `firstWhere(col, op?, val?)`                 | column name, operator/value, optional value                                                                  | `Promise<object\|null>` (first matching row, or null)                                                                       |
+| `latest(count?, column?)`                    | `null` or number; optional column name                                                                       | `null` count: `Promise<object\|null>`; numeric count: `Promise<Array<object>>`                                              |
+| `exists()`                                   | none                                                                                                         | `Promise<boolean>` whether any matching rows exist                                                                          |
+| `doesntExist()`                              | none                                                                                                         | `Promise<boolean>` whether no matching rows exist                                                                           |
+| `count(column?)`                             | optional column name (defaults to `*`)                                                                       | `Promise<number>` (matching row count; group by returns the number of groups)                                               |
+| `sum(column)`                                | column name                                                                                                  | `Promise<number>` (sum of values; 0 when no rows)                                                                           |
+| `avg(column)`                                | column name                                                                                                  | `Promise<number\|null>` (average value; null when no rows)                                                                  |
+| `min(column)`                                | column name                                                                                                  | `Promise<any>` (minimum value; null when no rows)                                                                           |
+| `max(column)`                                | column name                                                                                                  | `Promise<any>` (maximum value; null when no rows)                                                                           |
+| `pluck(column)`                              | column name                                                                                                  | `Promise<Array>` of that column's values across the matching rows (empty `[]` when none)                                    |
+| `getWithCount()`                             | none                                                                                                         | `Promise<{ rows: Array<object>, total: number }>`; rows have the internal `_total_count` field stripped                     |
+| `insert(data)`                               | row object, or array of row objects                                                                          | single row: `{ insertId, affectedRows, changedRows }`; array of rows: bulk insert header with `affectedRows` and `insertId` |
+| `update(data, where?)`                       | column/value object; optional where object                                                                   | `Promise<object>` `{ affectedRows, changedRows, insertId }`                                                                 |
+| `increment(column, amount?, extra?, where?)` | column name; optional numeric amount (default 1); optional extra column/values object; optional where object | `Promise<object>` `{ affectedRows, changedRows, insertId }`                                                                 |
+| `decrement(column, amount?, extra?, where?)` | column name; optional numeric amount (default 1); optional extra column/values object; optional where object | `Promise<object>` `{ affectedRows, changedRows, insertId }`                                                                 |
+| `save(data)`                                 | alias for `update(data)`                                                                                     | `Promise<object>` `{ affectedRows, changedRows, insertId }`                                                                 |
+| `delete(where?)`                             | optional where object (or chained `where`)                                                                   | `Promise<object>` `{ affectedRows, changedRows, insertId }`; throws when no where is set                                    |
 
 the builder itself is thenable and async iterable, so you can `await DB.table('users')` or `for await (const row of DB.table('users'))` directly. both forms execute the select and consume the same `Array<object>` shape.
 
@@ -630,7 +634,7 @@ const result = await DB.table('users').insert({
   email: 'tarou@example.com',
   name: 'tarou'
 });
-// result: mysql2 ResultSetHeader (single row)
+// result: { insertId, affectedRows, changedRows }
 // use result.insertId to read the assigned auto increment id.
 ```
 
@@ -638,14 +642,14 @@ const result = await DB.table('users').insert({
 
 ### bulk inserts
 
-if you pass an array of objects to the `insert` method, the query builder will execute a single, highly optimized bulk insert statement and return the database driver's `ResultSetHeader`.
+if you pass an array of objects to the `insert` method, the query builder will execute a single, highly optimized bulk insert statement and return the normalized mutation header.
 
 ```javascript
 const result = await DB.table('users').insert([
   { email: 'tarou@example.com', name: 'tarou' },
   { email: 'satou@example.com', name: 'satou' }
 ]);
-// result: mysql2 ResultSetHeader
+// result: { affectedRows, changedRows, insertId }
 // result.affectedRows indicates total inserted rows.
 // result.insertId indicates the first inserted auto increment id.
 ```
@@ -660,7 +664,7 @@ the `update` method updates existing records. it accepts an object containing th
 const result = await DB.table('users')
   .where('id', 1)
   .update({ votes: 1 });
-// result: mysql2 ResultSetHeader
+// result: { affectedRows, changedRows, insertId: 0 }
 // result.affectedRows tells you how many rows actually changed.
 ```
 
@@ -673,7 +677,7 @@ await DB.table('users')
   .update({ status: 'processing' });
 ```
 
-the `save` method acts as an alias for `update` and returns the same `ResultSetHeader`.
+the `save` method acts as an alias for `update` and returns the same mutation header.
 
 <a name="increment-and-decrement"></a>
 
@@ -709,12 +713,12 @@ const result = await DB.table('users')
   .where('status', 'inactive')
   .limit(500)
   .delete();
-// result: mysql2 ResultSetHeader
+// result: { affectedRows, changedRows, insertId: 0 }
 // result.affectedRows tells you how many rows were removed.
 ```
 
 > [!NOTE]
-> `update()` and `delete()` also support `.join()` clauses. note that mysql prohibits combining `LIMIT` with multi table `JOIN` operations in `UPDATE` or `DELETE` statements; doing so will throw an error.
+> `update()` and `delete()` also support `.join()` clauses. note that mysql prohibits combining `LIMIT` with multi table `JOIN` operations in `UPDATE` or `DELETE` statements (doing so throws a diagnostic error). on postgresql and sqlite, the grammar compiler automatically compiles mutations that combine limits or joins into subquery `IN` expressions against the table's primary key (`WHERE id IN (SELECT id FROM ...)`), ensuring consistent behavior across all database engines.
 
 <a name="cloning-queries"></a>
 
@@ -744,7 +748,7 @@ you can declare application wide auto hashed fields in `config/app.js` using `ap
 await DB.table('tokens')
   .setHashFields(['api_key'])
   .insert({ api_key: 'plain-text-key' });
-// returns the single row insert result (mysql2 ResultSetHeader).
+// returns the single row insert result ({ insertId, affectedRows, changedRows }).
 ```
 
 if you need to force hashing on an arbitrary value without relying on column names, the framework provides `hash` and `fastHash` wrappers exported from the `QueryBuilder` module.

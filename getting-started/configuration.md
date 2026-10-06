@@ -48,6 +48,7 @@ SESSION_DRIVER=memory
 QUEUE_MAX_WORKERS=4
 OPTIMIZE_CSS=true
 
+DB_DRIVER=mysql
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=root
@@ -146,21 +147,22 @@ export default {
 
 ### config/database.js
 
-the database configuration defines connection settings, pool limits, and query cache parameters:
+the database configuration defines the dialect driver, connection credentials, pool limits, and query cache parameters:
 
 ```javascript
 // config/database.js
 import { Env } from 'dframework';
 
 export default {
+  driver: Env.value('DB_DRIVER', 'mysql'),
   host: Env.value('DB_HOST', 'localhost'),
   port: Env.value('DB_PORT', 3306),
   user: Env.value('DB_USER', 'root'),
   pass: Env.value('DB_PASS', ''),
   name: Env.value('DB_NAME', 'dframework'),
-  poolSize: Env.value('DB_POOL_SIZE', '10'),
-  maxIdle: Env.value('DB_POOL_MAX_IDLE', '5'),
-  idleTimeout: Env.value('DB_POOL_IDLE_TIMEOUT', '60000'),
+  connectionLimit: Env.value('DB_CONNECTION_LIMIT', 10),
+  maxIdle: Env.value('DB_MAX_IDLE', 5),
+  idleTimeout: Env.value('DB_IDLE_TIMEOUT', 60000),
   queryCache: {
     maxEntries: Env.value('DB_QUERY_CACHE_MAX_ENTRIES', 200),
   },

@@ -105,14 +105,14 @@ export default class User extends Model {
 
 #### supported cast types
 
-| cast type | description |
-| :--- | :--- |
-| `json`, `array`, `object` | parses stringified json into javascript objects or arrays on hydration and stringifies objects or arrays during `save()` and `create()`. |
-| `boolean`, `bool` | casts values to boolean (`true` or `false`), handling `'1'`, `'0'`, `'true'`, `'false'`, `1`, `0`. |
-| `int`, `integer` | casts values to integer using `parseInt()`. |
-| `float`, `double`, `real` | casts values to floating point numbers using `parseFloat()`. |
-| `date`, `datetime`, `timestamp` | casts values to `Date` objects on hydration and formats to standard sql timestamp format on save. |
-| `string` | casts values to primitive strings. |
+| cast type                       | description                                                                                                                              |
+| :------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| `json`, `array`, `object`       | parses stringified json into javascript objects or arrays on hydration and stringifies objects or arrays during `save()` and `create()`. |
+| `boolean`, `bool`               | casts values to boolean (`true` or `false`), handling `'1'`, `'0'`, `'true'`, `'false'`, `1`, `0`.                                       |
+| `int`, `integer`                | casts values to integer using `parseInt()`.                                                                                              |
+| `float`, `double`, `real`       | casts values to floating point numbers using `parseFloat()`.                                                                             |
+| `date`, `datetime`, `timestamp` | casts values to `Date` objects on hydration and formats to standard sql timestamp format on save.                                        |
+| `string`                        | casts values to primitive strings.                                                                                                       |
 
 #### mutating json attributes in place
 
@@ -166,31 +166,34 @@ const user = await User.find(1);
 
 every method that runs a query returns a `Promise`. the result column lists what that promise resolves with, including null and empty array semantics.
 
-| method | arguments | returns |
-| --- | --- | --- |
-| `Model.all()` | none | `Promise<Model[]>` (hydrated instances, `[]` when no rows) |
-| `Model.find(id)` | primary key value, or `{ pk1, pk2 }` for composite keys | `Promise<Model\|null>` |
-| `Model.first(where?)` | optional `{ column: value }` object | `Promise<Model\|null>` |
-| `Model.latest(count?, column?)` | `null` or number; optional column name | `null` count: `Promise<Model\|null>`; numeric count: `Promise<Model[]>` |
-| `Model.where(...)` | column/operator/value, or object | `ModelQueryBuilder` (chainable, thenable, async iterable) |
-| `Model.orderBy(...)` / `groupBy(...)` / `limit(...)` / `offset(...)` / `distinct(...)` | chain values | `ModelQueryBuilder` (chainable) |
-| `Model.with(...relations)` | dot notation relation names | `ModelQueryBuilder` (chainable) |
-| `Model.paginate(perPage, pageName?)` | rows per page (default 10), optional page param name | `Promise<Paginator>` |
-| `Model.firstOrCreate(attributes, values?)` | attributes object; optional extra values | `Promise<Model>` (existing or newly created) |
-| `Model.updateOrCreate(attributes, values?)` | attributes object; optional extra values | `Promise<Model>` (updated or newly created) |
-| `Model.create(data)` | column/value object | `Promise<Model>` (reloaded from the database using the primary key) |
-| `Model.isFillable(key)` | attribute name string | `boolean` (true if attribute is mass assignable) |
-| `Model.filterAttributes(data)` | column/value object | `object` (shallow copy containing only fillable attributes) |
-| `Model.getCasts()` | none | `object` (merged cast definitions resolved across inheritance chain) |
-| `builder.clone()` | none | `ModelQueryBuilder` (isolated copy preserving relations and constraints) |
-| `instance.save(newData?)` | optional object to merge before saving | `Promise<void>` |
-| `instance.update(data)` | column/value object | `Promise<void>` |
-| `instance.increment(column, amount?, extra?)` | column name, optional amount (default 1), optional extra columns object | `Promise<object>` (mutates instance attribute in place and executes increment UPDATE) |
-| `instance.decrement(column, amount?, extra?)` | column name, optional amount (default 1), optional extra columns object | `Promise<object>` (mutates instance attribute in place and executes decrement UPDATE) |
-| `instance.delete()` | none | `Promise<void>` |
-| `instance.hash(field)` | attribute name on the instance | `Promise<void>` (mutates the instance in place) |
-| `instance.load(...relations)` | relation names | `Promise<Model>` (the same instance, with relations populated) |
-| `instance.toJSON()` | none | plain object with hidden keys removed and relations serialized |
+| method                                                                                 | arguments                                                               | returns                                                                               |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `Model.all()`                                                                          | none                                                                    | `Promise<Model[]>` (hydrated instances, `[]` when no rows)                            |
+| `Model.query()`                                                                        | none                                                                    | `ModelQueryBuilder` (fresh query builder instance)                                    |
+| `Model.find(id)`                                                                       | primary key value, or `{ pk1, pk2 }` for composite keys                 | `Promise<Model\|null>`                                                                |
+| `Model.first(where?)`                                                                  | optional `{ column: value }` object                                     | `Promise<Model\|null>`                                                                |
+| `Model.firstWhere(col, op?, val?)`                                                     | column name, operator/value, optional value                             | `Promise<Model\|null>`                                                                |
+| `Model.latest(count?, column?)`                                                        | `null` or number; optional column name                                  | `null` count: `Promise<Model\|null>`; numeric count: `Promise<Model[]>`               |
+| `Model.where(...)`                                                                     | column/operator/value, or object                                        | `ModelQueryBuilder` (chainable, thenable, async iterable)                             |
+| `Model.orderBy(...)` / `groupBy(...)` / `limit(...)` / `offset(...)` / `distinct(...)` | chain values                                                            | `ModelQueryBuilder` (chainable)                                                       |
+| `Model.with(...relations)`                                                             | dot notation relation names                                             | `ModelQueryBuilder` (chainable)                                                       |
+| `Model.paginate(perPage, pageName?)`                                                   | rows per page (default 10), optional page param name                    | `Promise<Paginator>`                                                                  |
+| `Model.firstOrCreate(attributes, values?)`                                             | attributes object; optional extra values                                | `Promise<Model>` (existing or newly created)                                          |
+| `Model.updateOrCreate(attributes, values?)`                                            | attributes object; optional extra values                                | `Promise<Model>` (updated or newly created)                                           |
+| `Model.create(data)`                                                                   | column/value object                                                     | `Promise<Model>` (reloaded from the database using the primary key)                   |
+| `Model.isFillable(key)`                                                                | attribute name string                                                   | `boolean` (true if attribute is mass assignable)                                      |
+| `Model.filterAttributes(data)`                                                         | column/value object                                                     | `object` (shallow copy containing only fillable attributes)                           |
+| `Model.getCasts()`                                                                     | none                                                                    | `object` (merged cast definitions resolved across inheritance chain)                  |
+| `builder.clone()`                                                                      | none                                                                    | `ModelQueryBuilder` (isolated copy preserving relations and constraints)              |
+| `instance.save(newData?)`                                                              | optional object to merge before saving                                  | `Promise<void>`                                                                       |
+| `instance.update(data)`                                                                | column/value object                                                     | `Promise<void>`                                                                       |
+| `instance.touch()`                                                                     | none                                                                    | `Promise<boolean>` (updates updated_at timestamp in database)                         |
+| `instance.increment(column, amount?, extra?)`                                          | column name, optional amount (default 1), optional extra columns object | `Promise<object>` (mutates instance attribute in place and executes increment UPDATE) |
+| `instance.decrement(column, amount?, extra?)`                                          | column name, optional amount (default 1), optional extra columns object | `Promise<object>` (mutates instance attribute in place and executes decrement UPDATE) |
+| `instance.delete()`                                                                    | none                                                                    | `Promise<void>`                                                                       |
+| `instance.hash(field)`                                                                 | attribute name on the instance                                          | `Promise<void>` (mutates the instance in place)                                       |
+| `instance.load(...relations)`                                                          | relation names                                                          | `Promise<Model>` (the same instance, with relations populated)                        |
+| `instance.toJSON()`                                                                    | none                                                                    | plain object with hidden keys removed and relations serialized                        |
 
 the `where` chainable builder exposes the same constraint, closure grouping, conditional (`when`, `unless`), subquery (`whereExists`, `whereIn`, `selectSub`), single entity lookup (`find`, `first`), and aggregate methods as the fluent query builder (`where`, `whereIn`, `whereNull`, `whereBetween`, `whereColumn`, `whereHashed`, `whereExists`, `when`, `unless`, `selectSub`, `join`, `leftJoin`, `rightJoin`, `crossJoin`, `joinRaw`, `count`, `sum`, `avg`, `min`, `max`, etc.). it is also thenable (`await builder`) and async iterable (`for await (const m of builder)`).
 
@@ -321,6 +324,8 @@ models support lifecycle hooks executed during record mutations:
 - `saving(instance)` / `saved(instance)`: fired before and after both inserts and updates
 - `deleting(instance)` / `deleted(instance)`: fired before and after record deletion
 
+hooks can be declared directly as class methods, or registered statically via `Model.creating(fn)`, `Model.created(fn)`, `Model.updating(fn)`, `Model.updated(fn)`, `Model.saving(fn)`, `Model.saved(fn)`, `Model.deleting(fn)`, and `Model.deleted(fn)`.
+
 returning `false` from a before hook (`creating`, `updating`, `saving`, `deleting`) aborts the operation and prevents database writes.
 
 ```javascript
@@ -333,6 +338,11 @@ export default class User extends Model {
     // executed after record is inserted
   }
 }
+
+// static registration alternative
+User.creating((user) => {
+  if (!user.email) return false;
+});
 ```
 
 to update a model, you can either mutate its properties and call `save`, or use the `update` method directly.
@@ -342,6 +352,14 @@ const user = await User.find(1);
 await user.update({ status: 'active' });
 // returns undefined. the instance attributes are mutated in place
 // before the underlying UPDATE executes.
+```
+
+if you only need to update the model `updated_at` timestamp without modifying other attributes, use the `touch` method:
+
+```javascript
+const user = await User.find(1);
+await user.touch();
+// updates updated_at to the current time in the database and returns true.
 ```
 
 <a name="first-or-create"></a>

@@ -48,6 +48,7 @@ the table builder contains a variety of column types that you may use when build
 
 | type                                            | description                                     |
 | ----------------------------------------------- | ----------------------------------------------- |
+| `table.id('id');`                               | auto incrementing big integer primary key       |
 | `table.increments('id');`                       | auto incrementing integer primary key           |
 | `table.bigIncrements('id');`                    | auto incrementing big integer primary key       |
 | `table.integer('votes');`                       | integer column                                  |
@@ -70,17 +71,19 @@ the table builder contains a variety of column types that you may use when build
 
 in addition to the column types listed above, there are several column modifiers you may use while adding a column to a database table.
 
-| type                                                  | description                 |
-| ----------------------------------------------------- | --------------------------- |
-| `table.string('email').nullable();`                   | allows null values          |
-| `table.string('title').notNullable();`                | prevents null values        |
-| `table.integer('votes').unsigned();`                  | makes integer unsigned      |
-| `table.integer('status').defaultTo(1);`               | sets default value          |
-| `table.string('email').unique();`                     | adds unique index           |
-| `table.string('slug').index();`                       | adds basic index            |
-| `table.index(['user_id', 'status'], 'idx_user_stat');`| adds composite named index  |
-| `table.integer('id').primary();`                      | explicitly adds primary key |
-| `table.string('status').comment('the user status');`  | adds column comment         |
+| type                                                   | description                 |
+| ------------------------------------------------------ | --------------------------- |
+| `table.string('email').nullable();`                    | allows null values          |
+| `table.string('title').notNullable();`                 | prevents null values        |
+| `table.integer('votes').unsigned();`                   | makes integer unsigned      |
+| `table.integer('status').defaultTo(1);`                | sets default value          |
+| `table.string('email').unique();`                      | adds unique index           |
+| `table.unique('email', 'uniq_email');`                 | adds unique index on column |
+| `table.unique(['org_id', 'slug'], 'uniq_org_slug');`   | adds composite unique index |
+| `table.string('slug').index();`                        | adds basic index            |
+| `table.index(['user_id', 'status'], 'idx_user_stat');` | adds composite named index  |
+| `table.integer('id').primary();`                       | explicitly adds primary key |
+| `table.string('status').comment('the user status');`   | adds column comment         |
 
 <a name="foreign-keys"></a>
 
@@ -147,6 +150,9 @@ you can also rename an existing table using the `rename` method.
 ```javascript
 await Schema.rename('old_table', 'new_table');
 ```
+
+> [!NOTE]
+> while mysql and postgresql support modifying existing column types (`table.modify()`) and altering foreign keys, sqlite does not natively support altering column definitions, adding or dropping foreign keys on existing tables, or altering primary keys. attempting these operations on sqlite throws an immediate diagnostic error with actionable guidance to recreate the table and migrate existing records.
 
 <a name="dropping-tables"></a>
 

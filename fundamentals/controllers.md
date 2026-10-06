@@ -193,14 +193,17 @@ export default class PreferencesController {
 
 ### file uploads
 
-when a request is submitted as `multipart/form-data` the framework parses the files and makes them available on `req.files`. each key on `req.files` is an array of file objects.
+when a request is submitted as `multipart/form-data` the framework parses the files and makes them available on `req.files`. each key on `req.files` is an array of file objects. you can also use `req.file(key)` to retrieve the first file directly, or `req.hasFile(key)` to check if a file was uploaded.
 
 ```javascript
 import { Storage } from 'dframework';
 
 export default class UserProfileController {
   async updateProfileImage(req) {
-    const image = req.files.profileImage[0];
+    if (!req.hasFile('profileImage')) {
+      return status(422).json({ error: 'no image provided' });
+    }
+    const image = req.file('profileImage');
     const path = await Storage.disk('public').put(`user_assets/${Auth.user().id}/${image.originalFilename}`, image);
     return json({ success: true, path });
   }
