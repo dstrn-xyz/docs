@@ -62,7 +62,7 @@ export default class AuthMiddleware {
       return redirect('/login', true);
     }
 
-    const devices = await Device.where({ user_id: Auth.user().id, revoked: false }).get();
+    const devices = await Device.where({ user_id: Auth.user().id, revoked: false });
 
     // passes data to req.devices and merges it into all view templates
     return next({ devices });
@@ -156,12 +156,10 @@ dframework does not support passing parameters directly through the middleware s
 ```javascript
 export default class DeviceMiddleware {
   async verifyDevice(req, next) {
-    const devices = await Device.where({ user_id: Auth.user().id, revoked: false }).get();
+    const devices = await Device.where({ user_id: Auth.id(), revoked: false });
     
-    // attach data to the request for the controller
-    req.devices = devices;
-    
-    return next();
+    // attach data to the request for controllers and views
+    return next({ devices });
   }
 }
 ```
@@ -202,6 +200,7 @@ when the limit is exceeded, the response includes `Retry-After`, `X-RateLimit-Li
 | `message`        | `'too many requests'` | message returned on limit exceeded                 |
 | `keyGenerator`   | client ip             | `(req) => string`, custom grouping key             |
 | `trustedProxies` | `[]`                  | trusted proxy ips for `x-forwarded-for` resolution |
+| `maxEntries`     | `100000`              | maximum distinct tracked keys before lru eviction  |
 
 a custom `keyGenerator` is useful for per user limiting:
 
@@ -209,6 +208,6 @@ a custom `keyGenerator` is useful for per user limiting:
 const limiter = new RateLimiter({
   windowMs: 60 * 1000,
   max: 20,
-  keyGenerator: (req) => Auth.user()?.id || req._req.socket.remoteAddress,
+  keyGenerator: (req) => Auth.id(),
 });
 ```

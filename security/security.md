@@ -93,6 +93,7 @@ the `RateLimiter` constructor accepts the following options. all entries are opt
 | `message`        | `string`   | `'too many requests'` | the error message returned in the json body when the limit is exceeded                           |
 | `keyGenerator`   | `Function` | `(req) => req.ip`     | a function that returns a string key to track. customize this to limit per user or per api token |
 | `trustedProxies` | `string[]` | `[]`                  | array of trusted proxy ip addresses for resolving `x-forwarded-for`                              |
+| `maxEntries`     | `number`   | `100000`              | maximum distinct tracked client keys held in memory before lru eviction                          |
 
 ### per user rate limiting
 
@@ -119,7 +120,25 @@ const apiLimiter = new RateLimiter({
 });
 ```
 
-The limiter injects standard rate limit headers (`Retry-After`, `X-RateLimit-Limit`, `X-RateLimit-Remaining`) into every response. An internal cleanup interval runs once per window to evict stale entries. The interval is stopped and all tracking data is cleared automatically when the application shuts down.
+### memory bounds and lru eviction
+
+each `RateLimiter` tracks client request counts in memory using a least recently used map (`LruMap`). each entry records the current hit count and window start timestamp for a specific client key.
+
+under normal traffic with thousands of active clients, the default `maxEntries` of `100000` provides generous capacity while consuming minimal heap memory (approximately a few megabytes).
+
+**memory protection**
+without an upper bound on tracked keys, distributed traffic spikes, bot attacks, or rotating client addresses could continuously allocate new entries until the node process crashes with an out of memory error. `maxEntries` sets a strict ceiling on memory consumption regardless of how many distinct client keys hit the server.
+
+**eviction dynamics and tuning**
+when the number of active tracked keys reaches `maxEntries`, the least recently accessed key is evicted immediately to make room for incoming callers. if an active client key is evicted before its `windowMs` expires, its hit counter is dropped. the client's next request will begin a fresh window, inadvertently resetting their rate limit count.
+
+**high traffic applications**
+for public apis or microservices expecting more than 100000 active unique clients within a single window, configure a higher `maxEntries` (such as `250000` or `500000`) to prevent premature eviction.
+  
+**memory constrained environments**
+on servers with tight memory limits or endpoints with a known small caller pool, lower `maxEntries` to maintain a smaller heap footprint.
+
+the limiter injects standard rate limit headers (`Retry-After`, `X-RateLimit-Limit`, `X-RateLimit-Remaining`) into every response. an internal cleanup interval runs once per window to evict stale entries. the interval is stopped and all tracking data is cleared automatically when the application shuts down.
 
 ### layered rate limiters (group plus route)
 
