@@ -36,6 +36,8 @@
 
 dframework includes a command line interface accessible via the `dstrn` binary. it provides commands for scaffolding new projects, managing the database, generating application files, analyzing architecture, and running an interactive shell.
 
+all commands except `dstrn init`, `dstrn help`, and `dstrn version` (-v) are gated and require execution within a valid dframework project directory containing `config/app.js`.
+
 ```bash
 dstrn help
 ```
@@ -166,7 +168,7 @@ dframework> users.length
 dframework> await User.where('role', 'admin').get();
 ```
 
-the shell persists command history to `.tinker_history` in your project root. all framework facades (`DB`, `Config`, `Session`, `Auth`, `Log`, etc.) and models are available in the context.
+the shell persists command history to `.dframework_history` in your project root. all framework facades (`DB`, `Config`, `Session`, `Auth`, `Log`, etc.) and models are available in the context.
 
 ### inline code execution
 
