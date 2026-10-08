@@ -194,3 +194,9 @@ dstrn migrate:rollback
 ```
 
 the framework queries the `migrations` table to identify the last batch number and executes the `down` function for those specific files in reverse chronological order.
+
+<a name="transactional-ddl"></a>
+
+### transactional migrations and ddl statements
+
+migrations execute within database transactions to ensure changes roll back if an error occurs. however, mysql implicitly commits ddl statements (such as `create table`, `alter table`, and `drop table`). if a migration contains multiple ddl statements and fails halfway, the statements executed before the failure will remain committed in mysql while the migration entry is not recorded in the `migrations` table. keep migrations focused and inspect your database schema if a ddl migration fails.
