@@ -134,8 +134,6 @@ legacy compatibility layers are intentionally avoided. when architectural improv
 the framework intentionally excludes:
 
 - react, vue, angular
-- bootstrap, tailwind
-- jquery, axios
 - vite and external bundler pipelines
 - plugin systems and adapter layers
 - alternate rendering engines and routing systems

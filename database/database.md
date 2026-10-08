@@ -41,7 +41,7 @@ database configuration is managed through environment variables and resolved via
 | `maxIdle`         | `DB_MAX_IDLE`         | `5`                                 | maximum idle connections                         |
 | `idleTimeout`     | `DB_IDLE_TIMEOUT`     | `60000`                             | idle connection timeout in milliseconds          |
 
-for mysql, connection pooling uses `mysql2/promise` with keep alive and decimal numbers enabled. for postgresql, connection pooling uses `pg` (requires `npm install pg`), compiling positional parameter bindings (`$1`, `$2`) and returning clauses automatically. for sqlite, the framework uses built in `node:sqlite` (available in node 22.5.0 or higher), enabling write ahead logging (`WAL`) and busy timeouts automatically with zero external dependencies.
+for mysql, connection pooling uses `mysql2/promise` (requires `npm install mysql2`) with keep alive and decimal numbers enabled. for postgresql, connection pooling uses `pg` (requires `npm install pg`), compiling positional parameter bindings (`$1`, `$2`) and returning clauses automatically. for sqlite, the framework uses built in `node:sqlite` (available in node 22.5.0 or higher), enabling write ahead logging (`WAL`) and busy timeouts automatically with zero external dependencies.
 
 the pool or database connection is created lazily on the first query (no upfront connection is established during boot), so a misconfigured database does not prevent the process from starting.
 

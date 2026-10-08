@@ -8,6 +8,7 @@
   - [layouts and includes](#layouts-and-includes)
   - [javascript execution](#javascript-execution)
   - [localization](#localization)
+    - [japanese furigana (ruby) support](#japanese-furigana-ruby-support)
   - [pagination](#pagination)
     - [custom pagination html](#custom-pagination-html)
   - [automatic form handling](#automatic-form-handling)
@@ -180,6 +181,17 @@ you can translate strings using the `@t()` directive. the framework automaticall
 ```html
 <h1>@t('home.welcome_message')</h1>
 <p>@t('home.unread_count', { count: 5 })</p>
+```
+
+<a name="japanese-furigana-ruby-support"></a>
+
+### japanese furigana (ruby) support
+
+dframework provides built in support for japanese furigana (ruby text) annotations using the `@ruby()` directive. you can pass two arguments (kanji and reading) or a single string with `漢字[かんじ]` notation.
+
+```html
+<h1>@ruby("漢字", "かんじ")</h1>
+<p>@ruby("日本[にほん]語")</p>
 ```
 
 <a name="pagination"></a>

@@ -3,20 +3,17 @@
 - [models](#models)
   - [introduction](#introduction)
   - [defining models](#defining-models)
-
     - [table names](#table-names)
     - [primary keys](#primary-keys)
     - [attribute casting](#attribute-casting)
     - [inspecting casts](#inspecting-casts)
   - [retrieving models](#retrieving-models)
-
     - [methods overview](#methods-overview)
     - [magic finders](#magic-finders)
     - [pagination](#pagination)
     - [latest rows](#latest-rows)
     - [cloning queries](#cloning-queries)
   - [inserting and updating](#inserting-and-updating)
-
     - [mass assignment](#mass-assignment)
     - [mass assignment helpers](#mass-assignment-helpers)
     - [lifecycle hooks](#lifecycle-hooks)
@@ -24,7 +21,6 @@
     - [increment and decrement](#increment-and-decrement)
   - [deleting models](#deleting-models)
   - [relationships](#relationships)
-
     - [one to one](#one-to-one)
     - [one to many](#one-to-many)
     - [belongs to](#belongs-to)
@@ -32,7 +28,6 @@
     - [eager loading](#eager-loading)
     - [lazy eager loading](#lazy-eager-loading)
   - [serialization](#serialization)
-
     - [hiding attributes](#hiding-attributes)
   - [mutations](#mutations)
 
@@ -77,8 +72,13 @@ the framework will automatically determine your table's primary key by inspectin
 ```javascript
 export default class User extends Model {
   static primaryKey = 'uuid';
+  static keyType = 'uuid';
 }
 ```
+
+when `static keyType = 'uuid'` is configured, the model automatically handles uuid primary key generation and resolution during `create()` and `save()`.
+
+to retrieve the primary key value of any model instance regardless of the key column name, call `model.getKey()`.
 
 composite primary keys are automatically supported if they are defined in the schema.
 
@@ -276,8 +276,9 @@ await user.save();
 <a name="mass-assignment"></a>
 
 ### mass assignment
+dframework provides mass assignment protection via `fillable` and `guarded` static model properties. by default, all attributes except the primary key are fillable (`guarded = []`). primary keys (such as `id` or custom `primaryKey`) are guarded by default and cannot be mass assigned unless explicitly included in `fillable` and absent from `guarded`. you may restrict other attributes by specifying `fillable` as an array of allowed column names, or `guarded` as an array of protected column names (or `['*']` to guard all attributes).
 
-dframework provides mass assignment protection via `fillable` and `guarded` static model properties. by default, all attributes are fillable (`guarded = []`). you may restrict mass assignable attributes by specifying `fillable` as an array of allowed column names, or `guarded` as an array of protected column names (or `['*']` to guard all attributes).
+creating a new model with a predefined primary key via direct property assignment or constructor and calling `save()` attempts an insert and throws a `DiagnosticError` on key collision.
 
 ```javascript
 export default class User extends Model {
