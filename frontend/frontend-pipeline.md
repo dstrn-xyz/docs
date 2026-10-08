@@ -55,6 +55,25 @@ the optimizer successfully identifies and rewrites classes within standard `clas
 
 a `css-map.json` file is written to the `storage/framework` directory for debugging purposes, mapping the original class names to their obfuscated versions.
 
+### safelisting dynamic classes
+
+when OPTIMIZE_CSS or css.optimize is true, utility classes are tree shaken and obfuscated based on static usage in `.d` views and public javascript. if you construct classes dynamically or generate them at runtime, you can safelist them so they are preserved in the bundle and kept unobfuscated:
+
+specify exact class names, wildcard strings ending in `*`, or regular expressions in the `css.safelist` array in `config/app.js`:
+
+```javascript
+export default {
+  css: {
+    optimize: Env.value('OPTIMIZE_CSS', true),
+    safelist: ['card', 'badge-*', /^nav-/],
+  },
+};
+```
+
+- exact tokens (such as `card`) preserve only `.card` and its responsive variants (such as `md:card`), without matching compound utilities like `card-header`.
+- wildcard tokens (such as `badge-*`) preserve all matching utility classes and their responsive variants (such as `md:badge-pill`).
+- template literals with dynamic prefixes (such as ``btn-${size}``) in views and client scripts are automatically detected and preserved without manual configuration.
+
 ### opting out of css optimization
 
 if you prefer to skip css minification, tree shaking, and obfuscation entirely, you can opt out by updating your `config/app.js` configuration.
