@@ -46,17 +46,17 @@ dframework ships a complete utility layer for styling and dom interaction. utili
 
 you can use prestyled buttons by using the base class `btn` and then chaining a prefix class `btn-*` where `*` represents the button color.
 
-| available colors          | description          |
-| -------------- | -------------------- |
-| `.btn-accent` | accent colored button        |
-| `.btn-red`      | soft red button        |
-| `.btn-yellow`   | soft yellow button       |
-| `.btn-green`   | soft green button        |
-| `.btn-blue`   | soft blue button |
-| `.btn-purple`   | soft purple button |
-| `.btn-pink`   | soft pink button |
-| `.btn-gray`   | `var(--container)` colored button |
-| `.btn-transparent`   | transparent button (use for animation) |
+| available colors   | description                            |
+| ------------------ | -------------------------------------- |
+| `.btn-accent`      | accent colored button                  |
+| `.btn-red`         | soft red button                        |
+| `.btn-yellow`      | soft yellow button                     |
+| `.btn-green`       | soft green button                      |
+| `.btn-blue`        | soft blue button                       |
+| `.btn-purple`      | soft purple button                     |
+| `.btn-pink`        | soft pink button                       |
+| `.btn-gray`        | `var(--container)` colored button      |
+| `.btn-transparent` | transparent button (use for animation) |
 
 <a name="responsive-prefixes"></a>
 
@@ -106,37 +106,37 @@ any utility class can be prefixed with a viewport breakpoint. prefixed classes a
 
 ### grid
 
-| class                      | description                   |
-| -------------------------- | ----------------------------- |
-| `.grid-center`             | centered grid                 |
-| `.grid-2`                  | 2-column grid                 |
-| `.grid-3`                  | 3-column grid                 |
-| `.grid-4`                  | 4-column grid                 |
-| `.grid-auto`               | dense auto-flow grid          |
-| `.col-span-[1–4,full]`     | grid column span              |
-| `.row-span-[1-3,full]`     | grid row span                 |
-| `.col-start-[1–4]`         | grid column start             |
-| `.col-end-[1–4]`           | grid column end               |
-| `.row-start-[1–3]`         | grid row start                |
-| `.row-end-[1–3]`           | grid row end                  |
+| class                  | description          |
+| ---------------------- | -------------------- |
+| `.grid-center`         | centered grid        |
+| `.grid-2`              | 2-column grid        |
+| `.grid-3`              | 3-column grid        |
+| `.grid-4`              | 4-column grid        |
+| `.grid-auto`           | dense auto-flow grid |
+| `.col-span-[1–4,full]` | grid column span     |
+| `.row-span-[1-3,full]` | grid row span        |
+| `.col-start-[1–4]`     | grid column start    |
+| `.col-end-[1–4]`       | grid column end      |
+| `.row-start-[1–3]`     | grid row start       |
+| `.row-end-[1–3]`       | grid row end         |
 
 ### flexbox
 
-| class                                               | description                   |
-| --------------------------------------------------- | ----------------------------- |
-| `.flex-row`                                         | `flex-direction: row`         |
-| `.flex-column`                                      | `flex-direction: column`      |
-| `.flex-center`                                      | center on both axes           |
-| `.flex-wrap`                                        | `flex-wrap: wrap`             |
-| `.flex-1`                                           | `flex: 1 1 0%`                |
-| `.flex-auto`                                        | `flex: 1 1 auto`              |
-| `.flex-none`                                        | `flex: none`                  |
-| `.grow` / `.grow-0`                                 | individual flex-grow control  |
-| `.shrink` / `.shrink-0`                             | individual flex-shrink control |
-| `.order-[1–5]` / `.order-[first|last|none]`         | flex/grid item order          |
-| `.justify-[start|end|center|between|around|evenly]` | main axis alignment           |
-| `.align-[start|end|center|baseline|stretch]`        | cross axis alignment          |
-| `.self-[start|end|center|stretch|baseline]`         | per item cross axis alignment |
+| class                           | description                    |
+| ------------------------------- | ------------------------------ |
+| `.flex-row`                     | `flex-direction: row`          |
+| `.flex-column`                  | `flex-direction: column`       |
+| `.flex-center`                  | center on both axes            |
+| `.flex-wrap`                    | `flex-wrap: wrap`              |
+| `.flex-1`                       | `flex: 1 1 0%`                 |
+| `.flex-auto`                    | `flex: 1 1 auto`               |
+| `.flex-none`                    | `flex: none`                   |
+| `.grow` / `.grow-0`             | individual flex-grow control   |
+| `.shrink` / `.shrink-0`         | individual flex-shrink control |
+| `.order-[1–5]` / `.order-[first | last                           | none]` | flex/grid item order |
+| `.justify-[start                | end                            | center | between              | around     | evenly]`                      | main axis alignment |
+| `.align-[start                  | end                            | center | baseline             | stretch]`  | cross axis alignment          |
+| `.self-[start                   | end                            | center | stretch              | baseline]` | per item cross axis alignment |
 
 <a name="spacing"></a>
 
@@ -175,87 +175,86 @@ values available for all spacing classes: `0`, `025`, `05`, `075`, `1`, `125`, `
 
 ## typography
 
-| class                                           | description                                       |
-| --------------------------------------------- | ------------------------------------------------- |
-| `.fs-[01–10]`                                 | font-size from `.1em` to `10em` in `.1em` steps   |
-| `.fw-[100–900]`                               | font-weight in hundreds (100 = thin, 900 = black) |
-| `.thin`                                       | `font-weight: 300`                                |
-| `.bold`                                       | `font-weight: 700`                                |
-| `.uppercase` / `.lowercase` / `.capitalize`   | text-transform                                    |
-| `.italic` / `.not-italic`                     | font-style control                                |
-| `.text-[left|center|right|justify|start|end]` | text alignment                                    |
-| `.text-vertical`                              | vertical writing mode                             |
-| `.lh-[1–3]`                                   | line height (1, 1.1, 1.15, 1.2, 1.25, … , 3)  |
-| `.underline` / `.line-through` / `.no-underline` | text decoration                                |
-| `.decoration-[dotted|dashed|wavy]`            | text-decoration-style                             |
-| `.underline-offset-[1|2]`                     | text-underline-offset in `.1em` steps             |
-| `.truncate`                                   | truncate with ellipsis (alias)                    |
-| `.overflow-ellipsis`                          | truncate with ellipsis                            |
-| `.line-clamp-[1–4]`                           | clamp to N lines with ellipsis                    |
-| `.indent-[1–3]`                               | text-indent in em                                 |
-| `.whitespace-[pre|pre-wrap|pre-line|normal|nowrap]` | white-space control                     |
-| `.break-words` / `.break-all` / `.break-keep`     | word-breaking                                  |
+| class                                            | description                                       |
+| ------------------------------------------------ | ------------------------------------------------- |
+| `.fs-[01–10]`                                    | font-size from `.1em` to `10em` in `.1em` steps   |
+| `.fw-[100–900]`                                  | font-weight in hundreds (100 = thin, 900 = black) |
+| `.thin`                                          | `font-weight: 300`                                |
+| `.bold`                                          | `font-weight: 700`                                |
+| `.uppercase` / `.lowercase` / `.capitalize`      | text-transform                                    |
+| `.italic` / `.not-italic`                        | font-style control                                |
+| `.text-[left                                     | center                                            | right                                 | justify               | start    | end]`               | text alignment |
+| `.text-vertical`                                 | vertical writing mode                             |
+| `.lh-[1–3]`                                      | line height (1, 1.1, 1.15, 1.2, 1.25, … , 3)      |
+| `.underline` / `.line-through` / `.no-underline` | text decoration                                   |
+| `.decoration-[dotted                             | dashed                                            | wavy]`                                | text-decoration-style |
+| `.underline-offset-[1                            | 2]`                                               | text-underline-offset in `.1em` steps |
+| `.truncate`                                      | truncate with ellipsis (alias)                    |
+| `.overflow-ellipsis`                             | truncate with ellipsis                            |
+| `.line-clamp-[1–4]`                              | clamp to N lines with ellipsis                    |
+| `.indent-[1–3]`                                  | text-indent in em                                 |
+| `.whitespace-[pre                                | pre-wrap                                          | pre-line                              | normal                | nowrap]` | white-space control |
+| `.break-words` / `.break-all` / `.break-keep`    | word-breaking                                     |
 
 <a name="appearance"></a>
 
 ## appearance
 
-| class                                                       | description                                                        |
-| ----------------------------------------------------------- | ------------------------------------------------------------------ |
-| `.bdr-[0–2]`                                                | border-radius in `.1em` steps                                      |
-| `.bdr-circle`                                              | `border-radius: 50%`                                               |
-| `.border-[s|m|l]`                                          | all borders                                                        |
-| `.border-[top|bottom|left|right|x|y]-[0|s|m|l]`           | directional borders                                                |
-| `.bg-[color]`                                              | background (`container`, `accent`, `red`, `blue`, `green`, …)      |
-| `.text-[color]`                                            | text color (same values)                                           |
-| `.shadow-[s|m|l]`                                         | box shadow                                                         |
-| `.opacity-[0–1]`                                           | opacity (0, .1, .2 … 1)                                            |
-| `.invert`                                                  | `filter: invert(1)`                                                |
-| `.grayscale` / `.grayscale-0`                             | full / remove grayscale filter                                     |
-| `.blur-[sm|md|lg|xl]`                                     | `filter: blur()`                                                   |
-| `.brightness-[50|75|100|125|150]`                          | brightness filter                                                  |
-| `.contrast-[50|75|100|125|150]`                            | contrast filter                                                    |
-| `.saturate-[0|50|100|150|200]`                             | saturation filter                                                  |
-| `.sepia`                                                    | sepia filter                                                       |
-| `.hue-rotate-[15|30|60|90|180]`                           | hue-rotate filter                                                  |
-| `.filter-none`                                              | remove all filters                                                 |
-| `.backdrop-blur-[sm|md|lg|xl]`                            | backdrop blur filter                                               |
-| `.object-[cover|contain|fill|none]`                       | image/video fitting                                                |
-| `.object-[center|top|bottom|left|right]`                  | image/video position                                               |
-| `.visible` / `.invisible`                                  | visibility (preserves layout space)                                |
-| `.list-none` / `.list-disc` / `.list-decimal`            | list style type                                                    |
-| `.list-inside` / `.list-outside`                            | list style position                                                |
-| `.divide-y` / `.divide-x`                                   | border between children                                            |
-| `.table`                                                   | styled table (header, rows, hover)                                 |
-| `.table-bordered`                                          | `.table` variant with borders                                     |
-| `.table-striped`                                           | `.table` variant with alternating rows                            |
-| `.table-compact`                                           | `.table` variant with compact padding                             |
-| `.table-auto` / `.table-fixed`                             | table layout mode                                                  |
-| `.border-collapse` / `.border-separate`                    | border collapse mode                                               |
-| `.border-spacing-0`                                        | remove border-spacing                                              |
-| `.table-caption`                                          | table caption styling                                              |
-| `.outline-none`                                            | `outline: none`                                                    |
+| class                                         | description                                                   |
+| --------------------------------------------- | ------------------------------------------------------------- |
+| `.bdr-[0–2]`                                  | border-radius in `.1em` steps                                 |
+| `.bdr-circle`                                 | `border-radius: 50%`                                          |
+| `.border-[s                                   | m                                                             | l]`    | all borders |
+| `.border-[top                                 | bottom                                                        | left   | right       | x                    | y]-[0                | s | m | l]` | directional borders |
+| `.bg-[color]`                                 | background (`container`, `accent`, `red`, `blue`, `green`, …) |
+| `.text-[color]`                               | text color (same values)                                      |
+| `.shadow-[s                                   | m                                                             | l]`    | box shadow  |
+| `.opacity-[0–1]`                              | opacity (0, .1, .2 … 1)                                       |
+| `.invert`                                     | `filter: invert(1)`                                           |
+| `.grayscale` / `.grayscale-0`                 | full / remove grayscale filter                                |
+| `.blur-[sm                                    | md                                                            | lg     | xl]`        | `filter: blur()`     |
+| `.brightness-[50                              | 75                                                            | 100    | 125         | 150]`                | brightness filter    |
+| `.contrast-[50                                | 75                                                            | 100    | 125         | 150]`                | contrast filter      |
+| `.saturate-[0                                 | 50                                                            | 100    | 150         | 200]`                | saturation filter    |
+| `.sepia`                                      | sepia filter                                                  |
+| `.hue-rotate-[15                              | 30                                                            | 60     | 90          | 180]`                | hue-rotate filter    |
+| `.filter-none`                                | remove all filters                                            |
+| `.backdrop-blur-[sm                           | md                                                            | lg     | xl]`        | backdrop blur filter |
+| `.object-[cover                               | contain                                                       | fill   | none]`      | image/video fitting  |
+| `.object-[center                              | top                                                           | bottom | left        | right]`              | image/video position |
+| `.visible` / `.invisible`                     | visibility (preserves layout space)                           |
+| `.list-none` / `.list-disc` / `.list-decimal` | list style type                                               |
+| `.list-inside` / `.list-outside`              | list style position                                           |
+| `.divide-y` / `.divide-x`                     | border between children                                       |
+| `.table`                                      | styled table (header, rows, hover)                            |
+| `.table-bordered`                             | `.table` variant with borders                                 |
+| `.table-striped`                              | `.table` variant with alternating rows                        |
+| `.table-compact`                              | `.table` variant with compact padding                         |
+| `.table-auto` / `.table-fixed`                | table layout mode                                             |
+| `.border-collapse` / `.border-separate`       | border collapse mode                                          |
+| `.border-spacing-0`                           | remove border-spacing                                         |
+| `.table-caption`                              | table caption styling                                         |
+| `.outline-none`                               | `outline: none`                                               |
 
 <a name="interaction"></a>
 
 ## interaction
 
-| class                                         | description                   |
-| --------------------------------------------- | ----------------------------- |
-| `.pointer`                                    | `cursor: pointer`             |
-| `.no-events`                                  | `pointer-events: none`        |
-| `.click-haptic-[small|med]`                   | scale-down effect on click    |
-| `.hover:bg-[color]`                           | background change on hover    |
-| `.hover:text-[color]`                         | text color change on hover    |
-| `.shadow-hover-[s,m,l]`                       | shadow change on hover        |
-| `.select-none` / `.select-text` / `.select-all` | user-select control        |
-| `.appearance-none`                            | remove native form styling    |
-| `.sr-only`                                    | visually hidden but accessible|
-| `.float-left` / `.float-right` / `.float-none` | float                   |
-| `.clear-both` / `.clear-left` / `.clear-right` / `.clear-none` | clear |
-| `.align-top` / `.align-middle` / `.align-bottom` | vertical-align |
-| `.align-text-top` / `.align-text-bottom` | vertical-align (text-relative) |
-| `.align-sub` / `.align-super`                 | vertical-align for sub/superscript |
+| class                                                          | description                        |
+| -------------------------------------------------------------- | ---------------------------------- |
+| `.pointer`                                                     | `cursor: pointer`                  |
+| `.no-events`                                                   | `pointer-events: none`             |
+| `.click-haptic-[small                                          | med]`                              | scale-down effect on click |
+| `.hover:bg-[color]`                                            | background change on hover         |
+| `.hover:text-[color]`                                          | text color change on hover         |
+| `.shadow-hover-[s,m,l]`                                        | shadow change on hover             |
+| `.select-none` / `.select-text` / `.select-all`                | user-select control                |
+| `.appearance-none`                                             | remove native form styling         |
+| `.float-left` / `.float-right` / `.float-none`                 | float                              |
+| `.clear-both` / `.clear-left` / `.clear-right` / `.clear-none` | clear                              |
+| `.align-top` / `.align-middle` / `.align-bottom`               | vertical-align                     |
+| `.align-text-top` / `.align-text-bottom`                       | vertical-align (text-relative)     |
+| `.align-sub` / `.align-super`                                  | vertical-align for sub/superscript |
 
 <a name="transitions--animation"></a>
 
