@@ -278,7 +278,7 @@ await user.save();
 ### mass assignment
 dframework provides mass assignment protection via `fillable` and `guarded` static model properties matching laravel conventions. by default, when neither `fillable` nor `guarded` is defined (or when `guarded = []`), all attributes are fillable. you may restrict assignable attributes by specifying `fillable` as an array of allowed column names (an allowlist), or `guarded` as an array of protected column names (a denylist, or `['*']` to protect all attributes).
 
-creating a new model with a predefined primary key via direct property assignment or constructor and calling `save()` attempts an insert and throws a `DiagnosticError` on key collision.
+creating a new model with a predefined primary key via direct property assignment or constructor and calling `save()` attempts an insert and throws an error on key collision.
 
 ```javascript
 export default class User extends Model {
