@@ -12,7 +12,6 @@
   - [config/session.js](#config-session)
   - [config/storage.js](#config-storage)
   - [config/native.js](#config-native)
-  - [performance tuning keys](#config-tuning)
 
 - [accessing configuration values](#accessing-configuration-values)
 

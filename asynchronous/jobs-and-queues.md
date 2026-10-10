@@ -156,7 +156,7 @@ Job.dispatch('ProcessVideoJob', { videoId: 42 }, {
 | --------- | -------- | ------- | --------------------------------------------------------------------------- |
 | `timeout` | `number` | `60000` | execution timeout in milliseconds; workers exceeding this timeout terminate |
 | `tries`   | `number` | `1`     | maximum attempt count before the job is marked as failed                    |
-| `backoff` | `number` | `0`     | exponential backoff base delay in milliseconds between retry attempts       |
+| `backoff` | `number` | `1000`  | exponential backoff base delay in milliseconds between retry attempts       |
 
 if you attempt to use the `Job` facade before the application has initialized, it will throw a descriptive error.
 
@@ -273,15 +273,19 @@ if the worker thread itself crashes (for example due to an out of memory conditi
 
 the queue system reads its configuration from the `app.queue` config namespace.
 
-| key                    | type     | default | description                                 |
-| ---------------------- | -------- | ------- | ------------------------------------------- |
-| `app.queue.maxWorkers` | `number` | `4`     | maximum number of concurrent worker threads |
+| key                        | type     | default | description                                                                             |
+| -------------------------- | -------- | ------- | --------------------------------------------------------------------------------------- |
+| `app.queue.maxWorkers`     | `number` | `4`     | maximum number of concurrent worker threads                                             |
+| `app.queue.timeout`        | `number` | `60000` | default job execution timeout in milliseconds                                           |
+| `app.queue.shutdownTimeout`| `number` | `30000` | maximum time in milliseconds to wait for active jobs to finish during graceful shutdown |
 
 ```javascript
 // config/app.js
 export default {
   queue: {
     maxWorkers: Env.value('QUEUE_MAX_WORKERS', 4),
+    timeout: Env.value('QUEUE_TIMEOUT', 60000),
+    shutdownTimeout: Env.value('QUEUE_SHUTDOWN_TIMEOUT', 30000),
   },
 };
 ```

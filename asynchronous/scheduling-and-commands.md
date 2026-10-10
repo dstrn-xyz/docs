@@ -179,7 +179,7 @@ when executed manually via `dstrn run`, additional arguments passed after the co
 
 ### automatic startup
 
-when the application starts, the framework checks for a `console/Schedule.js` file. if it exists, the framework imports it, passes a new `Scheduler` instance, and calls `scheduler.start()` after all tasks are registered. each registered task is executed immediately on startup and then rescheduled based on its configured interval.
+when the application starts, the framework checks for a `console/Schedule.js` file. if it exists, the framework imports it, passes a new `Scheduler` instance, and calls `scheduler.start()` after all tasks are registered. each registered task is scheduled to run after its configured interval elapses and then rescheduled continuously.
 
 <a name="execution-and-rescheduling"></a>
 

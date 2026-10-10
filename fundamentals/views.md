@@ -235,7 +235,7 @@ to update a specific container instead of a full page transition, pass a css sel
 
 if you provide content inside the `@pagination` block, the engine skips default html generation and renders your custom markup.
 
-inside the block, the engine automatically exposes four variables that you can use to build your custom controls:
+inside the block, the engine automatically exposes seven variables that you can use to build your custom controls:
 
 - `prev`: previous page url (or `null`)
 - `next`: next page url (or `null`)

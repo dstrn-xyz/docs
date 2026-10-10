@@ -294,7 +294,6 @@ dCombobox.closeAll();
 | event    | detail                   | bubbles | description                                    |
 | :------- | :----------------------- | :------ | :--------------------------------------------- |
 | `change` | selected value string    | yes     | dispatched when an option is selected or added |
-| `input`  | selected value string    | yes     | dispatched when selection changes              |
 | `add`    | `{value, text, content}` | no      | dispatched when a custom option is added       |
 | `open`   | none                     | yes     | dispatched when the dropdown panel opens       |
 | `close`  | none                     | yes     | dispatched when the dropdown panel closes      |
@@ -1523,11 +1522,13 @@ this.effect(() => {
 these methods automatically clean up listeners, timers, and animation frame requests when the component is removed from the dom:
 
 ```javascript
-// event listener with auto cleanup
-this.listen(element, 'click', (e) => this.handleClick(e));
+// event listener returning unlistener function
+const off = this.listen(element, 'click', (e) => this.handleClick(e));
+off(); // manual cleanup if needed
 
-// listen to multiple elements
-this.listenAll(elements, 'click', (e) => this.handleClick(e));
+// listen to multiple elements returning composite unlistener function
+const offAll = this.listenAll(elements, 'click', (e) => this.handleClick(e));
+offAll(); // detaches all listeners
 
 // unlisten manually if needed
 this.unlisten(element, 'click', handler);
@@ -1585,13 +1586,14 @@ supports single values, file instances (`File`), file arrays (`File[]`), and mul
 ### internal event emitter
 
 ```javascript
-// listen to component events
-this.on('custom-event', (data) => console.log(data));
+// listen to component events returning unlistener function
+const off = this.on('custom-event', (data) => console.log(data));
+off(); // detach listener
 
-// remove listener
+// remove listener by callback reference
 this.off('custom-event', handler);
 
-// emit event to internal listeners
+// emit event to internal listeners and dispatch bubbling composed customevent
 this.emit('custom-event', { id: 123 });
 ```
 

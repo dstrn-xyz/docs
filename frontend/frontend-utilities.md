@@ -301,7 +301,8 @@ select('.input', formElement)       // scoped to a parent element
 const cleanup = listen(button, 'click', handler);
 cleanup(); // detach manually if needed
 
-listenAll(selectAll('.btn'), 'click', handler);
+const cleanupAll = listenAll(selectAll('.btn'), 'click', handler);
+cleanupAll(); // detach all listeners manually if needed
 ```
 
 ### classes

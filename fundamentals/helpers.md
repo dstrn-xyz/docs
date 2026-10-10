@@ -635,7 +635,7 @@ the `DB` facade provides direct access to the database instance. it delegates al
 ```javascript
 const users = await DB.table('users').where('active', true).get();
 const count = await DB.table('orders').count();
-await DB.raw('SELECT * FROM users WHERE id = ?', [1]);
+await DB.query('SELECT * FROM users WHERE id = ?', [1]);
 ```
 
 <a name="job"></a>

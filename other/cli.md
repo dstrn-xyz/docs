@@ -95,6 +95,7 @@ dstrn help
 | `dstrn dispatch <JobName> [--payload]` | dispatch a background job from the command line with an optional json payload |
 | `dstrn logs:clear`                     | clear or archive log files with date filtering                                |
 | `dstrn deploy`                         | generate production deployment and service configurations                     |
+| `dstrn cert`                           | inspect and manage ssl certificates                                           |
 | `dstrn cert:obtain`                    | obtain let's encrypt ssl certificates                                         |
 | `dstrn cert:renew`                     | renew expiring ssl certificates                                               |
 | `dstrn cert:status`                    | display certificate validity and expiration details                           |
@@ -348,6 +349,7 @@ dstrn cert:status
 
 | command                                      | description                                                   |
 | -------------------------------------------- | ------------------------------------------------------------- |
+| `dstrn cert`                                 | inspect and manage installed ssl certificates                 |
 | `dstrn cert:obtain --domain=... --email=...` | obtain a new let's encrypt ssl certificate                    |
 | `dstrn cert:renew --domain=... --email=...`  | renew certificates expiring within 30 days                    |
 | `dstrn cert:status`                          | show validity and expiration dates for installed certificates |

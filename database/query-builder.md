@@ -115,14 +115,14 @@ each of these returns the same `TableQuery` instance for chaining.
 | `limit(n)` / `offset(n)`                                       | numeric row cap and skip count                                         |
 | `clone()`                                                      | produces an isolated clone of the query builder instance               |
 | `setHashFields(fields)`                                        | override which columns are autohashed on this builder                  |
-| `toSql()`                                                      | returns the compiled select sql string without executing               |
 
 ### terminal methods
 
-these return a promise and execute the underlying query.
+these return a promise and execute the underlying query (or return the compiled query string without execution).
 
 | method                                       | arguments                                                                                                    | returns                                                                                                                     |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `toSql()`                                    | none                                                                                                         | `string` (compiled select sql string without executing)                                                                     |
 | `get()`                                      | none                                                                                                         | `Promise<Array<object>>` of matching rows; `[]` when none match                                                             |
 | `first(where?)`                              | optional `{ column: value }` object                                                                          | `Promise<object\|null>` (first matching row, or null)                                                                       |
 | `firstWhere(col, op?, val?)`                 | column name, operator/value, optional value                                                                  | `Promise<object\|null>` (first matching row, or null)                                                                       |

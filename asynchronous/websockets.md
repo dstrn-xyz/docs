@@ -293,11 +293,12 @@ Socket.toUser(42, 'notification:new', { text: 'you received a payment' });
 
 // using model instance
 Socket.toUser(user, 'notification:new', { text: 'profile updated' });
-```
 
-you can also target component state updates to a specific user:
+// push component state directly
+Socket.toUserState(42, '#cart-count', { count: 3 });
 
-```javascript
+// fluent chaining syntax
+Socket.toUser(42).emit('notification:new', { text: 'order shipped' });
 Socket.toUser(42).setState('#cart-count', { count: 3 });
 ```
 
@@ -308,7 +309,15 @@ Socket.toUser(42).setState('#cart-count', { count: 3 });
 the `Socket.toUsers()` method dispatches an event to a list of user ids or user model instances:
 
 ```javascript
+// dispatch event to multiple users
 Socket.toUsers([1, 2, 3], 'room:update', { active: true });
+
+// push component state directly to multiple users
+Socket.toUsersState([1, 2, 3], '#status', { online: true });
+
+// fluent chaining syntax
+Socket.toUsers([1, 2, 3]).emit('room:update', { active: true });
+Socket.toUsers([1, 2, 3]).setState('#status', { online: true });
 ```
 
 <a name="sending-to-a-session"></a>
@@ -318,22 +327,27 @@ Socket.toUsers([1, 2, 3], 'room:update', { active: true });
 the `Socket.toSession()` method targets all connections matching a specific session id:
 
 ```javascript
+// dispatch event to specific session
 Socket.toSession(sessionId, 'session:revoked', { reason: 'logged in from new device' });
+
+// push component state directly to specific session
+Socket.toSessionState(sessionId, '#auth-panel', { authenticated: false });
+
+// fluent chaining syntax
+Socket.toSession(sessionId).emit('session:revoked', { reason: 'logged in from new device' });
+Socket.toSession(sessionId).setState('#auth-panel', { authenticated: false });
 ```
 
 <a name="fluent-targeting"></a>
 
-### fluent targeting
+### direct socket targeting
 
-the `Socket.to()` helper offers flexible targeting for websocket instances, user ids, arrays, or session strings:
+the `Socket.to()` helper targets a websocket instance directly:
 
 ```javascript
-// target websocket instance directly
 Socket.to(ws).emit('direct:message', { ok: true });
-
-// target by user id or session
-Socket.to(42).emit('user:alert', { priority: 'high' });
-Socket.to('session-token-xyz').emit('session:ping', {});
+Socket.to(ws, 'direct:message', { ok: true });
+Socket.to(ws).setState('#chat-box', { focused: true });
 ```
 
 <a name="multi-guard-targeting"></a>
@@ -342,17 +356,33 @@ Socket.to('session-token-xyz').emit('session:ping', {});
 
 if your application defines multiple authentication guards in `config/auth.js` (for example `web`, `admin`, `partner`), connections automatically track identities across all configured guards.
 
-`Socket.toUser(id)` delivers to connections matching that user id on any guard (or the default guard). to target a specific guard explicitly, scope the dispatch using `Socket.guard()`:
+`Socket.toUser(id)` delivers to connections matching that user id on any guard (or the default guard). to target a specific guard explicitly, you can scope the dispatch using `Socket.guard()` or call the direct guard methods:
 
 ```javascript
-// target user 5 specifically on the admin guard
+// target single user or multiple users through the guard scope
 Socket.guard('admin').toUser(5, 'admin:alert', { text: 'server restart scheduled' });
+Socket.guard('admin').toUsers([5, 6], 'admin:alert', { text: 'maintenance incoming' });
 
-// fluent chaining on custom guard
+// fluent state updates scoped by guard
 Socket.guard('admin').toUser(5).setState('#admin-panel', { status: 'maintenance' });
+Socket.guard('admin').toUsers([5, 6]).setState('#admin-panel', { status: 'maintenance' });
+
+// direct guard dispatch methods
+Socket.toGuardUser('admin', 5, 'admin:alert', { text: 'server restart scheduled' });
+Socket.toGuardUsers('admin', [5, 6], 'admin:alert', { text: 'server restart scheduled' });
+
+// direct guard component state updates
+Socket.toGuardUserState('admin', 5, '#admin-panel', { status: 'maintenance' });
+Socket.toGuardUsersState('admin', [5, 6], '#admin-panel', { status: 'maintenance' });
+
+// fluent chaining on direct guard methods
+Socket.toGuardUser('admin', 5).emit('admin:alert', { text: 'server restart scheduled' });
+Socket.toGuardUser('admin', 5).setState('#admin-panel', { status: 'maintenance' });
+Socket.toGuardUsers('admin', [5, 6]).emit('admin:alert', { text: 'server restart scheduled' });
+Socket.toGuardUsers('admin', [5, 6]).setState('#admin-panel', { status: 'maintenance' });
 ```
 
-all targeted methods (`toUser`, `toUsers`, `toSession`, `sendTo`, `guard`) work seamlessly across http controllers, wire handlers, and background jobs.
+all targeted methods (`toUser`, `toUserState`, `toUsers`, `toUsersState`, `toSession`, `toSessionState`, `to`, `guard`, `toGuardUser`, `toGuardUserState`, `toGuardUsers`, `toGuardUsersState`) work seamlessly across http controllers, wire handlers, and background jobs.
 
 <a name="the-socket-facade"></a>
 
@@ -364,7 +394,7 @@ the `Socket` global is a proxy facade that delegates all method calls to the app
 import { Socket } from 'dframework';
 ```
 
-the facade exposes all methods: `on()`, `group()`, `middleware()`, `broadcast()`, `setState()`, `toUser()`, `toUsers()`, `toSession()`, `sendTo()`, `to()`, and `liveNotify()`.
+the facade exposes all methods: `on()`, `group()`, `middleware()`, `broadcast()`, `setState()`, `to()`, `toUser()`, `toUserState()`, `toUsers()`, `toUsersState()`, `toSession()`, `toSessionState()`, `guard()`, `toGuardUser()`, `toGuardUserState()`, `toGuardUsers()`, `toGuardUsersState()`, and `liveNotify()`.
 
 <a name="client-side-usage"></a>
 

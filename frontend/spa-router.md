@@ -407,10 +407,10 @@ the following scoped apis are available inside every inline script:
 - `setTimeout`, `setInterval`, `clearTimeout`, `clearInterval`
 - `requestAnimationFrame`, `cancelAnimationFrame`
 - `fetch`
-- `listen(target, event, handler, options)`: scoped `addEventListener`
-- `listenAll(targets, event, handler, options)`: scoped `addEventListener` on multiple elements
-- `unlisten(target, event, handler, options)`: manual `removeEventListener`
-- `unlistenAll(targets, event, handler, options)`: manual `removeEventListener` on multiple elements
+- `listen(target, event, handler, options)`: scoped event listener (returns unlistener function)
+- `listenAll(targets, event, handler, options)`: scoped event listener on multiple elements (returns composite unlistener function)
+- `unlisten(target, event, handler, options)`: manual removal of event listener
+- `unlistenAll(targets, event, handler, options)`: manual removal of event listener on multiple elements
 - `nextFrame()`: returns a promise that resolves on the next animation frame
 - `sleep(ms)`: returns a promise that resolves after the specified delay
 - `dSPA_SCOPE`: the raw scope object, for advanced usage
