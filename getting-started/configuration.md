@@ -172,7 +172,7 @@ export default {
 
 ### config/session.js
 
-the session configuration defines the driver, cookie name, and lifetime for user sessions:
+the session configuration defines the driver, cookie name, lifetime, and cookie parameters for user sessions:
 
 ```javascript
 // config/session.js
@@ -182,6 +182,11 @@ export default {
   driver: Env.value('SESSION_DRIVER', 'memory'),
   cookie: Env.value('SESSION_COOKIE', 'sid'),
   lifetime: Env.value('SESSION_LIFETIME', 120),
+  domain: Env.value('SESSION_DOMAIN', null),
+  path: Env.value('SESSION_PATH', '/'),
+  same_site: Env.value('SESSION_SAME_SITE', 'Lax'),
+  http_only: Env.value('SESSION_HTTP_ONLY', true),
+  secure: Env.value('SESSION_SECURE', null),
 };
 ```
 

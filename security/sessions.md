@@ -4,6 +4,7 @@
   - [introduction](#introduction)
   - [configuration](#configuration)
     - [session lifetime](#session-lifetime)
+    - [cookie options](#cookie-options)
   - [interacting with the session](#interacting-with-the-session)
     - [retrieving data](#retrieving-data)
     - [storing data](#storing-data)
@@ -39,8 +40,25 @@ export default {
   driver: Env.value('SESSION_DRIVER', 'memory'),
   cookie: Env.value('SESSION_COOKIE', 'sid'),
   lifetime: Env.value('SESSION_LIFETIME', 120),
+  domain: Env.value('SESSION_DOMAIN', null),
+  path: Env.value('SESSION_PATH', '/'),
+  same_site: Env.value('SESSION_SAME_SITE', 'Lax'),
+  http_only: Env.value('SESSION_HTTP_ONLY', true),
+  secure: Env.value('SESSION_SECURE', null),
 };
 ```
+
+<a name="cookie-options"></a>
+
+### cookie options
+
+you can configure session cookie security attributes in `config/session.js`:
+
+- `same_site`: controls cross site cookie transmission (defaults to `'Lax'`, accepted values: `'Lax'`, `'Strict'`, `'None'`)
+- `secure`: forces cookie transmission over https (defaults to `null` which enables secure cookies automatically when app env is not local and disables them in local development, accepted values: `true`, `false`, `null`)
+- `domain`: defines the cookie domain scope (defaults to `null` which restricts the cookie strictly to the current host origin without subdomains, accepted values: domain string such as `'.example.com'` or `null`)
+- `path`: defines the cookie path scope (defaults to `'/'`, accepted values: path string such as `'/'`)
+- `http_only`: prevents client side script access to the session cookie (defaults to `true`, accepted values: `true`, `false`)
 
 <a name="interacting-with-the-session"></a>
 

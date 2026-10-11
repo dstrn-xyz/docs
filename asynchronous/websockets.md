@@ -382,7 +382,21 @@ Socket.toGuardUsers('admin', [5, 6]).emit('admin:alert', { text: 'server restart
 Socket.toGuardUsers('admin', [5, 6]).setState('#admin-panel', { status: 'maintenance' });
 ```
 
-all targeted methods (`toUser`, `toUserState`, `toUsers`, `toUsersState`, `toSession`, `toSessionState`, `to`, `guard`, `toGuardUser`, `toGuardUserState`, `toGuardUsers`, `toGuardUsersState`) work seamlessly across http controllers, wire handlers, and background jobs.
+<a name="revoking-user-connections"></a>
+
+### revoking user connections
+
+the `Socket.revokeUser()` method immediately deauthenticates active socket connections for a user across all guards or a specific guard:
+
+```javascript
+// revoke user on all guards
+Socket.revokeUser(userId);
+
+// revoke user only on a specific guard
+Socket.revokeUser(adminId, 'admin');
+```
+
+all targeted methods (`toUser`, `toUserState`, `toUsers`, `toUsersState`, `toSession`, `toSessionState`, `to`, `guard`, `toGuardUser`, `toGuardUserState`, `toGuardUsers`, `toGuardUsersState`, `revokeUser`) work seamlessly across http controllers, wire handlers, and background jobs.
 
 <a name="the-socket-facade"></a>
 
@@ -394,7 +408,7 @@ the `Socket` global is a proxy facade that delegates all method calls to the app
 import { Socket } from 'dframework';
 ```
 
-the facade exposes all methods: `on()`, `group()`, `middleware()`, `broadcast()`, `setState()`, `to()`, `toUser()`, `toUserState()`, `toUsers()`, `toUsersState()`, `toSession()`, `toSessionState()`, `guard()`, `toGuardUser()`, `toGuardUserState()`, `toGuardUsers()`, `toGuardUsersState()`, and `liveNotify()`.
+the facade exposes all methods: `on()`, `group()`, `middleware()`, `broadcast()`, `setState()`, `to()`, `toUser()`, `toUserState()`, `toUsers()`, `toUsersState()`, `toSession()`, `toSessionState()`, `guard()`, `toGuardUser()`, `toGuardUserState()`, `toGuardUsers()`, `toGuardUsersState()`, `revokeUser()`, and `liveNotify()`.
 
 <a name="client-side-usage"></a>
 
