@@ -126,21 +126,18 @@ uniquify([1, 2, 2, 3, 3]);  // [1, 2, 3]
 uniquify('aabbcc');           // "abc"
 ```
 
-**`pascalCase(str)`**
+**`Inflector`**
 
-converts a snake_case, kebab-case, camelCase, or space separated string into PascalCase.
-
-```javascript
-pascalCase('user_profile');    // "UserProfile"
-pascalCase('send-email-job');  // "SendEmailJob"
-```
-
-**`snakeCase(str)`**
-
-converts a camelCase or PascalCase string into snake_case.
+the `Inflector` export provides word inflection and casing utilities including `pluralize`, `snakeCase`, `pascalCase`, and `inferTableName`.
 
 ```javascript
-snakeCase('UserProfile');      // "user_profile"
+import { Inflector } from 'dframework';
+
+Inflector.pluralize('person');       // "people"
+Inflector.pluralize('user');         // "users"
+Inflector.snakeCase('UserProfile');  // "user_profile"
+Inflector.pascalCase('user_post');   // "UserPost"
+Inflector.inferTableName('User');    // "users"
 ```
 
 <a name="random-and-time"></a>

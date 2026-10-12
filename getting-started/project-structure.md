@@ -209,7 +209,7 @@ the `storage` directory is reserved for application generated files. this includ
 the `views` directory contains all frontend templates. the internal view compiler statically analyzes and optimizes these templates during the production build pipeline. you cannot place templates outside this directory as the compilation engine specifically targets this path.
 
 ```blade
-<!-- views/welcome.blade -->
+<!-- views/welcome.d -->
 @extends('layouts.app')
 
 @section('content')
