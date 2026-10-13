@@ -23,6 +23,7 @@
     - [db](#db)
     - [job](#job)
     - [log](#log)
+    - [app](#app)
 
 <a name="introduction"></a>
 
@@ -657,4 +658,20 @@ Log.info('user registered:', user.email);
 Log.warn('rate limit approaching');
 Log.error('payment failed:', err);
 Log.table(rows, 'query results');
+```
+
+<a name="app"></a>
+
+### app
+
+the `app(key?)` helper provides access to the current application instance or its registered services. it resolves from the active request context when available, falling back to the global application instance.
+
+```javascript
+// retrieve the active application instance
+const application = app();
+
+// access specific services or properties directly
+const db = app('db');
+const logger = app('logger');
+const env = app('env');
 ```
