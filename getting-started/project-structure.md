@@ -9,7 +9,7 @@
   - [the controllers directory](#the-controllers-directory)
   - [the database directory](#the-database-directory)
   - [the lang directory](#the-lang-directory)
-  - [the middleware directory](#the-middleware-directory)
+  - [the middlewares directory](#the-middlewares-directory)
   - [the models directory](#the-models-directory)
   - [the native directory](#the-native-directory)
   - [the public directory](#the-public-directory)
@@ -34,11 +34,12 @@ dframework enforces a deterministic application layout. you cannot configure or 
 
 ### the config directory
 
-the `config` directory holds all of your configuration files. the primary file is the application configuration where you define environment settings session drivers and security behaviors.
+the `config` directory holds all of your configuration files. each file exports a default object mapped to its filename namespace.
 
 ```javascript
 // config/app.js
 import { Env } from 'dframework';
+
 export default {
   name: Env.value('APP_NAME', 'dframework'),
   env: Env.value('APP_ENV', 'production'),
@@ -47,9 +48,94 @@ export default {
   port: Env.value('APP_PORT', 8250),
   locale: Env.value('APP_LOCALE', 'en'),
   key: Env.value('APP_KEY'),
+  hashFields: (Env.value('HASH_FIELDS') || 'password').split(',').map(s => s.trim()).filter(Boolean),
+
+  maxBodySize: Env.value('MAX_BODY_SIZE', 1),
+  maxUploadSize: Env.value('MAX_UPLOAD_SIZE', 50),
+
   shield: Env.value('SHIELD_ENABLED', false),
+
+  // tls: {
+  //   cert: Env.value('TLS_CERT'),
+  //   key: Env.value('TLS_KEY'),
+  //   ca: Env.value('TLS_CA'),
+  //   redirect: Env.value('TLS_REDIRECT', true),
+  // },
+
   queue: {
     maxWorkers: Env.value('QUEUE_MAX_WORKERS', 4),
+  },
+};
+```
+
+```javascript
+// config/auth.js
+export default {
+  model: 'User',
+
+  // default: 'web',
+  // guards: {
+  //   web: {
+  //     model: 'User',
+  //     sessionKey: 'userId'
+  //   },
+  //   admin: {
+  //     model: 'Admin',
+  //     sessionKey: 'adminId'
+  //   }
+  // }
+};
+```
+
+```javascript
+// config/database.js
+import { Env } from 'dframework';
+
+export default {
+  driver: Env.value('DB_DRIVER', 'mysql'),
+  host: Env.value('DB_HOST', 'localhost'),
+  port: Env.value('DB_PORT', 3306),
+  user: Env.value('DB_USER', 'root'),
+  pass: Env.value('DB_PASS', ''),
+  name: Env.value('DB_NAME', 'dframework'),
+  connectionLimit: Env.value('DB_CONNECTION_LIMIT', '10'),
+  maxIdle: Env.value('DB_MAX_IDLE', '5'),
+  idleTimeout: Env.value('DB_IDLE_TIMEOUT', '60000'),
+};
+```
+
+```javascript
+// config/session.js
+import { Env } from 'dframework';
+
+export default {
+  driver: Env.value('SESSION_DRIVER', 'memory'),
+  cookie: Env.value('SESSION_COOKIE', 'sid'),
+  lifetime: Env.value('SESSION_LIFETIME', 120),
+  domain: Env.value('SESSION_DOMAIN', null),
+  path: Env.value('SESSION_PATH', '/'),
+  same_site: Env.value('SESSION_SAME_SITE', 'Lax'),
+  http_only: Env.value('SESSION_HTTP_ONLY', true),
+  secure: Env.value('SESSION_SECURE', null),
+};
+```
+
+```javascript
+// config/storage.js
+import { Env } from 'dframework';
+
+export default {
+  disks: {
+    local: {
+      root: Env.value('STORAGE_ROOT', './storage'),
+    },
+    public: {
+      root: Env.value('STORAGE_PUBLIC', './storage/public'),
+    },
+    secure: {
+      root: './storage/secure',
+      encryptionKey: Env.value('APP_KEY'),
+    },
   },
 };
 ```
@@ -58,6 +144,8 @@ export default {
 // config/native.js
 export default {
   name: null,
+  index: null,
+  fallback: 'native/static/index.html',
   identifier: 'com.dframework.app',
   version: '1.0.0',
   build: 1,
@@ -144,14 +232,14 @@ localization strings and translation dictionaries are stored in the `lang` direc
 }
 ```
 
-<a name="the-middleware-directory"></a>
+<a name="the-middlewares-directory"></a>
 
-### the middleware directory
+### the middlewares directory
 
-the `middleware` directory contains classes that filter and inspect http requests entering your application. you define custom logic here to enforce authentication rate limiting and request manipulation before it reaches your controllers.
+the `middlewares` directory contains classes that filter and inspect http requests entering your application. you define custom logic here to enforce authentication rate limiting and request manipulation before it reaches your controllers.
 
 ```javascript
-// middleware/EnsureAuth.js
+// middlewares/EnsureAuth.js
 export default class EnsureAuth {
   handle(req, next) {
     if (!Auth.check()) return abort(401);

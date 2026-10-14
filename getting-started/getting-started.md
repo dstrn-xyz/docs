@@ -75,9 +75,12 @@ when the application boots it registers the database connection initializes the 
 
 create a `.env` file in the project root. all values are parsed on startup
 
+the `config` directory houses modular configuration files that read from the environment using `Env.value()`:
+
 ```javascript
 // config/app.js
 import { Env } from 'dframework';
+
 export default {
   name: Env.value('APP_NAME', 'dframework'),
   env: Env.value('APP_ENV', 'production'),
@@ -86,23 +89,114 @@ export default {
   port: Env.value('APP_PORT', 8250),
   locale: Env.value('APP_LOCALE', 'en'),
   key: Env.value('APP_KEY'),
-  shield: Env.value('SHIELD_ENABLED', true),
-  session_driver: Env.value('SESSION_DRIVER', 'memory'),
-  css: {
-    optimize: Env.value('OPTIMIZE_CSS', true),
-  },
+  hashFields: (Env.value('HASH_FIELDS') || 'password').split(',').map(s => s.trim()).filter(Boolean),
+
+  maxBodySize: Env.value('MAX_BODY_SIZE', 1),
+  maxUploadSize: Env.value('MAX_UPLOAD_SIZE', 50),
+
+  shield: Env.value('SHIELD_ENABLED', false),
+
+  // tls: {
+  //   cert: Env.value('TLS_CERT'),
+  //   key: Env.value('TLS_KEY'),
+  //   ca: Env.value('TLS_CA'),
+  //   redirect: Env.value('TLS_REDIRECT', true),
+  // },
+
   queue: {
     maxWorkers: Env.value('QUEUE_MAX_WORKERS', 4),
-  },
-  database: {
-    driver: Env.value('DB_DRIVER', 'mysql'),
-    host: Env.value('DB_HOST', 'localhost'),
-    port: Env.value('DB_PORT', 3306),
-    user: Env.value('DB_USER', 'root'),
-    pass: Env.value('DB_PASS', ''),
-    name: Env.value('DB_NAME', 'dframework'),
   },
 };
 ```
 
-for full detail on environment configuration see the dedicated [configuration documentation](configuration.md) 
+```javascript
+// config/auth.js
+export default {
+  model: 'User',
+
+  // default: 'web',
+  // guards: {
+  //   web: {
+  //     model: 'User',
+  //     sessionKey: 'userId'
+  //   },
+  //   admin: {
+  //     model: 'Admin',
+  //     sessionKey: 'adminId'
+  //   }
+  // }
+};
+```
+
+```javascript
+// config/database.js
+import { Env } from 'dframework';
+
+export default {
+  driver: Env.value('DB_DRIVER', 'mysql'),
+  host: Env.value('DB_HOST', 'localhost'),
+  port: Env.value('DB_PORT', 3306),
+  user: Env.value('DB_USER', 'root'),
+  pass: Env.value('DB_PASS', ''),
+  name: Env.value('DB_NAME', 'dframework'),
+  connectionLimit: Env.value('DB_CONNECTION_LIMIT', '10'),
+  maxIdle: Env.value('DB_MAX_IDLE', '5'),
+  idleTimeout: Env.value('DB_IDLE_TIMEOUT', '60000'),
+};
+```
+
+```javascript
+// config/session.js
+import { Env } from 'dframework';
+
+export default {
+  driver: Env.value('SESSION_DRIVER', 'memory'),
+  cookie: Env.value('SESSION_COOKIE', 'sid'),
+  lifetime: Env.value('SESSION_LIFETIME', 120),
+  domain: Env.value('SESSION_DOMAIN', null),
+  path: Env.value('SESSION_PATH', '/'),
+  same_site: Env.value('SESSION_SAME_SITE', 'Lax'),
+  http_only: Env.value('SESSION_HTTP_ONLY', true),
+  secure: Env.value('SESSION_SECURE', null),
+};
+```
+
+```javascript
+// config/storage.js
+import { Env } from 'dframework';
+
+export default {
+  disks: {
+    local: {
+      root: Env.value('STORAGE_ROOT', './storage'),
+    },
+    public: {
+      root: Env.value('STORAGE_PUBLIC', './storage/public'),
+    },
+    secure: {
+      root: './storage/secure',
+      encryptionKey: Env.value('APP_KEY'),
+    },
+  },
+};
+```
+
+```javascript
+// config/native.js
+export default {
+  name: null,
+  index: null,
+  fallback: 'native/static/index.html',
+  identifier: 'com.dframework.app',
+  version: '1.0.0',
+  build: 1,
+  icon: { source: 'native/assets/icon.png', background: '#ffffff', padding: 0 },
+  splash: { enabled: true, background: '#0a0a0a', icon: 'native/assets/icon.png', iconSize: 0.3, fadeOut: 300 },
+  theme: { statusBar: 'dark', primary: '#d3ac5f', background: '#0a0a0a', navigationBar: '#0a0a0a', safeArea: true },
+  ios: { orientation: 'all', statusBarHidden: false },
+  android: { orientation: 'unspecified', minSdk: 24, targetSdk: 34, permissions: ['INTERNET'] },
+  desktop: { width: 1280, height: 720, resizable: true, minWidth: 800, minHeight: 600, titleBarStyle: 'default' },
+};
+```
+
+for full detail on configuration see the dedicated [configuration documentation](configuration.md) 

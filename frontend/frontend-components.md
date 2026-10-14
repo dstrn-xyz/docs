@@ -167,9 +167,9 @@ checkbox.value = 'accepted';
 
 #### events
 
-| event    | detail              | bubbles | description                                       |
-| :------- | :------------------ | :------ | :------------------------------------------------ |
-| `change` | native event object | no      | dispatched whenever the user toggles the checkbox |
+| event    | detail                  | bubbles | description                                       |
+| :------- | :---------------------- | :------ | :------------------------------------------------ |
+| `change` | boolean (checked state) | yes     | dispatched whenever the user toggles the checkbox |
 
 #### behavior
 
@@ -291,12 +291,11 @@ dCombobox.closeAll();
 
 #### events
 
-| event    | detail                   | bubbles | description                                    |
-| :------- | :----------------------- | :------ | :--------------------------------------------- |
-| `change` | selected value string    | yes     | dispatched when an option is selected or added |
-| `add`    | `{value, text, content}` | no      | dispatched when a custom option is added       |
-| `open`   | none                     | yes     | dispatched when the dropdown panel opens       |
-| `close`  | none                     | yes     | dispatched when the dropdown panel closes      |
+| event    | detail                | bubbles | description                                    |
+| :------- | :-------------------- | :------ | :--------------------------------------------- |
+| `change` | selected value string | yes     | dispatched when an option is selected or added |
+| `open`   | none                  | yes     | dispatched when the dropdown panel opens       |
+| `close`  | none                  | yes     | dispatched when the dropdown panel closes      |
 
 #### behavior
 
@@ -363,7 +362,9 @@ listen(menu, 'click', (e) => {
 
 | event   | detail          | bubbles | description                                                |
 | :------ | :-------------- | :------ | :--------------------------------------------------------- |
-| `click` | clicked element | no      | emitted through component emitter when an item is selected |
+| `click` | clicked element | yes     | emitted through component emitter when an item is selected |
+| `open`  | none            | yes     | dispatched when context menu opens                         |
+| `close` | none            | yes     | dispatched when context menu closes                        |
 
 #### behavior
 
@@ -476,6 +477,13 @@ dropdown.toggle();
 // inspect open state
 console.log(dropdown.isOpened);
 ```
+
+#### events
+
+| event   | detail | bubbles | description                               |
+| :------ | :----- | :------ | :---------------------------------------- |
+| `open`  | none   | yes     | dispatched when the dropdown panel opens  |
+| `close` | none   | yes     | dispatched when the dropdown panel closes |
 
 #### behavior
 
@@ -979,8 +987,8 @@ await modal.destroy();
 
 | event   | detail | bubbles | description                  |
 | :------ | :----- | :------ | :--------------------------- |
-| `open`  | none   | no      | dispatched when modal opens  |
-| `close` | none   | no      | dispatched when modal closes |
+| `open`  | none   | yes     | dispatched when modal opens  |
+| `close` | none   | yes     | dispatched when modal closes |
 
 #### behavior and styling boundaries
 
@@ -1099,6 +1107,13 @@ toast.hide();
 // hide, wait for animation to finish, and remove from dom
 await toast.destroy();
 ```
+
+#### events
+
+| event   | detail | bubbles | description                         |
+| :------ | :----- | :------ | :---------------------------------- |
+| `open`  | none   | yes     | dispatched when notification opens  |
+| `close` | none   | yes     | dispatched when notification closes |
 
 #### behavior
 
@@ -1230,7 +1245,9 @@ enhanced input field with icon prefixes, keyboard shortcut binding, number stepp
 | `readonly`     | `readonly`     | `boolean` | `false`  | no   | sets input to read only mode                                |
 | `min`          | `min`          | `string`  | `""`     | no   | minimum number value                                        |
 | `max`          | `max`          | `string`  | `""`     | no   | maximum number value                                        |
-| `step`         | `step`         | `string`  | `"1"`    | no   | step value for number controls                              |
+| `step`         | `step`         | `string`   | `"1"`    | no   | step value for number controls                              |
+| `endpoint`     | `endpoint`     | `string`   | `""`     | no   | live input debounced fetch endpoint                         |
+| `callback`     | `callback`     | `function` | `null`   | no   | callback function invoked during live input updates         |
 
 #### programmatic api
 

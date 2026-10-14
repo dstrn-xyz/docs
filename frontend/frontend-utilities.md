@@ -349,7 +349,7 @@ escapeJs(v)                 // escapes quotes, backticks, backslashes, dollar si
 ```javascript
 isString(v)    isNumber(v)    isBoolean(v)
 isArray(v)     isObject(v)    isFunction(v)
-isEmpty(v)     // true for "", [], {}, null, undefined
+isEmpty(v)     // true for "" and [] (returns false for null, undefined, {})
 hasValue(v)    // true if not empty, null, or undefined
 ```
 
@@ -374,8 +374,8 @@ clipboard('text to copy')   // write to system clipboard
 formatTime(seconds)         // returns "mm:ss"
 formatDate(date, false)     // returns "YYYY-MM-DD"
 formatDate(date)            // returns "YYYY-MM-DD HH:mm:ss"
-localizeDate(date, false)   // returns "YYYY-MM-DD" in the user's timezone
-localizeDate(date)          // returns "YYYY-MM-DD HH:mm:ss" in the user's timezone
+localizeDate(date, false)   // returns "MM/DD/YYYY" in the user's timezone
+localizeDate(date)          // returns "MM/DD/YYYY, HH:mm:ss" in the user's timezone
 distance(a, b)              // levenshtein or jaccard distance between two strings
 
 Storage.get('key')          // typed localStorage wrapper
@@ -427,8 +427,8 @@ pass a setup callback for interactive modals. use `.listen()` for automatic clea
 modal(`
   <h2>delete post</h2>
   <p>this action cannot be undone.</p>
-  <button class="btn-danger confirm">delete</button>
-  <button class="btn cancel">cancel</button>
+  <button class="btn-red confirm">delete</button>
+  <button class="btn-gray cancel">cancel</button>
 `, (m) => {
   m.listen(m.querySelector('.confirm'), 'click', async () => {
     await fetch(`/posts/${postId}`, { method: 'DELETE' });

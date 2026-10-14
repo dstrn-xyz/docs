@@ -261,9 +261,12 @@ each stack frame is classified into a category based on its file path.
 | `middleware` | blue    | `/middlewares/`                  |
 | `model`      | green   | `/models/`                       |
 | `view`       | magenta | `view:///`                       |
-| `route`      | yellow  | `/routes/`                       |
+| `route`      | accent  | `/routes/`                       |
 | `job`        | cyan    | `/jobs/`                         |
 | `command`    | cyan    | `/console/`                      |
+| `config`     | orange  | `/config/`                       |
+| `migration`  | white   | `/migrations/`                   |
+| `seeder`     | white   | `/seeders/`                      |
 | `app`        | white   | anything within the project root |
 
 frames from `node_modules` and the framework's core directory are automatically filtered out. only your application code is shown in the trace.

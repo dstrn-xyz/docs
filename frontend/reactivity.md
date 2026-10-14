@@ -121,6 +121,7 @@ special trigger values are available.
 emit a `d-wire` event from javascript or from inside a frontend component.
 
 ```javascript
+// from client javascript
 Socket.emit('dashboard:refresh', {}, '#stats-panel');
 
 // from a component
@@ -189,8 +190,8 @@ multiple filters use and logic. use commas to separate them.
 push state directly into a component's reactive memory without rerendering its template. this is useful for lightweight state updates that do not require a full html replacement.
 
 ```javascript
-// backend, emit to a specific component by selector
-Socket.emit('d-sync:state', { unread: 14 }, '#notification-badge');
+// backend, push state to a specific component by selector
+Socket.setState('#notification-badge', { unread: 14 });
 ```
 
 the targeted component calls its set state method automatically, triggering its render and effect loops.

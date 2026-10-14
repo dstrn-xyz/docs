@@ -751,23 +751,21 @@ await DB.table('tokens')
 // returns the single row insert result ({ insertId, affectedRows, changedRows }).
 ```
 
-if you need to force hashing on an arbitrary value without relying on column names, the framework provides `hash` and `fastHash` wrappers exported from the `QueryBuilder` module.
+if you need to hash an arbitrary value without relying on automatic column configuration, use the `Hash` facade exported from `dframework`.
 
 ```javascript
-import { hash, fastHash } from 'dframework/QueryBuilder';
+import { Hash } from 'dframework';
 
 // uses slow, secure bcrypt (for passwords)
 await DB.table('users').insert({
-  custom_secret: hash('plain-text-password')
+  custom_secret: await Hash.make('plain-text-password')
 });
 
 // uses fast, peppered sha256 (for indexable tokens)
 await DB.table('tokens').insert({
-  token_hash: fastHash('plain-text-token')
+  token_hash: Hash.fast('plain-text-token')
 });
 ```
-
-both wrappers return an opaque object (not a string). the query builder unpacks them at execution time, so never read their value directly.
 
 you can also perform direct where comparisons against plaintext values if the column is configured as a hash field, using the `whereHashed` and `orWhereHashed` methods.
 

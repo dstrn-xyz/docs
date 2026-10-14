@@ -37,7 +37,7 @@ if (matchedStatic && matchedStatic._compiled) {
   const result = RequestContext.run(request, () =>
     matchedStatic._compiled(request, response, this, this.router)
   );
-  return this._routeResult(result, req, res);
+  return this.settleRoute(result, request, response);
 }
 ```
 

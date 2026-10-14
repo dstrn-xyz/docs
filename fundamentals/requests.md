@@ -81,7 +81,7 @@ const role = req.input('role');
 const allInputs = req.all(); // or req.input()
 ```
 
-as detailed in the [controllers documentation](controllers.md), `req.body` and `req.files` are populated automatically for mutating requests (`POST`, `PUT`, `PATCH`, `DELETE`) by the route compiler.
+as detailed in the [controllers documentation](controllers.md), `req.body` and `req.files` are populated automatically for mutating requests (`POST`, `PUT`, `DELETE`) by the route compiler.
 
 <a name="streaming-requests"></a>
 
@@ -116,7 +116,7 @@ const referer = req.header('referrer'); // handles both referer and referrer
 the request object handles generating and verifying csrf tokens.
 
 > [!NOTE]
-> the route compiler automatically inserts verification logic for all mutating routes (`POST`, `PUT`, `PATCH`, `DELETE`) unless explicitly disabled, so you rarely call these methods manually.
+> the route compiler automatically inserts verification logic for all mutating routes (`POST`, `PUT`, `DELETE`) unless explicitly disabled, so you rarely call these methods manually.
 
 ```javascript
 // generate a new token valid for 6 hours
@@ -125,6 +125,6 @@ const token = req.csrfToken();
 // verify a submitted token
 const isValid = req.verifyCsrfToken(submittedToken);
 
-// force rotation of the current token
+// generate a fresh token (alias of csrfToken, does not invalidate previous tokens)
 const newToken = req.rotateCsrfToken();
 ```

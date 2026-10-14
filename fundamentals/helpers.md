@@ -377,7 +377,8 @@ these helpers are shortcuts for calling methods on the current request context's
 | `back(fallback, code, force)`  | redirect to the previous url     |
 | `abort(code, message)`         | throw an http error              |
 | `status(code)`                 | set the response status code     |
-| `cookie(name, value, options)` | set a response cookie            |
+| `cookie(name, value, options)` | set a response cookie                     |
+| `stream(writer)`               | stream a response using a writer callback |
 
 ```javascript
 export default class HomeController {

@@ -88,13 +88,13 @@ desktop simulation is the fastest iteration cycle. the window can be resized and
 
 simulation and production modes differ in several critical ways:
 
-| aspect | simulation | production |
-|--------|------------|------------|
-| url source | environment variable | configured url |
-| server | local development | remote or static |
-| reloading | instant via `r` key | full app restart |
-| debugging | console output enabled | minimal logging |
-| networking | localhost/10.0.2.2 | production endpoints |
+| aspect     | simulation             | production           |
+| ---------- | ---------------------- | -------------------- |
+| url source | environment variable   | configured url       |
+| server     | local development      | remote or static     |
+| reloading  | instant via `r` key    | full app restart     |
+| debugging  | console output enabled | minimal logging      |
+| networking | localhost/10.0.2.2     | production endpoints |
 
 the most important distinction is url resolution. simulators receive the development server url via `DSTRN_DEV_URL` environment variable. production builds use the url configured in [`config/native.js`](getting-started.md#url-configuration) or fall back to your app config.
 
@@ -243,7 +243,7 @@ common causes:
 - cors issues blocking network requests
 - timing issues where dom elements are accessed before ready
 
-the native bridge is available at `window.dstrnBridge` on all platforms. if your code depends on native features, verify the bridge exists before calling methods.
+the native bridge is available at `App.native` (or `window.App.native`) on all platforms. if your code depends on native features, verify the bridge exists before calling methods.
 
 <a name="log-output"></a>
 

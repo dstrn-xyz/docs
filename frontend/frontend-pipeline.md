@@ -49,7 +49,7 @@ the css optimizer then processes the framework's utility css with the following 
 2. **obfuscation**: every kept utility class is renamed to a short, random character sequence (e.g. `mt-4` becomes `ab`).
 3. **rewriting**: the optimizer directly edits your compiled `.dc` views and public javascript files, replacing the original class names with their obfuscated counterparts.
 4. **integrity updates**: the `manifest.json` is automatically updated with the new cryptographic signatures of the modified `.dc` files.
-5. **minification**: the base css, obfuscated utilities, icons, components, and your custom css are bundled and minified into a single `public/css/dstrn.css` file.
+5. **minification**: the base css, obfuscated utilities, icons, components, and your custom css are bundled and minified into `storage/framework/public/css/dstrn.css`.
 
 the optimizer successfully identifies and rewrites classes within standard `class=""` attributes, dynamic bindings like `:class`, `x-bind:class`, and `v-bind:class`, as well as javascript `classList` operations.
 

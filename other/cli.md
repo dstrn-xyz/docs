@@ -501,7 +501,7 @@ dframework includes a build time compiler that bundles and minifies the frontend
 
 ### javascript compilation
 
-the js compiler concatenates the framework's core client side files (the main runtime, native bridge, custom elements, and utility functions), along with any user defined component files found in `public/js/components`. the combined output is minified with three compression passes, function name mangling, and toplevel mangling. the result is written to `public/js/dstrn.js`.
+the js compiler concatenates the framework's core client side files (the main runtime, native bridge, custom elements, and utility functions), along with any user defined component files found in `public/js/components`. the combined output is minified with three compression passes, function name mangling, and toplevel mangling. the result is written to `storage/framework/public/js/dstrn.js`.
 
 in the `local` environment with debug mode enabled, the `__DF_DEBUG__` global is set to `true`, enabling debug only code paths in the client runtime. in production, these paths are eliminated during dead code elimination.
 
@@ -511,4 +511,4 @@ in the `local` environment with debug mode enabled, the `__DF_DEBUG__` global is
 
 the css compiler concatenates the framework's base styles, utility classes, icon font, and component styles. it then generates responsive variants for each utility class across six breakpoints (`sm`, `md`, `lg`, `xl`, `xxl`, `ultra`) using the `prefix\:classname` pattern. user defined component css files from `public/css/components` are included in the output.
 
-the final output is minified by stripping comments, collapsing whitespace, removing unnecessary semicolons, and eliminating zero unit suffixes. the result is written to `public/css/dstrn.css`.
+the final output is minified by stripping comments, collapsing whitespace, removing unnecessary semicolons, and eliminating zero unit suffixes. the result is written to `storage/framework/public/css/dstrn.css`.

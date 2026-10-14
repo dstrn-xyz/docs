@@ -50,7 +50,7 @@ the validation result object provides several methods for interacting with the e
 - `passes()`: returns true if validation succeeded
 - `errors()`: returns an object mapping field names to an array of error messages
 - `first(field)`: returns the first error message for a specific field
-- `all()`: returns a flat array of all error messages across all fields
+- `all()`: returns an object mapping field names to an array of error messages (identical to errors())
 
 when returning an html response rather than json, you typically use the `.withErrors()` and `.withInput()` helpers.
 

@@ -324,7 +324,7 @@ when generating a url for a domain bound route using `route(name, params)`, the 
 instead of a single controller string you can pass an array as the handler. the framework treats all entries before the last as middleware and the final entry as the controller.
 
 ```javascript
-pair.post('/approve', ['AuthMiddleware@requireAuth', 'auth.AuthController@approvePost']).name('approve.post');
+Route.post('/approve', ['AuthMiddleware@requireAuth', 'auth.AuthController@approvePost']).name('approve.post');
 ```
 
 you can also apply middleware to a single route without a group by calling `.middleware()`.
@@ -400,7 +400,6 @@ the available profile keys are:
 - `needsFlash`: boolean
 - `needsBody`: boolean
 - `needsLocale`: boolean
-- `needsAntiPeeping`: boolean
 - `hasCsrf`: boolean
 - `hasShield`: boolean
 
