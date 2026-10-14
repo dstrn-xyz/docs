@@ -230,7 +230,7 @@ const record = await TokenModel.where('token', Hash.fast('provided-token')).firs
 
 dframework provides built in support for http basic authentication directly via the `Route` facade. you can protect routes or entire route groups using chainable route builders, route modifiers, group options, or shorthand groups.
 
-credentials can be configured globally in `config/auth.js` under `auth.basic` (or via `BASIC_AUTH_USER` and `BASIC_AUTH_PASS` environment variables) or supplied directly on the route.
+credentials can be configured globally in `config/auth.js` under `auth.basic` or supplied directly on the route.
 
 ### route modifier
 

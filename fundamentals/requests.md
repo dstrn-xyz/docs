@@ -125,6 +125,6 @@ const token = req.csrfToken();
 // verify a submitted token
 const isValid = req.verifyCsrfToken(submittedToken);
 
-// generate a fresh token (alias of csrfToken, does not invalidate previous tokens)
+// rotate the csrf secret and generate a fresh token (invalidates previous tokens)
 const newToken = req.rotateCsrfToken();
 ```

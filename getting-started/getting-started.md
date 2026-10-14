@@ -1,12 +1,17 @@
 # getting started
 
 - [meet dframework](#meet-dframework)
+
   - [why dframework?](#why-dframework)
+
 - [creating an application](#creating-an-application)
+
   - [installing the framework](#installing-the-framework)
   - [initializing a project](#initializing-a-project)
   - [booting the runtime](#booting-the-runtime)
+
 - [initial configuration](#initial-configuration)
+
   - [environment configuration](#environment-configuration)
 
 <a name="meet-dframework"></a>
@@ -68,14 +73,15 @@ internally the framework utilizes a central application instance. this instance 
 
 when the application boots it registers the database connection initializes the logger and prepares the request handlers. during the booting process the framework also resolves the native socket router and the background queue workers.
 
-> [!NOTE]
+> \[!NOTE]
 > you never instantiate database connections, loggers, socket routers, or queue workers manually. they are resolved and managed exclusively by the framework runtime.
 
 <br />
 
-create a `.env` file in the project root. all values are parsed on startup
+create a `.env` file in the project root. all values are parsed on startup.
 
-the `config` directory houses modular configuration files that read from the environment using `Env.value()`:
+the `config` directory houses modular configuration files that read from the environment using `Env.value()`
+the following are basic configuration examples:
 
 ```javascript
 // config/app.js
@@ -199,4 +205,4 @@ export default {
 };
 ```
 
-for full detail on configuration see the dedicated [configuration documentation](configuration.md) 
+for full detail on configuration see the dedicated [configuration documentation](configuration.md)

@@ -326,7 +326,7 @@ Route.domain('api.example.com', (api) => {
   api.get('/status', async () => json({ service: 'api' }));
 });
 
-Route.domain('admin.example.com', (admin => {
+Route.domain('admin.example.com', (admin) => {
   admin.get('/status', async () => json({ service: 'admin' }));
 });
 ```

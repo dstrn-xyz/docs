@@ -36,7 +36,7 @@
 
 ## introduction
 
-dframework ships with a fully integrated socket layer built on top of the `ws` library. it provides a dedicated event router that mirrors the http `Route` architecture, complete with middleware support, controller resolution, session authentication, and html rendering. the socket server boots automatically alongside your http server. there is nothing to install separately.
+dframework ships with a fully integrated socket layer. it provides a dedicated event router that mirrors the http `Route` architecture, complete with middleware support, controller resolution, session authentication, and html rendering. the socket server boots automatically alongside your http server. there is nothing to install separately.
 
 on the client side, the framework's frontend runtime exposes a global `Socket` facade that manages the connection, event emission, and event listening. the socket connection is established automatically when the spa router initializes.
 

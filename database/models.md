@@ -29,6 +29,7 @@
     - [lazy eager loading](#lazy-eager-loading)
   - [serialization](#serialization)
     - [hiding attributes](#hiding-attributes)
+    - [visible attributes](#visible-attributes)
   - [mutations](#mutations)
 
 <a name="introduction"></a>
@@ -194,6 +195,8 @@ every method that runs a query returns a `Promise`. the result column lists what
 | `instance.hash(field)`                                                                 | attribute name on the instance                                          | `Promise<void>` (mutates the instance in place)                                       |
 | `instance.load(...relations)`                                                          | relation names                                                          | `Promise<Model>` (the same instance, with relations populated)                        |
 | `instance.toJSON()`                                                                    | none                                                                    | plain object with hidden keys removed and relations serialized                        |
+| `Model.getHidden()`                                                                    | none                                                                    | array of all hidden attributes inherited across the prototype chain                   |
+| `Model.getVisible()`                                                                   | none                                                                    | array of all visible attributes defined on the model or null                          |
 
 the `where` chainable builder exposes the same constraint, closure grouping, conditional (`when`, `unless`), subquery (`whereExists`, `whereIn`, `selectSub`), single entity lookup (`find`, `first`), and aggregate methods as the fluent query builder (`where`, `whereIn`, `whereNull`, `whereBetween`, `whereColumn`, `whereHashed`, `whereExists`, `when`, `unless`, `selectSub`, `join`, `leftJoin`, `rightJoin`, `crossJoin`, `joinRaw`, `count`, `sum`, `avg`, `min`, `max`, etc.). it is also thenable (`await builder`) and async iterable (`for await (const m of builder)`).
 
@@ -654,7 +657,19 @@ export default class User extends Model {
 ```
 
 > [!NOTE]
-> by default, the framework automatically hides `password`, `token`, `secret`, `api_key`, and `remember_token` when serializing models with `toJSON()`.
+> by default, the framework automatically hides `password`, `token`, `secret`, `api_key`, and `remember_token` when serializing models with `toJSON()`. subclasses defining additional hidden attributes inherit these defaults automatically. hidden attributes only apply to `toJSON()` serialization (such as api responses) and never restrict direct property access in code (such as reading `user.password` during authentication).
+
+<a name="visible-attributes"></a>
+
+### visible attributes
+
+alternatively, you can define an allowlist of attributes that should be included when serializing the model using the static `visible` property. when `visible` is defined, only the specified attributes, relations, and pivot keys are serialized with `toJSON()`, and `hidden` is ignored.
+
+```javascript
+export default class User extends Model {
+  static visible = ['id', 'name', 'email', 'posts', 'pivot'];
+}
+```
 
 <a name="mutations"></a>
 

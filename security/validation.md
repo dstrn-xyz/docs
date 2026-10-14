@@ -1,6 +1,7 @@
 # validation
 
 - [validation](#validation)
+
   - [introduction](#introduction)
   - [basic usage](#basic-usage)
   - [working with errors](#working-with-errors)
@@ -111,7 +112,7 @@ the built in rules cover the most common validation scenarios:
 
 ## file validation
 
-> [!IMPORTANT]
+> \[!IMPORTANT]
 > when validating uploaded files, pass the full `req` object to `validate(req, rules)` rather than `req.body` so the validator can inspect `req.files`.
 
 file sizes can be specified in bytes, or with shorthand suffixes (`kb`, `mb`, `gb`).
@@ -136,7 +137,7 @@ the available file validation rules are:
 
 | rule                 | description                                                                   |
 | -------------------- | ----------------------------------------------------------------------------- |
-| `file`               | the field must be an array of files (optional)                                |
+| `file`               | the field must be an array of files (required)                                |
 | `file_required`      | the field must contain at least one uploaded file                             |
 | `file_size:size`     | no individual file can exceed the specified size (e.g. `8mb`, `500kb`)        |
 | `file_min_size:size` | no individual file can be smaller than the specified size                     |

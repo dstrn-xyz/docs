@@ -33,7 +33,7 @@ v0.21.0 marks the consolidated production release of dframework, bringing togeth
 
 ### declarative routing and middleware
 
-- fluent declarative routing facade (`Route.get()`, `Route.post()`, `Route.put()`, `Route.delete()`, `Route.patch()`, `Route.resource()`)
+- fluent declarative routing facade (`Route.get()`, `Route.post()`, `Route.put()`, `Route.delete()`)
 - route group scoping supporting path prefixes, named route prefixes, and shared middleware pipelines
 - compiled regular expression route matching engine for low overhead route dispatch
 - pipeline based middleware runner executing pre route and post route handlers
@@ -77,7 +77,7 @@ v0.21.0 marks the consolidated production release of dframework, bringing togeth
 
 - shield guard middleware providing automatic csrf token generation, cookie signing, and pow verification
 - configurable rate limiting with ip based sliding windows and response headers
-- bcrypt password hashing facade (`Hash.make()`, `Hash.check()`)
+- bcrypt password hashing facade (`Hash.make()`, `Hash.verify()`)
 - session drivers: memory session driver, database session driver for distributed state, and stealth session driver for encrypted client state
 - input validation engine
 

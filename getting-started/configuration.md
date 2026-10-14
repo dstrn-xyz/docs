@@ -98,7 +98,7 @@ STORAGE_PUBLIC=./storage/public
 
 the framework parses this file on startup. unquoted integer strings (such as `8250` or `-5`) are cast to safe integers. unquoted values of `true`, `false`, and `null` are cast to their boolean and null primitives. quoted values (wrapped in single or double quotes) are always preserved strictly as strings, protecting numeric passwords, hashes, tokens, or strings with leading zeros from being coerced. values are immediately available via `Env.value()` throughout your config files.
 
-> [!IMPORTANT]
+> \[!IMPORTANT]
 > if you change the `.env` file while the application is running in the `local` environment the framework will restart the server entirely to pick up the new values.
 
 <a name="config-files"></a>
@@ -167,39 +167,39 @@ export default {
 };
 ```
 
-| key | env variable | accepted values | default | description |
-| --- | --- | --- | --- | --- |
-| `name` | `APP_NAME` | string | `'dframework'` | application name displayed in banners and logs |
-| `env` | `APP_ENV` | `'production' \| 'local'` | `'production'` | runtime environment mode |
-| `debug` | `APP_DEBUG` | boolean (`true \| false`) | `false` | enables detailed error diagnostic traces in local mode |
-| `url` | `APP_URL` | string (valid url) | `'http://localhost'` | base url for links redirects and cli banners |
-| `host` | `APP_HOST` | string \| null (e.g. `'0.0.0.0'`, `'127.0.0.1'`, null) | `null` | host address to bind http server (null binds to all interfaces) |
-| `port` | `APP_PORT` | integer (1 to 65535) | `8250` | tcp port number for the http server |
-| `locale` | `APP_LOCALE` | string (iso language code e.g. `'en'`, `'fr'`) | `'en'` | default language for view localization |
-| `key` | `APP_KEY` | string (min 32 characters) | none (required in production) | application secret used for session signing and hashing |
-| `hashFields` | `HASH_FIELDS` | array of strings (comma separated in env) | `['password']` | request parameters automatically hashed by request pipeline |
-| `maxBodySize` | `MAX_BODY_SIZE` | integer (megabytes) | `1` | maximum incoming request payload body size in mb |
-| `maxUploadSize` | `MAX_UPLOAD_SIZE` | integer (megabytes) | `50` | maximum multipart file upload payload size in mb |
-| `trustProxy` | `TRUST_PROXY` | boolean (`true \| false`) | `false` | trust x-forwarded-for and x-forwarded-proto proxy headers |
-| `transport` | `APP_TRANSPORT` | `'uws' \| 'node' \| null` | `null` | http server transport engine (null auto-detects native uws with node fallback) |
-| `shield` | `SHIELD_ENABLED` | boolean (`true \| false`) | `false` | enables anti-bot proof of work challenge protection |
-| `shield_difficulty` | `SHIELD_DIFFICULTY` | integer (positive integer) | `4` | leading hex zero difficulty for proof of work puzzle |
-| `shield_threshold` | `SHIELD_THRESHOLD` | integer (seconds) | `60` | challenge token expiration validity in seconds |
-| `objectPoolSize` | `OBJECT_POOL_SIZE` | integer (positive integer) | `2000` | maximum recycled request context objects retained in pool |
-| `maxCompiledCacheSize` | `MAX_COMPILED_CACHE_SIZE` | integer (positive integer) | `500` | maximum compiled view functions cached in memory |
-| `maxTemplateSourceCacheSize` | `MAX_TEMPLATE_SOURCE_CACHE_SIZE` | integer (positive integer) | `500` | maximum raw view template files cached in memory |
-| `staticFileCache.maxFiles` | `STATIC_FILE_CACHE_MAX_FILES` | integer (positive integer) | `100` | maximum number of static public assets held in memory |
-| `staticFileCache.maxSize` | `STATIC_FILE_CACHE_MAX_SIZE` | integer (bytes) | `1048576` (1 mb) | maximum individual file size eligible for static cache |
-| `staticFileCache.maxTotalBytes` | `STATIC_FILE_CACHE_MAX_TOTAL_BYTES` | integer (bytes) | `33554432` (32 mb) | total static file memory cache allocation limit |
-| `css.optimize` | `OPTIMIZE_CSS` | boolean (`true \| false`) | `true` | enables css purging and minification during production builds |
-| `css.safelist` | none | array of strings | `[]` | css class names protected from purge removal |
-| `tls.cert` | `TLS_CERT` | string (file path) \| null | `null` | path to tls ssl certificate file |
-| `tls.key` | `TLS_KEY` | string (file path) \| null | `null` | path to tls private key file |
-| `tls.ca` | `TLS_CA` | string (file path) \| null | `null` | path to intermediate certificate authority bundle file |
-| `tls.redirect` | `TLS_REDIRECT` | boolean (`true \| false`) | `true` | automatically redirect cleartext http traffic to https |
-| `queue.maxWorkers` | `QUEUE_MAX_WORKERS` | integer (positive integer) | `4` | maximum concurrent background queue worker processes |
-| `queue.timeout` | `QUEUE_TIMEOUT` | integer (milliseconds) | `60000` | execution timeout per queued job before termination |
-| `queue.shutdownTimeout` | `QUEUE_SHUTDOWN_TIMEOUT` | integer (milliseconds) | `30000` | graceful shutdown drain timeout for queue workers |
+| key                             | env variable                        | accepted values                                | default                                      | description                                                                          |                                                                 |
+| ------------------------------- | ----------------------------------- | ---------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| `name`                          | `APP_NAME`                          | string                                         | `'dframework'`                               | application name displayed in banners and logs                                       |                                                                 |
+| `env`                           | `APP_ENV`                           | `'production' \| 'local'`                      | `'production'`                               | runtime environment mode                                                             |                                                                 |
+| `debug`                         | `APP_DEBUG`                         | boolean (`true \| false`)                      | `false`                                      | enables detailed error diagnostic traces in local mode                               |                                                                 |
+| `url`                           | `APP_URL`                           | string (valid url)                             | `'http://localhost'`                         | base url for links redirects and cli banners                                         |                                                                 |
+| `host`                          | `APP_HOST`                          | string                                         | null (e.g. `'0.0.0.0'`, `'127.0.0.1'`, null) | `null`                                                                               | host address to bind http server (null binds to all interfaces) |
+| `port`                          | `APP_PORT`                          | integer (1 to 65535)                           | `8250`                                       | tcp port number for the http server                                                  |                                                                 |
+| `locale`                        | `APP_LOCALE`                        | string (iso language code e.g. `'en'`, `'fr'`) | `'en'`                                       | default language for view localization                                               |                                                                 |
+| `key`                           | `APP_KEY`                           | string (min 32 characters)                     | none (required in production)                | application secret used for session signing and hashing                              |                                                                 |
+| `hashFields`                    | `HASH_FIELDS`                       | array of strings (comma separated in env)      | `['password']`                               | request parameters automatically hashed during database operations                   |                                                                 |
+| `maxBodySize`                   | `MAX_BODY_SIZE`                     | integer (megabytes)                            | `1`                                          | maximum incoming request payload body size in mb                                     |                                                                 |
+| `maxUploadSize`                 | `MAX_UPLOAD_SIZE`                   | integer (megabytes)                            | `50`                                         | maximum multipart file upload payload size in mb                                     |                                                                 |
+| `trustProxy`                    | `TRUST_PROXY`                       | boolean (`true \| false`)                      | `false`                                      | trust x-forwarded-for and x-forwarded-proto proxy headers                            |                                                                 |
+| `transport`                     | `APP_TRANSPORT`                     | `null \| 'http'`                               | `null`                                       | http server transport engine (null auto detects native dfws with node-http fallback) |                                                                 |
+| `shield`                        | `SHIELD_ENABLED`                    | boolean (`true \| false`)                      | `false`                                      | enables antibot proof of work challenge protection                                   |                                                                 |
+| `shield_difficulty`             | `SHIELD_DIFFICULTY`                 | integer (positive integer)                     | `4`                                          | leading hex zero difficulty for proof of work puzzle                                 |                                                                 |
+| `shield_threshold`              | `SHIELD_THRESHOLD`                  | integer (0 to 100)                             | `70`                                         | proof of work pass score                                                             |                                                                 |
+| `objectPoolSize`                | `OBJECT_POOL_SIZE`                  | integer (positive integer)                     | `2000`                                       | maximum recycled request context objects retained in pool                            |                                                                 |
+| `maxCompiledCacheSize`          | `MAX_COMPILED_CACHE_SIZE`           | integer (positive integer)                     | `500`                                        | maximum compiled view functions cached in memory                                     |                                                                 |
+| `maxTemplateSourceCacheSize`    | `MAX_TEMPLATE_SOURCE_CACHE_SIZE`    | integer (positive integer)                     | `500`                                        | maximum raw view template files cached in memory                                     |                                                                 |
+| `staticFileCache.maxFiles`      | `STATIC_FILE_CACHE_MAX_FILES`       | integer (positive integer)                     | `100`                                        | maximum number of static public assets held in memory                                |                                                                 |
+| `staticFileCache.maxSize`       | `STATIC_FILE_CACHE_MAX_SIZE`        | integer (bytes)                                | `1048576` (1 mb)                             | maximum individual file size eligible for static cache                               |                                                                 |
+| `staticFileCache.maxTotalBytes` | `STATIC_FILE_CACHE_MAX_TOTAL_BYTES` | integer (bytes)                                | `33554432` (32 mb)                           | total static file memory cache allocation limit                                      |                                                                 |
+| `css.optimize`                  | `OPTIMIZE_CSS`                      | boolean (`true \| false`)                      | `true`                                       | enables css purging and minification during production builds                        |                                                                 |
+| `css.safelist`                  | none                                | array of strings                               | `[]`                                         | css class names protected from purge removal                                         |                                                                 |
+| `tls.cert`                      | `TLS_CERT`                          | string (file path) \| null                     | `null`                                       | path to tls ssl certificate file                                                     |                                                                 |
+| `tls.key`                       | `TLS_KEY`                           | string (file path) \| null                     | `null`                                       | path to tls private key file                                                         |                                                                 |
+| `tls.ca`                        | `TLS_CA`                            | string (file path) \| null                     | `null`                                       | path to intermediate certificate authority bundle file                               |                                                                 |
+| `tls.redirect`                  | `TLS_REDIRECT`                      | boolean (`true \| false`)                      | `true`                                       | automatically redirect cleartext http traffic to https                               |                                                                 |
+| `queue.maxWorkers`              | `QUEUE_MAX_WORKERS`                 | integer (positive integer)                     | `4`                                          | maximum concurrent background queue worker processes                                 |                                                                 |
+| `queue.timeout`                 | `QUEUE_TIMEOUT`                     | integer (milliseconds)                         | `60000`                                      | execution timeout per queued job before termination                                  |                                                                 |
+| `queue.shutdownTimeout`         | `QUEUE_SHUTDOWN_TIMEOUT`            | integer (milliseconds)                         | `30000`                                      | graceful shutdown drain timeout for queue workers                                    |                                                                 |
 
 <a name="config-auth"></a>
 
@@ -255,16 +255,16 @@ export default {
 };
 ```
 
-| key | env variable | accepted values | default | description |
-| --- | --- | --- | --- | --- |
-| `model` | none | string (model class name in `models/`) | `'User'` | primary model class used for single guard authentication |
-| `default` | none | string (guard name) | `'web'` | default guard used when resolving authenticated users |
-| `guards` | none | object of guard definitions | `{ web: { model: 'User', sessionKey: 'userId' } }` | mapping of guard names to model and session key |
-| `guards.<name>.model` | none | string (model class name in `models/`) | `'User'` | model class resolved for this guard |
-| `guards.<name>.sessionKey` | none | string (session key name) | `'userId'` (for web/default) or `<name>Id` | session key storing the authenticated user id |
-| `basic.username` | none | string | none | username required for http basic authentication |
-| `basic.password` | none | string | none | password required for http basic authentication |
-| `basic.realm` | none | string | `'Restricted'` | realm prompt string returned in 401 www-authenticate header |
+| key                        | env variable | accepted values                        | default                                            | description                                                 |
+| -------------------------- | ------------ | -------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------- |
+| `model`                    | none         | string (model class name in `models/`) | `'User'`                                           | primary model class used for single guard authentication    |
+| `default`                  | none         | string (guard name)                    | `'web'`                                            | default guard used when resolving authenticated users       |
+| `guards`                   | none         | object of guard definitions            | `{ web: { model: 'User', sessionKey: 'userId' } }` | mapping of guard names to model and session key             |
+| `guards.<name>.model`      | none         | string (model class name in `models/`) | `'User'`                                           | model class resolved for this guard                         |
+| `guards.<name>.sessionKey` | none         | string (session key name)              | `'userId'` (for web/default) or `<name>Id`         | session key storing the authenticated user id               |
+| `basic.username`           | none         | string                                 | none                                               | username required for http basic authentication             |
+| `basic.password`           | none         | string                                 | none                                               | password required for http basic authentication             |
+| `basic.realm`              | none         | string                                 | `'Restricted'`                                     | realm prompt string returned in 401 www-authenticate header |
 
 <a name="config-database"></a>
 
@@ -293,19 +293,19 @@ export default {
 };
 ```
 
-| key | env variable | accepted values | default | description |
-| --- | --- | --- | --- | --- |
-| `driver` | `DB_DRIVER` | `'mysql' \| 'pgsql' \| 'sqlite'` | `'mysql'` | database engine dialect driver |
-| `host` | `DB_HOST` | string (hostname or ip) | `'localhost'` | database server host address (not used by sqlite) |
-| `port` | `DB_PORT` | integer (1 to 65535) | `3306` (mysql) or `5432` (pgsql) | database server port |
-| `user` | `DB_USER` | string | `'root'` (mysql) or `'postgres'` (pgsql) | database user account |
-| `pass` | `DB_PASS` | string | `''` | database user password |
-| `name` | `DB_NAME` | string | application database name, or `':memory:'` for sqlite | database name or sqlite database file path |
-| `connectionLimit` | `DB_CONNECTION_LIMIT` | integer (positive integer) | `20` in production / `10` in local | maximum simultaneous database connections in pool |
-| `maxIdle` | `DB_MAX_IDLE` | integer (positive integer) | `5` | maximum idle connections retained in pool |
-| `idleTimeout` | `DB_IDLE_TIMEOUT` | integer (milliseconds) | `60000` | duration before closing idle connections |
-| `queryCache.maxEntries` | `DB_QUERY_CACHE_MAX_ENTRIES` | integer (positive integer) | `200` | maximum cached query plans in lru query cache |
-| `queryCache.maxRows` | `DB_QUERY_CACHE_MAX_ROWS` | integer (positive integer) | `1000` | maximum rows per result eligible for lru query cache |
+| key                     | env variable                 | accepted values                  | default                                               | description                                          |
+| ----------------------- | ---------------------------- | -------------------------------- | ----------------------------------------------------- | ---------------------------------------------------- |
+| `driver`                | `DB_DRIVER`                  | `'mysql' \| 'pgsql' \| 'sqlite'` | `'mysql'`                                             | database engine dialect driver                       |
+| `host`                  | `DB_HOST`                    | string (hostname or ip)          | `'localhost'`                                         | database server host address (not used by sqlite)    |
+| `port`                  | `DB_PORT`                    | integer (1 to 65535)             | `3306` (mysql) or `5432` (pgsql)                      | database server port                                 |
+| `user`                  | `DB_USER`                    | string                           | `'root'` (mysql) or `'postgres'` (pgsql)              | database user account                                |
+| `pass`                  | `DB_PASS`                    | string                           | `''`                                                  | database user password                               |
+| `name`                  | `DB_NAME`                    | string                           | application database name, or `':memory:'` for sqlite | database name or sqlite database file path           |
+| `connectionLimit`       | `DB_CONNECTION_LIMIT`        | integer (positive integer)       | `20` in production / `10` in local                    | maximum simultaneous database connections in pool    |
+| `maxIdle`               | `DB_MAX_IDLE`                | integer (positive integer)       | `5`                                                   | maximum idle connections retained in pool            |
+| `idleTimeout`           | `DB_IDLE_TIMEOUT`            | integer (milliseconds)           | `60000`                                               | duration before closing idle connections             |
+| `queryCache.maxEntries` | `DB_QUERY_CACHE_MAX_ENTRIES` | integer (positive integer)       | `200`                                                 | maximum cached query plans in lru query cache        |
+| `queryCache.maxRows`    | `DB_QUERY_CACHE_MAX_ROWS`    | integer (positive integer)       | `1000`                                                | maximum rows per result eligible for lru query cache |
 
 <a name="config-session"></a>
 
@@ -330,17 +330,17 @@ export default {
 };
 ```
 
-| key | env variable | accepted values | default | description |
-| --- | --- | --- | --- | --- |
-| `driver` | `SESSION_DRIVER` | `'memory' \| 'database' \| 'stealth'` | `'memory'` | session storage mechanism backend |
-| `cookie` | `SESSION_COOKIE` | string (valid cookie name) | `'sid'` | name of session id cookie sent to client |
-| `lifetime` | `SESSION_LIFETIME` | integer (minutes) | `120` | session lifespan in minutes before expiration |
-| `domain` | `SESSION_DOMAIN` | string \| null | `null` | domain scope for the session cookie |
-| `path` | `SESSION_PATH` | string | `'/'` | path scope for the session cookie |
-| `same_site` | `SESSION_SAME_SITE` | `'Lax' \| 'Strict' \| 'None'` | `'Lax'` | samesite cookie policy |
-| `http_only` | `SESSION_HTTP_ONLY` | boolean (`true \| false`) | `true` | prevents javascript access to session cookie |
-| `secure` | `SESSION_SECURE` | boolean \| null (`true \| false \| null`) | `null` | require https for session cookie (null auto-detects from request) |
-| `maxSessions` | `SESSION_MAX_SESSIONS` | integer (positive integer) | `10000` | maximum active sessions retained by memory driver |
+| key           | env variable           | accepted values                           | default    | description                                                       |
+| ------------- | ---------------------- | ----------------------------------------- | ---------- | ----------------------------------------------------------------- |
+| `driver`      | `SESSION_DRIVER`       | `'memory' \| 'database' \| 'stealth'`     | `'memory'` | session storage mechanism backend                                 |
+| `cookie`      | `SESSION_COOKIE`       | string (valid cookie name)                | `'sid'`    | name of session id cookie sent to client                          |
+| `lifetime`    | `SESSION_LIFETIME`     | integer (minutes)                         | `120`      | session lifespan in minutes before expiration                     |
+| `domain`      | `SESSION_DOMAIN`       | string \| null                            | `null`     | domain scope for the session cookie                               |
+| `path`        | `SESSION_PATH`         | string                                    | `'/'`      | path scope for the session cookie                                 |
+| `same_site`   | `SESSION_SAME_SITE`    | `'Lax' \| 'Strict' \| 'None'`             | `'Lax'`    | samesite cookie policy                                            |
+| `http_only`   | `SESSION_HTTP_ONLY`    | boolean (`true \| false`)                 | `true`     | prevents javascript access to session cookie                      |
+| `secure`      | `SESSION_SECURE`       | boolean \| null (`true \| false \| null`) | `null`     | require https for session cookie (null auto-detects from request) |
+| `maxSessions` | `SESSION_MAX_SESSIONS` | integer (positive integer)                | `10000`    | maximum active sessions retained by memory driver                 |
 
 <a name="config-storage"></a>
 
@@ -368,11 +368,11 @@ export default {
 };
 ```
 
-| key | env variable | accepted values | default | description |
-| --- | --- | --- | --- | --- |
-| `disks` | none | object of disk definitions | `{ local: ..., public: ..., secure: ... }` | map of disk names to configuration objects |
-| `disks.<name>.root` | `STORAGE_ROOT`, `STORAGE_PUBLIC`, etc. | string (directory path) | none (required per disk) | local filesystem directory path for disk root |
-| `disks.<name>.encryptionKey` | `APP_KEY` or custom secret | string (min 32 characters) \| null | `null` | key for aes-256-gcm automatic encryption and decryption |
+| key                          | env variable                           | accepted values                    | default                                    | description                                             |
+| ---------------------------- | -------------------------------------- | ---------------------------------- | ------------------------------------------ | ------------------------------------------------------- |
+| `disks`                      | none                                   | object of disk definitions         | `{ local: ..., public: ..., secure: ... }` | map of disk names to configuration objects              |
+| `disks.<name>.root`          | `STORAGE_ROOT`, `STORAGE_PUBLIC`, etc. | string (directory path)            | none (required per disk)                   | local filesystem directory path for disk root           |
+| `disks.<name>.encryptionKey` | `APP_KEY` or custom secret             | string (min 32 characters) \| null | `null`                                     | key for aes-256-gcm automatic encryption and decryption |
 
 <a name="config-native"></a>
 
@@ -398,39 +398,39 @@ export default {
 };
 ```
 
-| key | accepted values | default | description |
-| --- | --- | --- | --- |
-| `name` | string \| null | `null` (falls back to `app.name`) | display name on home screen and application window title |
-| `index` | string (url path) \| null | `null` | initial web route loaded by native container |
-| `fallback` | string (file path) | `'native/static/index.html'` | fallback static html file if remote server is unreachable |
-| `identifier` | string (reverse domain format) | `'com.dframework.app'` | unique bundle identifier for apple and android packages |
-| `version` | string (semantic version) | `'1.0.0'` | user-facing application version string |
-| `build` | integer (positive integer) | `1` | incremental build number / android version code |
-| `icon.source` | string (file path) | `'native/assets/icon.png'` | source icon image path (1024x1024 png) |
-| `icon.background` | string (hex color) | `'#ffffff'` | adaptive icon background color for android |
-| `icon.padding` | number (0 to 1 float) | `0` | icon inset padding ratio |
-| `splash.enabled` | boolean (`true \| false`) | `true` | enables native launch splash screen |
-| `splash.background` | string (hex color) | `'#0a0a0a'` | splash screen background color |
-| `splash.icon` | string (file path) | `'native/assets/icon.png'` | splash screen center icon image path |
-| `splash.iconSize` | number (0 to 1 float) | `0.3` | splash icon scale relative to screen bounds |
-| `splash.fadeOut` | integer (milliseconds) | `300` | splash screen dismissal transition duration in ms |
-| `theme.statusBar` | `'light' \| 'dark'` | `'dark'` | native status bar icon appearance |
-| `theme.primary` | string (hex color) | `'#d3ac5f'` | primary brand accent color |
-| `theme.background` | string (hex color) | `'#0a0a0a'` | webview and window container background color |
-| `theme.navigationBar` | string (hex color) | `'#0a0a0a'` | android bottom system navigation bar color |
-| `theme.safeArea` | boolean (`true \| false`) | `true` | webview content respects device safe area insets |
-| `ios.orientation` | `'all' \| 'portrait' \| 'landscape'` | `'all'` | allowed device screen orientations on ios |
-| `ios.statusBarHidden` | boolean (`true \| false`) | `false` | hides the ios status bar |
-| `android.orientation` | `'unspecified' \| 'portrait' \| 'landscape'` | `'unspecified'` | allowed screen orientation on android |
-| `android.minSdk` | integer (sdk api level) | `24` | minimum supported android sdk version |
-| `android.targetSdk` | integer (sdk api level) | `34` | target android sdk version |
-| `android.permissions` | array of strings | `['INTERNET']` | permissions declared in android manifest |
-| `desktop.width` | integer (pixels) | `1280` | default desktop application window width |
-| `desktop.height` | integer (pixels) | `720` | default desktop application window height |
-| `desktop.minWidth` | integer (pixels) \| undefined | `800` | minimum allowed desktop window width |
-| `desktop.minHeight` | integer (pixels) \| undefined | `600` | minimum allowed desktop window height |
-| `desktop.resizable` | boolean (`true \| false`) | `true` | allow user resizing of desktop window |
-| `desktop.titleBarStyle` | `'default' \| 'hidden'` | `'default'` | desktop window title bar appearance |
+| key                     | accepted values                              | default                           | description                                               |
+| ----------------------- | -------------------------------------------- | --------------------------------- | --------------------------------------------------------- |
+| `name`                  | string \| null                               | `null` (falls back to `app.name`) | display name on home screen and application window title  |
+| `index`                 | string (url path) \| null                    | `null`                            | initial web route loaded by native container              |
+| `fallback`              | string (file path)                           | `'native/static/index.html'`      | fallback static html file if remote server is unreachable |
+| `identifier`            | string (reverse domain format)               | `'com.dframework.app'`            | unique bundle identifier for apple and android packages   |
+| `version`               | string (semantic version)                    | `'1.0.0'`                         | user-facing application version string                    |
+| `build`                 | integer (positive integer)                   | `1`                               | incremental build number / android version code           |
+| `icon.source`           | string (file path)                           | `'native/assets/icon.png'`        | source icon image path (1024x1024 png)                    |
+| `icon.background`       | string (hex color)                           | `'#ffffff'`                       | adaptive icon background color for android                |
+| `icon.padding`          | number (0 to 1 float)                        | `0.15`                            | icon inset padding ratio                                  |
+| `splash.enabled`        | boolean (`true \| false`)                    | `true`                            | enables native launch splash screen                       |
+| `splash.background`     | string (hex color)                           | `'#0a0a0a'`                       | splash screen background color                            |
+| `splash.icon`           | string (file path)                           | `'native/assets/icon.png'`        | splash screen center icon image path                      |
+| `splash.iconSize`       | number (0 to 1 float)                        | `0.3`                             | splash icon scale relative to screen bounds               |
+| `splash.fadeOut`        | integer (milliseconds)                       | `300`                             | splash screen dismissal transition duration in ms         |
+| `theme.statusBar`       | `'light' \| 'dark'`                          | `'dark'`                          | native status bar icon appearance                         |
+| `theme.primary`         | string (hex color)                           | `'#d3ac5f'`                       | primary brand accent color                                |
+| `theme.background`      | string (hex color)                           | `'#0a0a0a'`                       | webview and window container background color             |
+| `theme.navigationBar`   | string (hex color)                           | `'#0a0a0a'`                       | android bottom system navigation bar color                |
+| `theme.safeArea`        | boolean (`true \| false`)                    | `true`                            | webview content respects device safe area insets          |
+| `ios.orientation`       | `'all' \| 'portrait' \| 'landscape'`         | `'all'`                           | allowed device screen orientations on ios                 |
+| `ios.statusBarHidden`   | boolean (`true \| false`)                    | `false`                           | hides the ios status bar                                  |
+| `android.orientation`   | `'unspecified' \| 'portrait' \| 'landscape'` | `'unspecified'`                   | allowed screen orientation on android                     |
+| `android.minSdk`        | integer (sdk api level)                      | `24`                              | minimum supported android sdk version                     |
+| `android.targetSdk`     | integer (sdk api level)                      | `34`                              | target android sdk version                                |
+| `android.permissions`   | array of strings                             | `['INTERNET']`                    | permissions declared in android manifest                  |
+| `desktop.width`         | integer (pixels)                             | `1280`                            | default desktop application window width                  |
+| `desktop.height`        | integer (pixels)                             | `720`                             | default desktop application window height                 |
+| `desktop.minWidth`      | integer (pixels) \| undefined                | `800`                             | minimum allowed desktop window width                      |
+| `desktop.minHeight`     | integer (pixels) \| undefined                | `600`                             | minimum allowed desktop window height                     |
+| `desktop.resizable`     | boolean (`true \| false`)                    | `true`                            | allow user resizing of desktop window                     |
+| `desktop.titleBarStyle` | `'default' \| 'hidden'`                      | `'default'`                       | desktop window title bar appearance                       |
 
 <a name="accessing-configuration-values"></a>
 
