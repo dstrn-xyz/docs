@@ -45,6 +45,7 @@ the simplest route accepts a url path and a controller string pointing to the me
 Route.get('/dashboard', 'app.IndexController@dashboard');
 Route.post('/register', 'auth.AuthController@register');
 Route.put('/profile', 'app.UserProfileController@update');
+Route.patch('/profile/avatar', 'app.UserProfileController@updateAvatar');
 Route.delete('/session', 'auth.AuthController@logout');
 ```
 
@@ -52,13 +53,15 @@ Route.delete('/session', 'auth.AuthController@logout');
 
 ### available methods
 
-the router supports four http verbs.
+the router supports standard http verbs.
 
 ```javascript
 Route.get(path, handler);
 Route.post(path, handler);
 Route.put(path, handler);
+Route.patch(path, handler);
 Route.delete(path, handler);
+Route.head(path, handler);
 ```
 
 <a name="route-parameters"></a>
