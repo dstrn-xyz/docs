@@ -123,11 +123,15 @@ the `local` environment writes to `logs/dev/` and production writes to `logs/pro
 
 <a name="log-file-rotation"></a>
 
-### log file rotation
+### log file rotation and retention
 
-log files are automatically rotated daily. each file is named with the date (`dframework_YYYY-MM-DD.log`). when the date changes, the logger detects that the current file path no longer matches, closes the previous write stream, and opens a new one for the current date.
+file logging uses a dedicated background worker thread communicating over a lock free atomic ring buffer (via SharedArrayBuffer). log formatting and encoding execute without blocking the main event loop, preserving strict sequential order while isolating all disk io.
 
-you can clear log files using the cli.
+log files are rotated daily at midnight. each file is named with the date (`dframework_YYYY-MM-DD.log`). when the date changes, the background worker closes the previous file descriptor and opens the new daily file descriptor automatically.
+
+the framework does not automatically delete older log files. retention cleanup is intentionally delegated to the application level via scheduled commands or cron jobs, allowing teams to determine their own retention and compliance policies.
+
+you can clear or prune older log files using the cli or schedule it in a task:
 
 ```bash
 dstrn logs:clear
