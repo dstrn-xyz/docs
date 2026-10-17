@@ -195,6 +195,12 @@ dstrn migrate:rollback
 
 the framework queries the `migrations` table to identify the last batch number and executes the `down` function for those specific files in reverse chronological order.
 
+in production (`APP_ENV=production`), the command requires confirmation before applying rollbacks. pass `--force` to run non interactively in automated pipelines:
+
+```bash
+dstrn migrate:rollback --force
+```
+
 <a name="transactional-ddl"></a>
 
 ### transactional migrations and ddl statements
