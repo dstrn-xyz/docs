@@ -52,7 +52,7 @@ export default class DownloadController {
 }
 ```
 
-to set a cookie, use the `.cookie()` method.
+to set a cookie, use the `.cookie()` method. the `maxAge` option sets the `Max-Age` header in seconds. passing a boolean (such as `maxAge: false`) or an empty string is safely ignored so the cookie remains a standard session cookie.
 
 ```javascript
 export default class ThemeController {

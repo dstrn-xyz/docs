@@ -311,7 +311,7 @@ cleanupAll(); // detach all listeners manually if needed
 addClass('active', el)
 removeClass('hidden', el)
 toggleClass('open', el, state) // state is optional
-hasClass('disabled', el)  // returns boolean
+hasClass('disabled', el)  // returns boolean (returns false when el is null or missing)
 ```
 
 <a name="fragments-and-mounting"></a>
