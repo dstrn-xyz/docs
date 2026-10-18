@@ -355,7 +355,7 @@ import { Env } from 'dframework';
 export default {
   disks: {
     local: {
-      root: Env.value('STORAGE_ROOT', './storage'),
+      root: Env.value('STORAGE_ROOT', './storage/local'),
     },
     public: {
       root: Env.value('STORAGE_PUBLIC', './storage/public'),
