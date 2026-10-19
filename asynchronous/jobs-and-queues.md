@@ -184,7 +184,7 @@ the maximum worker count is configurable through the `queue.maxWorkers` configur
 
 when the worker pool is at capacity, additional dispatched jobs are automatically buffered in an internal queue. workers in dframework operate within a persistent worker thread pool:
 
-1. lazy warming: the framework checks the application `jobs/` directory at startup. if no jobs exist, zero worker threads are spawned, ensuring applications with no background jobs incur zero memory or performance overhead.
+1. on demand execution: worker threads are spawned lazily when jobs are dispatched via `Job.dispatch()`. applications that never dispatch background jobs incur zero worker overhead.
 2. persistent execution: when jobs exist, worker threads boot the application environment and database pool once and stay alive in the idle pool. subsequent jobs are picked up immediately by warm workers without thread creation or isolate boot delay.
 3. automatic dequeuing: as each worker finishes its job, it picks up the next buffered job from the internal queue, or returns to the idle pool ready for future dispatches.
 4. fault recovery: if an unhandled fatal error or process crash occurs inside a worker thread, the worker cleans up and exits, and a replacement worker is spawned to continue processing pending tasks.
@@ -212,7 +212,7 @@ when a persistent worker thread boots, it performs the following steps:
 
 ### database access
 
-jobs have full access to the database through the same `DB` facade and model classes available in your controllers. each worker thread establishes its own database connection during initialization. the connection is guaranteed to be closed when the job completes through a cleanup function that runs in the worker's finally block, ensuring proper resource teardown regardless of whether the job succeeded or failed.
+jobs have full access to the database through the same `DB` facade and model classes available in controllers. each worker thread establishes its database connection pool during initialization. the pool stays open across job executions for the worker lifetime and tears down cleanly when the worker exits or the queue drains.
 
 ```javascript
 export default class CleanupExpiredSessionsJob {

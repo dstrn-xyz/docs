@@ -145,9 +145,9 @@ export default {
   user: Env.value('DB_USER', 'root'),
   pass: Env.value('DB_PASS', ''),
   name: Env.value('DB_NAME', 'dframework'),
-  connectionLimit: Env.value('DB_CONNECTION_LIMIT', '10'),
-  maxIdle: Env.value('DB_MAX_IDLE', '5'),
-  idleTimeout: Env.value('DB_IDLE_TIMEOUT', '60000'),
+  connectionLimit: Env.value('DB_CONNECTION_LIMIT', 10),
+  maxIdle: Env.value('DB_MAX_IDLE', 5),
+  idleTimeout: Env.value('DB_IDLE_TIMEOUT', 60000),
 };
 ```
 

@@ -107,11 +107,15 @@ await t(req, 'common.buttons.save');
 
 ### the t helper
 
-the `t()` function is the primary way to retrieve translations. it is available globally. it accepts the current request object, a dot notation key, and an optional fallback value.
+the `t()` function is the primary way to retrieve translations. it is available globally. you can invoke it directly with a dot notation key, or pass the request object explicitly. when the request object is omitted, `t()` resolves the current request automatically from the asynchronous request context.
 
 ```javascript
-const welcome = await t(req, 'common.welcome');
-const missing = await t(req, 'common.nonexistent', 'default text');
+// auto resolves request from context
+const welcome = await t('common.welcome');
+const missing = await t('common.nonexistent', 'default text');
+
+// or pass request explicitly
+const welcomeExplicit = await t(req, 'common.welcome');
 ```
 
 the first segment of the key is the filename (without the `.json` extension), and the remaining segments form the path within the json object.

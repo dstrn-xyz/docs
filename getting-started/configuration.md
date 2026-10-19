@@ -12,6 +12,7 @@
   - [config/session.js](#config-session)
   - [config/storage.js](#config-storage)
   - [config/native.js](#config-native)
+  - [config/view.js](#config-view)
 
 - [accessing configuration values](#accessing-configuration-values)
 
@@ -135,7 +136,7 @@ export default {
 
   shield: Env.value('SHIELD_ENABLED', false),
   shield_difficulty: Env.value('SHIELD_DIFFICULTY', 4),
-  shield_threshold: Env.value('SHIELD_THRESHOLD', 60),
+  shield_threshold: Env.value('SHIELD_THRESHOLD', 70),
 
   objectPoolSize: Env.value('OBJECT_POOL_SIZE', 2000),
   maxCompiledCacheSize: Env.value('MAX_COMPILED_CACHE_SIZE', 500),
@@ -166,6 +167,8 @@ export default {
   },
 };
 ```
+
+<a name="config-tuning"></a>
 
 | key                             | env variable                        | accepted values                                | default                                      | description                                                                          |                                                                 |
 | ------------------------------- | ----------------------------------- | ---------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
@@ -431,6 +434,26 @@ export default {
 | `desktop.minHeight`     | integer (pixels) \| undefined                | `600`                             | minimum allowed desktop window height                     |
 | `desktop.resizable`     | boolean (`true \| false`)                    | `true`                            | allow user resizing of desktop window                     |
 | `desktop.titleBarStyle` | `'default' \| 'hidden'`                      | `'default'`                       | desktop window title bar appearance                       |
+
+<a name="config-view"></a>
+
+### config/view.js
+
+dframework supports an optional `config/view.js` configuration file for view engine settings.
+
+```javascript
+// config/view.js
+import { Env } from 'dframework';
+
+export default {
+  maxYieldDepth: Env.value('VIEW_MAX_YIELD_DEPTH', 30),
+};
+```
+
+| key | env variable | accepted values | default | description |
+| --- | --- | --- | --- | --- |
+| `maxYieldDepth` | `VIEW_MAX_YIELD_DEPTH` | integer (positive integer) | `30` | maximum recursion depth for nested `@yield` section resolution |
+
 
 <a name="accessing-configuration-values"></a>
 

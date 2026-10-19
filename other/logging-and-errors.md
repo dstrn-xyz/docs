@@ -189,9 +189,9 @@ the `ErrorHandler` class manages error rendering and logging throughout the appl
 
 ### error pages
 
-dframework includes built in error pages for the following http status codes: `400`, `401`, `403`, `404`, `405`, `419`, `429`, `500`, `502`, `503`, and `504`. each page uses the framework's view template syntax and displays a styled error screen to the user.
+dframework includes built in error page templates for `404` and `500` (along with `debug` in local development). each page uses the framework's view template syntax and displays a styled error screen to the user.
 
-when an error occurs, the error handler selects the appropriate template based on the status code. if no template exists for the specific code, it falls back to the `500` template. if no templates are available at all, a plain text response is sent.
+when an error occurs, the error handler selects the appropriate template based on the status code. if no view template exists for the specific code, the error handler sends a plain text `${status} Error` response.
 
 <a name="custom-error-pages"></a>
 

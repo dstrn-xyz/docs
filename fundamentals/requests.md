@@ -12,7 +12,7 @@
 
 ## introduction
 
-the `Request` class wraps the raw node http request to provide an api for interacting with incoming data. it parses the url, query strings, headers, and body payloads (json, formn urlencoded, and multipart files).
+the `Request` class wraps the raw node http request to provide an api for interacting with incoming data. it parses the url, query strings, headers, and body payloads (json, form urlencoded, and multipart files).
 
 in controllers and middleware, the request instance is injected as the `req` argument.
 
@@ -79,9 +79,17 @@ const role = req.input('role');
 
 // retrieve all merged inputs
 const allInputs = req.all(); // or req.input()
+
+// retrieve uploaded file instance (first item if array)
+const avatar = req.file('avatar');
+
+// check if a file was uploaded for the given key
+if (req.hasFile('document')) {
+  const doc = req.file('document');
+}
 ```
 
-as detailed in the [controllers documentation](controllers.md), `req.body` and `req.files` are populated automatically for mutating requests (`POST`, `PUT`, `DELETE`) by the route compiler.
+as detailed in the [controllers documentation](controllers.md), `req.body` and `req.files` are populated automatically for mutating requests (`POST`, `PUT`, `DELETE`) by the route compiler. you can also use `req.file(key)` to retrieve the first file directly, or `req.hasFile(key)` to verify that an uploaded file is present.
 
 <a name="streaming-requests"></a>
 

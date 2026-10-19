@@ -569,13 +569,17 @@ fields with `null` or `undefined` values are omitted from the result.
 
 ## translation
 
-**`t(req, key, fallback)`**
+**`t(key, fallback)` or `t(req, key, fallback)`**
 
-retrieves a translated string for the current locale. see the [localization](../other/localization.md) documentation for full details.
+retrieves a translated string for the current locale. the request object is optional and auto resolves from the request context. see the [localization](../other/localization.md) documentation for full details.
 
 ```javascript
-const welcome = await t(req, 'common.welcome');
-const missing = await t(req, 'common.unknown', 'fallback text');
+// auto resolves request from context
+const welcome = await t('common.welcome');
+const missing = await t('common.unknown', 'fallback text');
+
+// or pass request explicitly
+const explicit = await t(req, 'common.welcome');
 ```
 
 <a name="facades"></a>
@@ -594,8 +598,10 @@ the `Session` facade provides access to the current request's session store.
 | ---------------------------------- | ------------------------------------------------------------------ |
 | `Session.get(key, fallback)`       | retrieve a value from the session                                  |
 | `Session.set(key, value)`          | store a value in the session                                       |
+| `Session.all()`                    | retrieve all session data as an object                             |
 | `Session.has(key)`                 | determine if a key exists in the session                           |
 | `Session.forget(key)`              | remove a value (or destroy the entire session if no key is passed) |
+| `Session.flush()`                  | destroy the active session and remove all stored data              |
 | `Session.flash(key, value)`        | store a value for only the next request                            |
 | `Session.permanent(data)`          | store data with a long lived cookie (10 years)                     |
 | `Session.id(newId)`                | returns or sets the active session id                              |

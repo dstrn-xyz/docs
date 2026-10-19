@@ -77,6 +77,7 @@ each of these returns the same `TableQuery` instance for chaining.
 
 | method                                                         | arguments                                                              |
 | -------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `from(table)`                                                  | target table name or alias; updates source table for builder           |
 | `select(...columns)`                                           | column names; replaces the current select list                         |
 | `selectRaw(expression, bindings?)`                             | raw sql fragment plus optional bindings                                |
 | `selectSub(query, as)`                                         | scalar subquery expression with alias                                  |
@@ -95,6 +96,7 @@ each of these returns the same `TableQuery` instance for chaining.
 | `whereBetween(column, [min, max])` / `whereNotBetween(...)`    | range check, requires exactly two values                               |
 | `orWhereBetween(...)` / `orWhereNotBetween(...)`               | `or` forms of range checks                                             |
 | `whereColumn(column, operator?, otherColumn)`                  | compare two columns in the same row                                    |
+| `orWhereColumn(column, operator?, otherColumn)`                | `or` form of column comparison                                         |
 | `whereRaw(sql, bindings?)`                                     | raw sql where condition with optional bindings                         |
 | `orWhereRaw(sql, bindings?)`                                   | raw sql or where condition with optional bindings                      |
 | `whereHashed(column, operator?, value)` / `orWhereHashed(...)` | compare against the fast hash of a value                               |
@@ -436,10 +438,15 @@ const users = await DB.table('users')
 
 ### column comparisons
 
-use the `whereColumn` method to compare the values of two different columns within the same row.
+use the `whereColumn` and `orWhereColumn` methods to compare the values of two different columns within the same row.
 
 ```javascript
 await DB.table('users').whereColumn('updated_at', '>', 'created_at').get();
+
+await DB.table('users')
+  .where('status', 'active')
+  .orWhereColumn('last_login_at', '>', 'created_at')
+  .get();
 ```
 
 <a name="conditional-clauses"></a>

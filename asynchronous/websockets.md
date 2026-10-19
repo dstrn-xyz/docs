@@ -225,7 +225,7 @@ Socket.on('admin:action', (req) => {
 });
 ```
 
-the default status messages are `400 Bad Request`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found`, `429 Too Many Requests`, and `500 Internal Error`.
+the default status messages are `400 Bad Request`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found`, `429 Too Many Requests`, and `500 Internal Server Error`.
 
 <a name="cookies"></a>
 

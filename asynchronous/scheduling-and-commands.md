@@ -199,7 +199,7 @@ you can programmatically trigger any registered scheduled task by name using `sc
 await app.scheduler.run('CleanupExpiredSessions');
 ```
 
-this immediately executes the task and resets its scheduling timer.
+this immediately executes the task once on demand without modifying its scheduled recurrence timer.
 
 <a name="error-handling"></a>
 
