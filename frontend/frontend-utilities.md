@@ -372,10 +372,10 @@ random(1, 100)              // inclusive integer random
 uniqueId(8)                 // collision resistant unique id string
 clipboard('text to copy')   // write to system clipboard
 formatTime(seconds)         // returns "mm:ss"
-formatDate(date, false)     // returns "YYYY-MM-DD"
-formatDate(date)            // returns "YYYY-MM-DD HH:mm:ss"
-localizeDate(date, false)   // returns "MM/DD/YYYY" in the user's timezone
-localizeDate(date)          // returns "MM/DD/YYYY, HH:mm:ss" in the user's timezone
+formatDate(date, false)     // returns "YYYY-MM-DD" in utc (gmt 0)
+formatDate(date)            // returns "YYYY-MM-DD HH:mm:ss" in utc (gmt 0)
+localizeDate(date, false)   // returns "MM-DD-YYYY" in the user local timezone
+localizeDate(date)          // returns "MM-DD-YYYY HH:mm:ss" in the user local timezone
 distance(a, b)              // levenshtein or jaccard distance between two strings
 
 Storage.get('key')          // typed localStorage wrapper

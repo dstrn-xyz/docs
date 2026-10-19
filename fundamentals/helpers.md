@@ -162,6 +162,33 @@ returns the current date and time as an iso 8601 string.
 now();   // "2026-06-05T02:30:00.000Z"
 ```
 
+**`formatTime(seconds)`**
+
+formats seconds into `mm:ss` display format.
+
+```javascript
+formatTime(65);   // "01:05"
+formatTime(360);  // "06:00"
+```
+
+**`formatDate(date, includeTime = true)`**
+
+formats a date instance or date string into standard `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:ss` format in GMT 0 for database and storage standardization. throws an error on invalid date inputs.
+
+```javascript
+formatDate(new Date(), false);  // "2026-06-05"
+formatDate(new Date());         // "2026-06-05 02:30:00"
+```
+
+**`localizeDate(date, includeTime = true, locale = null, timezone = null)`**
+
+formats a date in the user timezone using standard locale date format with hyphen delimiters and space separation.
+
+```javascript
+localizeDate(new Date(), false);  // "06-05-2026"
+localizeDate(new Date());         // "06-05-2026 02:30:00"
+```
+
 <a name="html-and-security"></a>
 
 ## html and security

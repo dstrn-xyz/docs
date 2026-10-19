@@ -112,7 +112,7 @@ export default class User extends Model {
 | `boolean`, `bool`               | casts values to boolean (`true` or `false`), handling `'1'`, `'0'`, `'true'`, `'false'`, `1`, `0`.                                       |
 | `int`, `integer`                | casts values to integer using `parseInt()`.                                                                                              |
 | `float`, `double`, `real`       | casts values to floating point numbers using `parseFloat()`.                                                                             |
-| `date`, `datetime`, `timestamp` | casts values to `Date` objects on hydration and formats to standard sql timestamp format on save.                                        |
+| `date`, `datetime`, `timestamp` | casts values to `Date` objects on hydration and formats to standard sql timestamp format in utc on save. all database timestamps are standardized to utc across postgresql, mysql, and sqlite. |
 | `string`                        | casts values to primitive strings.                                                                                                       |
 
 #### mutating json attributes in place
