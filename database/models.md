@@ -132,6 +132,10 @@ await user.save();
 
 subclasses automatically inherit and merge static `casts` from parent model classes up the prototype chain.
 
+#### automatic json casting
+
+models automatically detect and serialize json data without requiring explicit casts. any attribute containing a plain javascript object or array is serialized to a json string during `save()`, `create()`, and query updates. similarly, database strings formatted as json (starting and ending with `{}` or `[]`) are automatically parsed into javascript objects on hydration. to preserve raw json formatted strings as strings without parsing, declare an explicit `'string'` cast.
+
 <a name="inspecting-casts"></a>
 
 #### inspecting casts
