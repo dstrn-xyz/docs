@@ -1453,6 +1453,8 @@ dComponent.define(dCounter);
 | `connected()`                   | on every connection  | called whenever element is attached to document       |
 | `render()`                      | on state/prop change | performs surgical dom node updates                    |
 | `onPropChanged(name, old, new)` | on prop mutation     | reacts to specific property changes                   |
+| `onscreen()`                    | on viewport entry    | called when component enters viewport                 |
+| `offscreen()`                   | on viewport exit     | called when component leaves viewport                 |
 | `destroy()`                     | on disconnection     | teardown hook called when element is removed from dom |
 
 > [!NOTE]

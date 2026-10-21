@@ -411,7 +411,7 @@ export default {
 | `build`                 | integer (positive integer)                   | `1`                               | incremental build number / android version code           |
 | `icon.source`           | string (file path)                           | `'native/assets/icon.png'`        | source icon image path (1024x1024 png)                    |
 | `icon.background`       | string (hex color)                           | `'#ffffff'`                       | adaptive icon background color for android                |
-| `icon.padding`          | number (0 to 1 float)                        | `0.15`                            | icon inset padding ratio                                  |
+| `icon.padding`          | number (0 to 1 float)                        | `0`                               | icon inset padding ratio                                  |
 | `splash.enabled`        | boolean (`true \| false`)                    | `true`                            | enables native launch splash screen                       |
 | `splash.background`     | string (hex color)                           | `'#0a0a0a'`                       | splash screen background color                            |
 | `splash.icon`           | string (file path)                           | `'native/assets/icon.png'`        | splash screen center icon image path                      |

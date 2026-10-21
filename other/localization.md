@@ -266,12 +266,6 @@ import { Locale } from 'dframework';
 Locale.set('ja');
 ```
 
-or use the globally available function:
-
-```javascript
-Locale.set('es');
-```
-
 the cookie is written immediately to ensure subsequent navigations respect the new locale even before the session is synced. the cookie uses `SameSite=Lax`, the `secure` flag in non local environments, and the root path `/`.
 
 the locale value must match the pattern `/^[a-zA-Z]{2,10}(-[a-zA-Z]{2,8})?$/`. invalid values throw an error.

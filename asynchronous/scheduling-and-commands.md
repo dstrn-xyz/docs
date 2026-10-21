@@ -132,11 +132,11 @@ intervals cannot exceed 2147483647 milliseconds (approximately 24.8 days) due to
 
 ### the command class
 
-a command is a class stored in the `console/commands` directory. it must export a default class with a `handle()` method. the `handle` method contains the logic that will be executed when the command runs.
+a command is a class stored in the `console/commands` directory. it must export a default class with an `async handle(args, options)` method. the `handle` method contains the logic that will be executed when the command runs.
 
 ```javascript
 export default class PruneOldLogsCommand {
-  async handle() {
+  async handle(args, options) {
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - 30);
     await DB.table('logs').where('created_at', '<', cutoff).delete();
@@ -145,7 +145,7 @@ export default class PruneOldLogsCommand {
 }
 ```
 
-commands used by the scheduler do not receive any arguments. if you need to pass data, use configuration values or database lookups inside the command itself.
+scheduled command instances provide argument helpers (`this.option()`, `this.hasOption()`, `this.argument()`, `this.options`, `this.arguments`, `this.rawArgs`). commands triggered by the automated scheduler run with empty arguments (`handle([], {})`), while manual execution via `dstrn run` forwards arguments and options (`handle(rawArgs, options)`).
 
 <a name="generating-commands"></a>
 
@@ -169,7 +169,7 @@ you can execute any scheduled command on demand using the `run` cli command:
 dstrn run PruneOldLogs
 ```
 
-when executed manually via `dstrn run`, additional arguments passed after the command name are forwarded as a string array to `handle(args)`. when triggered by the automated scheduler, `handle()` runs with no arguments. dframework reports elapsed execution time upon completion.
+when executed manually via `dstrn run`, additional arguments and options passed after the command name are forwarded to `handle(args, options)` and accessible through `this.option()` and `this.argument()`. when triggered by the automated scheduler, `handle([], {})` runs with empty arguments. dframework reports elapsed execution time upon completion.
 
 <a name="how-the-scheduler-works"></a>
 

@@ -16,7 +16,7 @@ seeding allows you to populate your newly migrated database tables with initial 
 
 ## writing seeders
 
-seeder files live in the seeders directory and are responsible for populating tables with data. similar to migrations, a seeder file must export an asynchronous `run` function. the framework injects a context object containing the fluent `table` query builder, giving you direct access to insert operations.
+seeder files live in the `database/seeders/` directory and are responsible for populating tables with data. similar to migrations, a seeder file must export an asynchronous `run` function. the framework injects a context object containing the fluent `table` query builder, giving you direct access to insert operations.
 
 these context properties are also available globally during execution.
 

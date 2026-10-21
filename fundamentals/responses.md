@@ -180,7 +180,7 @@ the `back()` helper redirects the user to their previous location based on the s
 ```javascript
 export default class PostController {
   async destroy(req) {
-    await Post.delete(req.params.id);
+    await Post.where('id', req.params.id).delete();
     return back('/fallback-url');
   }
 }

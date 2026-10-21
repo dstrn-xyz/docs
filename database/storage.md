@@ -76,8 +76,8 @@ await Storage.disk('local').put('exports/report.csv', 'id,name\n1,tarou');
 the `put` method is fully aware of multipart file objects generated during http uploads. you can pass the uploaded file object directly to the `put` method, and the framework will stream it to its destination without requiring manual buffer extraction.
 
 ```javascript
-// assuming `req.files.avatar` is a multiparty file upload
-const path = await Storage.disk().put('avatars/user.jpg', req.files.avatar);
+// assuming `req.file('avatar')` is a multiparty file upload
+const path = await Storage.disk().put('avatars/user.jpg', req.file('avatar'));
 ```
 
 <a name="retrieving-files"></a>

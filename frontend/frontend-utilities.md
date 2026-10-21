@@ -349,7 +349,7 @@ escapeJs(v)                 // escapes quotes, backticks, backslashes, dollar si
 ```javascript
 isString(v)    isNumber(v)    isBoolean(v)
 isArray(v)     isObject(v)    isFunction(v)
-isEmpty(v)     // true for "" and [] (returns false for null, undefined, {})
+isEmpty(v)     // true for undefined, null, "", [], and {}
 hasValue(v)    // true if not empty, null, or undefined
 ```
 
