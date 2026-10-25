@@ -55,9 +55,11 @@ the minimum log level is determined by whether debug mode is enabled. when `app.
 
 ### writing log messages
 
-each log level has a corresponding method accessible via the global `Log` facade. all methods accept variadic arguments that are automatically formatted.
+each log level has a corresponding method accessible via the global `Log` facade or named import (`import { Log } from 'dframework'`). all methods accept variadic arguments that are automatically formatted.
 
 ```javascript
+import { Log } from 'dframework';
+
 Log.debug('cache miss for key:', cacheKey);
 Log.info('user registered:', user.email);
 Log.warn('rate limit approaching for ip:', clientIp);

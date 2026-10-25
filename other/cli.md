@@ -36,11 +36,16 @@
 
 dframework includes a command line interface accessible via the `dstrn` binary. it provides commands for scaffolding new projects, managing the database, generating application files, analyzing architecture, and running an interactive shell.
 
-all commands except `dstrn init`, `dstrn help`, and `dstrn version` (-v) are gated and require execution within a valid dframework project directory containing `config/app.js`.
+all commands except `dstrn init`, `dstrn help` (or `--help`), and `dstrn version` (or `-v`, `--version`) are gated and require execution within a valid dframework project directory containing `config/app.js`.
 
 ```bash
 dstrn help
+dstrn help serve
+dstrn migrate --help
+dstrn --version
 ```
+
+passing a command name to `dstrn help <command>` or appending `--help` / `-h` to any command prints focused usage, arguments, and options for that specific command.
 
 <a name="available-commands"></a>
 
@@ -404,7 +409,7 @@ this outputs the full graph as a json object with `nodes` and `edges` arrays, su
 the `lint` command detects structural violations in your application.
 
 > [!IMPORTANT]
-> `dstrn lint` enforces strict architectural boundaries: controllers may not depend on other controllers, models may not depend on controllers, middleware may not depend on controllers, and routes may not depend directly on models.
+> `dstrn lint` enforces strict architectural boundaries: controllers may not depend on other controllers, models may not depend on controllers, middleware may not depend on controllers, routes may not depend directly on models, and jobs should not be imported directly (dispatch via Job.dispatch instead).
 
 ```bash
 dstrn lint
@@ -421,7 +426,7 @@ if violations are found, each one is printed with a description.
 
 ### dead code detection
 
-the `dead` command performs reachability analysis starting from all registered routes and socket wires. it traverses the dependency graph and reports any controllers, models, or middleware that are never referenced by any route.
+the `dead` command performs reachability analysis starting from all registered routes and socket wires. it traverses the dependency graph and reports any controllers, models, jobs, or middleware that are never referenced by any route.
 
 ```bash
 dstrn dead

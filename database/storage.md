@@ -50,11 +50,15 @@ dframework automatically creates a symbolic link from `public/storage` to `stora
 
 ## obtaining a disk
 
-you interact with the file system by calling the `disk` method on the `Storage` facade. if you do not specify a disk name, the framework defaults to the `public` disk.
+you can interact with the file system directly on the `Storage` facade, which proxies operations to your default disk (configured in `config/storage.js` via `default`, falling back to `public`). to target a specific disk, call `Storage.disk(name)`.
 
 ```javascript
 import { Storage } from 'dframework';
 
+// operations proxy to default disk
+await Storage.put('notes.txt', 'hello');
+
+// or target a specific disk
 const disk = Storage.disk('local');
 ```
 
@@ -65,7 +69,7 @@ const disk = Storage.disk('local');
 to write a file to the disk, use the `put` method. it accepts the relative file path as the first argument, and the file contents (as a string or buffer) as the second argument. the method will automatically create any necessary directories.
 
 ```javascript
-await Storage.disk().put('avatars/1.jpg', imageBuffer);
+await Storage.put('avatars/1.jpg', imageBuffer);
 await Storage.disk('local').put('exports/report.csv', 'id,name\n1,tarou');
 ```
 

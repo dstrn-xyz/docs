@@ -147,7 +147,7 @@ you can define a master layout and extend it from child views. use `@yield` to m
 
 nested sections are resolved up to a maximum recursion depth (defaults to 30, configurable via `view.maxYieldDepth` in configuration).
 
-you can include partials using the `@include` directive.
+you can include partials using the `@include` directive. in local development, referencing a missing partial throws an actionable `DiagnosticError` with view suggestions to help catch typos quickly; in production, missing partials resolve to an empty string.
 
 ```html
 @include('components.header')

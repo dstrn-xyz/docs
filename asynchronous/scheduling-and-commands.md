@@ -61,13 +61,14 @@ the framework automatically detects this file on startup and begins executing th
 
 ### scheduling commands
 
-when you pass a string to `scheduler.command()`, the scheduler resolves it as a command file in your `console/commands` directory. the file must export a default class with a `handle()` method.
+when you pass a string to `scheduler.command()`, the scheduler resolves it as a command file in your `console/commands` directory, checking both `${name}.js` and `${name}Command.js`. the file must export a default class with a `handle()` method.
 
 ```javascript
 scheduler.command('PruneOldLogs').daily();
+scheduler.command('Report').args(['--format=pdf', 'sales']).daily();
 ```
 
-this will look for `console/commands/PruneOldLogs.js`, instantiate the class, and call its `handle()` method at the specified interval.
+this resolves `console/commands/PruneOldLogs.js` or `console/commands/PruneOldLogsCommand.js`, instantiates the class, and calls its `handle()` method at the specified interval. chaining `.args(argsArray)` forwards arguments and options to the command instance.
 
 <a name="scheduling-closures"></a>
 
