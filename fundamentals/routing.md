@@ -21,6 +21,7 @@
   - [route modifiers](#route-modifiers)
     - [csrf](#csrf)
     - [shield](#shield)
+    - [middleware](#route-level-middleware)
     - [log](#log)
     - [views](#views)
     - [profile](#profile)
@@ -330,10 +331,14 @@ instead of a single controller string you can pass an array as the handler. the 
 Route.post('/approve', ['AuthMiddleware@requireAuth', 'auth.AuthController@approvePost']).name('approve.post');
 ```
 
-you can also apply middleware to a single route without a group by calling `.middleware()`.
+you can also apply middleware to a single route without a group by calling `.middleware()` before or after the route definition.
 
 ```javascript
+// prefixed builder
 Route.middleware(authLimiter).post('/register', 'auth.AuthController@register');
+
+// or chained directly on the route definition
+Route.post('/register', 'auth.AuthController@register').middleware(authLimiter);
 ```
 
 <a name="route-modifiers"></a>
@@ -346,7 +351,7 @@ every route definition returns a chainable object that exposes several modifiers
 
 ### csrf
 
-csrf verification is enabled by default on all `post`, `put`, and `delete` routes. you can disable it for a specific route by chaining `.csrf(false)`.
+csrf verification is enabled by default on all `post`, `put`, `patch`, and `delete` routes. you can disable it for a specific route by chaining `.csrf(false)`.
 
 ```javascript
 Route.post('/magic/:token', 'auth.AuthController@magicConsume').csrf(false);
@@ -368,6 +373,22 @@ Route.post('/magic/:token', 'auth.AuthController@magicConsume').shield(false);
 Route.shield(false, (publicApi) => {
   publicApi.post('/api/external', 'ExternalController@handle');
 });
+```
+
+<a name="route-level-middleware"></a>
+
+### middleware
+
+you can attach route level middleware by chaining `.middleware()` directly onto any route definition. it accepts a middleware string, an array of middleware, or an instantiated middleware object. multiple `.middleware()` calls can also be chained sequentially.
+
+```javascript
+Route.get('/profile', 'ProfileController@show').middleware('AuthMiddleware@requireAuth');
+
+Route.post('/orders', 'OrderController@store').middleware(['AuthMiddleware@requireAuth', orderLimiter]);
+
+Route.get('/settings', 'SettingsController@index')
+  .middleware('AuthMiddleware@requireAuth')
+  .middleware('TwoFactorMiddleware@require2fa');
 ```
 
 <a name="log"></a>

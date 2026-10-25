@@ -26,7 +26,7 @@ when a request enters the application it first hits the central application hand
 
 ### the fast path
 
-if the fast path is active the request bypasses several initialization steps and jumps directly into the pre compiled routing tables stored in compiled `.rc` files. this aggressive optimization drastically reduces latency for static routes and cached responses. the framework generates these highly optimized files during the production build step.
+if the fast path is active the request bypasses several initialization steps and jumps directly into the pre compiled routing tables stored in compiled `.rc` files. this aggressive optimization drastically reduces latency for static routes and cached responses. the framework generates these highly optimized files automatically during application startup when running in production, without requiring a manual build step.
 
 ```javascript
 // internal framework code demonstrating the fast path execution

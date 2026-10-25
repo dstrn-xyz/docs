@@ -62,4 +62,4 @@ dstrn seed --force
 the seeder runner is designed for safety in production environments.
 
 > [!NOTE]
-> before executing an insert statement within a seeder, the framework performs a database count on the target table. if records exist, the insert is safely skipped, allowing seeder suites to run repeatedly without primary key collisions or duplicate rows.
+> before executing an insert statement within a seeder, the framework performs a database count on the target table. if records exist, the runner rolls back the transaction for that seeder and skips the entire seeder file, allowing seeder suites to run repeatedly without primary key collisions or duplicate rows.

@@ -89,7 +89,7 @@ if (req.hasFile('document')) {
 }
 ```
 
-as detailed in the [controllers documentation](controllers.md), `req.body` and `req.files` are populated automatically for mutating requests (`POST`, `PUT`, `DELETE`) by the route compiler. you can also use `req.file(key)` to retrieve the first file directly, or `req.hasFile(key)` to verify that an uploaded file is present.
+as detailed in the [controllers documentation](controllers.md), `req.body` and `req.files` are populated automatically for mutating requests (`POST`, `PUT`, `PATCH`, `DELETE`) by the route compiler. you can also use `req.file(key)` to retrieve the first file directly, or `req.hasFile(key)` to verify that an uploaded file is present.
 
 <a name="streaming-requests"></a>
 
@@ -124,7 +124,7 @@ const referer = req.header('referrer'); // handles both referer and referrer
 the request object handles generating and verifying csrf tokens.
 
 > [!NOTE]
-> the route compiler automatically inserts verification logic for all mutating routes (`POST`, `PUT`, `DELETE`) unless explicitly disabled, so you rarely call these methods manually.
+> the route compiler automatically inserts verification logic for all mutating routes (`POST`, `PUT`, `PATCH`, `DELETE`) unless explicitly disabled, so you rarely call these methods manually.
 
 ```javascript
 // generate a new token valid for 6 hours

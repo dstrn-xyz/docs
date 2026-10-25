@@ -303,6 +303,10 @@ cleanup(); // detach manually if needed
 
 const cleanupAll = listenAll(selectAll('.btn'), 'click', handler);
 cleanupAll(); // detach all listeners manually if needed
+
+// or detach directly without holding a cleanup function reference
+unlisten(button, 'click', handler);
+unlistenAll(selectAll('.btn'), 'click', handler);
 ```
 
 ### classes
@@ -374,8 +378,9 @@ clipboard('text to copy')   // write to system clipboard
 formatTime(seconds)         // returns "mm:ss"
 formatDate(date, false)     // returns "YYYY-MM-DD" in utc (gmt 0)
 formatDate(date)            // returns "YYYY-MM-DD HH:mm:ss" in utc (gmt 0)
-localizeDate(date, false)   // returns "MM-DD-YYYY" in the user local timezone
-localizeDate(date)          // returns "MM-DD-YYYY HH:mm:ss" in the user local timezone
+localizeDate(date, false)                           // returns "MM-DD-YYYY" in the user local timezone
+localizeDate(date)                                  // returns "MM-DD-YYYY HH:mm:ss" in the user local timezone
+localizeDate(date, true, 'ja-JP', 'Asia/Tokyo')     // accepts optional locale and timezone overrides
 distance(a, b)              // levenshtein or jaccard distance between two strings
 
 Storage.get('key')          // typed localStorage wrapper

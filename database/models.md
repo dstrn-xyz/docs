@@ -190,12 +190,12 @@ every method that runs a query returns a `Promise`. the result column lists what
 | `Model.filterAttributes(data)`                                                         | column/value object                                                     | `object` (shallow copy containing only fillable attributes)                           |
 | `Model.getCasts()`                                                                     | none                                                                    | `object` (merged cast definitions resolved across inheritance chain)                  |
 | `builder.clone()`                                                                      | none                                                                    | `ModelQueryBuilder` (isolated copy preserving relations and constraints)              |
-| `instance.save(newData?)`                                                              | optional object to merge before saving                                  | `Promise<void>`                                                                       |
-| `instance.update(data)`                                                                | column/value object                                                     | `Promise<void>`                                                                       |
+| `instance.save(newData?)`                                                              | optional object to merge before saving                                  | `Promise<boolean>` (true on success, false if aborted by hook)                         |
+| `instance.update(data)`                                                                | column/value object                                                     | `Promise<boolean>` (mutates in place and executes UPDATE; false if aborted)            |
 | `instance.touch()`                                                                     | none                                                                    | `Promise<boolean>` (updates updated_at timestamp in database)                         |
 | `instance.increment(column, amount?, extra?)`                                          | column name, optional amount (default 1), optional extra columns object | `Promise<object>` (mutates instance attribute in place and executes increment UPDATE) |
 | `instance.decrement(column, amount?, extra?)`                                          | column name, optional amount (default 1), optional extra columns object | `Promise<object>` (mutates instance attribute in place and executes decrement UPDATE) |
-| `instance.delete()`                                                                    | none                                                                    | `Promise<void>`                                                                       |
+| `instance.delete()`                                                                    | none                                                                    | `Promise<boolean>` (deletes row by primary key; false if aborted by hook)              |
 | `instance.hash(field)`                                                                 | attribute name on the instance                                          | `Promise<void>` (mutates the instance in place)                                       |
 | `instance.load(...relations)`                                                          | relation names                                                          | `Promise<Model>` (the same instance, with relations populated)                        |
 | `instance.toJSON()`                                                                    | none                                                                    | plain object with hidden keys removed and relations serialized                        |
@@ -334,7 +334,7 @@ models support lifecycle hooks executed during record mutations:
 
 hooks can be declared directly as class methods, or registered statically via `Model.creating(fn)`, `Model.created(fn)`, `Model.updating(fn)`, `Model.updated(fn)`, `Model.saving(fn)`, `Model.saved(fn)`, `Model.deleting(fn)`, and `Model.deleted(fn)`.
 
-returning `false` from a before hook (`creating`, `updating`, `saving`, `deleting`) aborts the operation and prevents database writes.
+returning `false` from a before hook (`creating`, `updating`, `saving`, `deleting`) aborts the operation and prevents database writes, causing `save()`, `update()`, or `delete()` to resolve to `false`. on successful completion, these methods resolve to `true`.
 
 ```javascript
 export default class User extends Model {
@@ -358,7 +358,7 @@ to update a model, you can either mutate its properties and call `save`, or use 
 ```javascript
 const user = await User.find(1);
 await user.update({ status: 'active' });
-// returns undefined. the instance attributes are mutated in place
+// returns true (or false if aborted by hook). the instance attributes are mutated in place
 // before the underlying UPDATE executes.
 ```
 

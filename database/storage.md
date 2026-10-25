@@ -50,15 +50,20 @@ dframework automatically creates a symbolic link from `public/storage` to `stora
 
 ## obtaining a disk
 
-you can interact with the file system directly on the `Storage` facade, which proxies operations to your default disk (configured in `config/storage.js` via `default`, falling back to `public`). to target a specific disk, call `Storage.disk(name)`.
+the preferred canonical pattern is calling `Storage.disk(name)` to obtain a disk instance. omitting the disk name resolves the default disk configured in `config/storage.js` (falling back to `public`).
+
+for convenience, the `Storage` facade also proxies operations directly (`Storage.put()`, `Storage.get()`, `Storage.delete()`, etc.) to the default disk.
 
 ```javascript
 import { Storage } from 'dframework';
 
-// operations proxy to default disk
+// preferred canonical pattern on default disk
+await Storage.disk().put('notes.txt', 'hello');
+
+// direct proxy shorthand to default disk
 await Storage.put('notes.txt', 'hello');
 
-// or target a specific disk
+// target a specific configured disk
 const disk = Storage.disk('local');
 ```
 
@@ -66,10 +71,10 @@ const disk = Storage.disk('local');
 
 ## storing files
 
-to write a file to the disk, use the `put` method. it accepts the relative file path as the first argument, and the file contents (as a string or buffer) as the second argument. the method will automatically create any necessary directories.
+to write a file to a disk, use the `put` method. it accepts the relative file path as the first argument, and the file contents (as a string or buffer) as the second argument. the method will automatically create any necessary directories.
 
 ```javascript
-await Storage.put('avatars/1.jpg', imageBuffer);
+await Storage.disk().put('avatars/1.jpg', imageBuffer);
 await Storage.disk('local').put('exports/report.csv', 'id,name\n1,tarou');
 ```
 
