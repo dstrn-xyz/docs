@@ -101,6 +101,7 @@ the `RateLimiter` constructor accepts the following options. all entries are opt
 | `keyGenerator`   | `Function` | `(req) => req.ip`     | a function that returns a string key to track. customize this to limit per user or per api token |
 | `trustedProxies` | `string[]` | `[]`                  | array of trusted proxy ip addresses for resolving `x-forwarded-for`                              |
 | `maxEntries`     | `number`   | `100000`              | maximum distinct tracked client keys held in memory before lru eviction                          |
+| `headers`        | `boolean`  | `false`               | send rate limit quota headers on non exceeded requests (disabled by default for state secrecy)  |
 
 ### per user rate limiting
 

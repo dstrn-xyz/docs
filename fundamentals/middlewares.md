@@ -201,6 +201,7 @@ when the limit is exceeded, the response includes `Retry-After`, `X-RateLimit-Li
 | `keyGenerator`   | client ip             | `(req) => string`, custom grouping key             |
 | `trustedProxies` | `[]`                  | trusted proxy ips for `x-forwarded-for` resolution |
 | `maxEntries`     | `100000`              | maximum distinct tracked keys before lru eviction  |
+| `headers`        | `false`               | send quota headers on non exceeded requests        |
 
 a custom `keyGenerator` is useful for per user limiting:
 

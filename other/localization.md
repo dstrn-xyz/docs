@@ -258,17 +258,17 @@ if no default is configured, the framework falls back to `'en'`.
 
 ### persistent locale
 
-use the `Locale.set()` function to change the user's locale. by default, the change is persisted by writing a `locale` cookie and storing the preference in the user's session.
+use the `Locale.set()` function to change the user's locale. by default, the change is persisted by writing a `locale` cookie and storing the preference in the user's session. `Locale.set()` returns a promise and can be awaited.
 
 ```javascript
 import { Locale } from 'dframework';
 
-Locale.set('ja');
+await Locale.set('ja');
 ```
 
-the cookie is written immediately to ensure subsequent navigations respect the new locale even before the session is synced. the cookie uses `SameSite=Lax`, the `secure` flag in non local environments, and the root path `/`.
+the cookie is written with a 1 year lifetime (`maxAge: 365 * 24 * 60 * 60 * 1000`) so the user's language preference is preserved across browser sessions. the cookie uses `SameSite=Lax`, the `secure` flag in non local environments, and the root path `/`.
 
-the locale value must match the pattern `/^[a-zA-Z]{2,10}(-[a-zA-Z]{2,8})?$/`. invalid values throw an error.
+the locale value must match standard BCP 47 format (`/^[a-zA-Z]{2,8}(-[a-zA-Z0-9]{2,8})*$/`), supporting regional tags and numeric identifiers like `es-419`, `zh-Hans-CN`, and `zh-Hant-TW`. invalid values throw an error.
 
 <a name="request-only-locale"></a>
 
