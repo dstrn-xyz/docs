@@ -138,7 +138,6 @@ export default {
   shield_difficulty: Env.value('SHIELD_DIFFICULTY', 4),
   shield_threshold: Env.value('SHIELD_THRESHOLD', 70),
 
-  objectPoolSize: Env.value('OBJECT_POOL_SIZE', 2000),
   maxCompiledCacheSize: Env.value('MAX_COMPILED_CACHE_SIZE', 500),
   maxTemplateSourceCacheSize: Env.value('MAX_TEMPLATE_SOURCE_CACHE_SIZE', 500),
 
@@ -188,7 +187,6 @@ export default {
 | `shield`                        | `SHIELD_ENABLED`                    | boolean (`true \| false`)                      | `false`                                      | enables antibot proof of work challenge protection                                   |                                                                 |
 | `shield_difficulty`             | `SHIELD_DIFFICULTY`                 | integer (positive integer)                     | `4`                                          | leading hex zero difficulty for proof of work puzzle                                 |                                                                 |
 | `shield_threshold`              | `SHIELD_THRESHOLD`                  | integer (0 to 100)                             | `70`                                         | proof of work pass score                                                             |                                                                 |
-| `objectPoolSize`                | `OBJECT_POOL_SIZE`                  | integer (positive integer)                     | `2000`                                       | maximum recycled request context objects retained in pool                            |                                                                 |
 | `maxCompiledCacheSize`          | `MAX_COMPILED_CACHE_SIZE`           | integer (positive integer)                     | `500`                                        | maximum compiled view functions cached in memory                                     |                                                                 |
 | `maxTemplateSourceCacheSize`    | `MAX_TEMPLATE_SOURCE_CACHE_SIZE`    | integer (positive integer)                     | `500`                                        | maximum raw view template files cached in memory                                     |                                                                 |
 | `staticFileCache.maxFiles`      | `STATIC_FILE_CACHE_MAX_FILES`       | integer (positive integer)                     | `100`                                        | maximum number of static public assets held in memory                                |                                                                 |
