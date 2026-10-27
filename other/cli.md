@@ -74,7 +74,7 @@ passing a command name to `dstrn help <command>` or appending `--help` / `-h` to
 | `dstrn migrate:make <table>` | create a new migration template                         |
 | `dstrn seed [name]`          | run database seeders                                    |
 | `dstrn seed:make <Name>`     | create a new seeder template                            |
-| `dstrn drop`                 | drop all tables in the database with confirmation       |
+| `dstrn drop [--force]`                 | drop all tables in the database with confirmation (or --force) |
 | `dstrn advisor [--apply]`    | inspect unindexed relationships and generate migrations |
 
 <a name="generators"></a>
@@ -94,10 +94,10 @@ passing a command name to `dstrn help <command>` or appending `--help` / `-h` to
 
 ### system
 
-| command                                | description                                                                   |
-| -------------------------------------- | ----------------------------------------------------------------------------- |
-| `dstrn run <CommandName>`              | run a user command from `console/commands`                                    |
-| `dstrn dispatch <JobName> [--payload]` | dispatch a background job from the command line with an optional json payload |
+| command                                 | description                                                                   |
+| --------------------------------------- | ----------------------------------------------------------------------------- |
+| `dstrn run <CommandName>`               | run a user command from `console/commands`                                    |
+| `dstrn dispatch <JobName> [--payload=]` | dispatch a background job from the command line with an optional json payload |
 | `dstrn logs:clear`                     | clear or archive log files with date filtering                                |
 | `dstrn deploy`                         | generate production deployment and service configurations                     |
 | `dstrn cert`                           | inspect and manage ssl certificates                                           |
