@@ -263,10 +263,11 @@ searchable, extensible select combobox with automatic floating placement, keyboa
 | `value`        | `value`        | `string`  | `null`  | yes  | currently selected option value                                                     |
 | `allow-search` | `allowSearch`  | `boolean` | `false` | no   | enables real time search filtering input                                            |
 | `allow-input`  | `allowInput`   | `boolean` | `false` | no   | allows adding custom options via input and plus button                              |
-| `horizontal`   | `isHorizontal` | `boolean` | `false` | no   | switches option layout from vertical list to horizontal chips                       |
-| `name`         | `name`         | `string`  | `""`    | no   | form field name                                                                     |
-| `id`           | `id`           | `string`  | `""`    | no   | component id                                                                        |
-| `options`      | `options`      | `array`   | `[]`    | no   | array of `{value, text, content, html}` objects (set `html: true` for rich content) |
+| `horizontal`   | `isHorizontal` | `boolean` | `false`         | no   | switches option layout from vertical list to horizontal chips                       |
+| `empty-text`   | `emptyText`    | `string`  | `"no results"`  | no   | custom empty state message displayed when no options match                           |
+| `name`         | `name`         | `string`  | `""`            | no   | form field name                                                                     |
+| `id`           | `id`           | `string`  | `""`            | no   | component id                                                                        |
+| `options`      | `options`      | `array`   | `[]`            | no   | array of `{value, text, content, html}` objects (set `html: true` for rich content) |
 
 #### programmatic api
 
