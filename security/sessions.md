@@ -117,7 +117,13 @@ await Session.forget('key');
 
 // destroy the entire session
 await Session.forget();
+
+// clear all session payload keys without invalidating authentication
+await Session.flush();
 ```
+
+> [!NOTE]
+> `Session.flush()` removes all custom data keys stored in the active session payload without touching authentication guards or disconnecting active websocket connections. to revoke authenticated credentials and drop authorized websocket clients, call `Auth.logout()` or `Auth.flush()`.
 
 <a name="session-id-and-regeneration"></a>
 
@@ -148,12 +154,38 @@ dframework abstracts away the complexity of session storage behind simple driver
 
 - **memory**: stores sessions in ram. fast, but lost on server restart. suitable for local development.
 - **database**: stores sessions in a dedicated database table. highly robust and scalable across multiple server instances.
+- **stealth**: stores sessions entirely client side in encrypted cookies. zero server side storage or database queries required.
 
 <a name="stealth-mode"></a>
 
 ### stealth mode
 
-dframework includes a `stealth` session driver.
+dframework includes a `stealth` session driver designed for privacy and zero state architectures.
 
-> [!NOTE]
-> when stealth mode is enabled, session data is completely stateless on the server side. the entire session payload is encrypted using aes-256-gcm and stored directly inside the user's secure http only cookie, eliminating database lookups and server memory overhead entirely.
+when stealth mode is enabled (`SESSION_DRIVER=stealth`), session storage requires zero database queries, zero redis network roundtrips, and zero server memory consumption.
+
+```javascript
+// config/session.js
+import { Env } from 'dframework';
+
+export default {
+  driver: Env.value('SESSION_DRIVER', 'stealth'),
+  cookie: Env.value('SESSION_COOKIE', 'sid'),
+  lifetime: Env.value('SESSION_LIFETIME', 120),
+  same_site: 'Lax',
+  http_only: true,
+  secure: null
+};
+```
+
+#### how stealth sessions operate
+
+the entire session payload is serialized and encrypted with aes 256 gcm using your application secret key (`APP_KEY`). the resulting encrypted token string serves as the session identifier and is sent back to the browser in the configured http only cookie.
+
+on incoming requests, the framework decrypts the cookie. if the cookie has been tampered with or modified by an attacker, decryption fails safely, logs a debug warning when `app.debug` is enabled, and initializes an empty guest session.
+
+an expiration timestamp is embedded inside the encrypted payload. when saving session state, the driver refreshes the expiration window automatically or preserves future expiration dates (such as permanent sessions). expired sessions return null and are discarded.
+
+because the entire session is stored inside an http cookie header, you must keep stored data minimal (strictly under 4kb to stay safely within web browser cookie size limits). stealth mode is ideal for user identifiers, auth tokens, and minimal preferences, but should not be used to store large arrays or bulky objects.
+
+because no session rows or files exist on the server, there are no database tables to migrate and no scheduled garbage collection commands needed.

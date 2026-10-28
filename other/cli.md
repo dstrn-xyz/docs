@@ -193,29 +193,40 @@ inline execution supports top level await expressions and multi statement blocks
 
 ## database advisor
 
-the `advisor` command inspects your database schema and model definitions to detect missing indexes on foreign keys, junction tables, and frequently filtered column pairs.
+the `advisor` command inspects your database schema, column definitions, and active query history to detect missing indexes on foreign keys, junction tables, and frequently filtered column pairs.
 
 ```bash
 dstrn advisor
 ```
 
 ```
-  ADVISOR  analyzing 12 tables...
+  database index advisor found 2 recommendation(s):
 
-  WARN  tracks: unindexed foreign key 'album_id'
-        CREATE INDEX idx_tracks_album_id ON tracks (album_id);
+  table: tracks
+  index: idx_tracks_album_id (album_id)
+  reason: unindexed foreign key column
 
-  WARN  track_artists: unindexed junction pair '(track_id, artist_id)'
-        CREATE INDEX idx_track_artists_track_id_artist_id ON track_artists (track_id, artist_id);
+  table: track_artists
+  index: idx_track_artists_track_id_artist_id (track_id, artist_id)
+  reason: frequently filtered column pair (track_id, artist_id) lacks composite index
+
+run "dstrn advisor --apply" to generate and execute migrations automatically
 ```
 
-to automatically scaffold and execute a migration with all recommended indexes, pass the `--apply` flag:
+to automatically scaffold and execute timestamped migrations with all recommended indexes, pass the `--apply` flag:
 
 ```bash
 dstrn advisor --apply
 ```
 
-this creates a timestamped migration file exporting `up` and `down` functions with `table.index()` and `table.dropIndex()` calls, then immediately runs `dstrn migrate`.
+```
+  generating and running migrations
+  created migration: database/migrations/2026_10_28_120000_add_idx_tracks_album_id.js
+  created migration: database/migrations/2026_10_28_120001_add_idx_track_artists_track_id_artist_id.js
+  all migrations applied successfully
+```
+
+each generated migration file exports `up` and `down` functions with `table.index()` and `table.dropIndex()` calls, allowing full rollback support via `dstrn migrate:rollback`.
 
 <a name="user-commands"></a>
 

@@ -137,6 +137,9 @@ this is fully transparent: callers receive the rows that match their specific va
 
 to intentionally skip batching (for example inside a batcher's own callback or for cursor sensitive logic), pass `{ _skipBatch: true }` in the options argument of `DB.query`.
 
+> [!NOTE]
+> query batching is managed per request. when multiple components, relations, or helpers query the same table and column during the same event loop tick, `QueryBatcher` pools them and schedules a batch execution on the microtask queue. up to 1024 unique keys are merged into a single database roundtrip, with row sets mapped back to each original caller's promise. when the request lifecycle ends, the batcher is closed to prevent state leaks across concurrent requests.
+
 <a name="sql-helpers"></a>
 
 ## sql helpers

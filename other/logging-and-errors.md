@@ -127,7 +127,7 @@ the `local` environment writes to `logs/dev/` and production writes to `logs/pro
 
 ### log file rotation and retention
 
-file logging uses a dedicated background worker thread communicating over a lock free atomic ring buffer (via SharedArrayBuffer). log formatting and encoding execute without blocking the main event loop, preserving strict sequential order while isolating all disk io.
+file logging uses a dedicated background worker thread communicating over a lock free atomic ring buffer. log formatting and encoding execute without blocking the main event loop, preserving strict sequential order while isolating all disk io.
 
 log files are rotated daily at midnight. each file is named with the date (`dframework_YYYY-MM-DD.log`). when the date changes, the background worker closes the previous file descriptor and opens the new daily file descriptor automatically.
 
