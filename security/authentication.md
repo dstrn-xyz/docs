@@ -286,6 +286,11 @@ Route.group({ basicAuth: true }, (admin) => {
   admin.get('/dashboard', 'admin.AdminController@index');
 });
 
+// group shorthand with config defaults and zero parameter callback
+Route.basicAuth(() => {
+  Route.get('/status', 'admin.StatusController@show');
+});
+
 // group shorthand with explicit credentials
 Route.basicAuth('admin', 'secret', (admin) => {
   admin.get('/settings', 'admin.SettingsController@index');
