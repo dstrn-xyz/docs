@@ -498,8 +498,12 @@ the framework generates a `Plugins.swift` file in the ios runtime project during
 ```swift
 import Foundation
 
-struct BarcodePlugin {
-    var bridge: Bridge?
+class BarcodePlugin {
+    weak var bridge: Bridge?
+
+    init(bridge: Bridge? = nil) {
+        self.bridge = bridge
+    }
 
     func handle(method: String, params: [String: Any], callId: String) {
         switch method {
@@ -557,10 +561,10 @@ the framework generates a `plugins.rs` dispatcher. inside your `Plugin.rs`:
 ```rust
 use serde_json::{json, Value};
 
-pub fn dispatch(module: &str, method: &str, params: &Value) -> (bool, Value) {
-    match (module, method) {
-        ("barcode", "scan") => (true, json!({ "ok": false, "error": "no camera in desktop build" })),
-        _ => (false, json!(format!("barcode: unknown method {}", method))),
+pub fn handle(method: &str, params: &Value) -> (bool, Value, Value) {
+    match method {
+        "scan" => (true, json!({ "ok": false, "error": "no camera in desktop build" }), json!(null)),
+        _ => (false, json!(null), json!(format!("barcode: unknown method {}", method))),
     }
 }
 ```
@@ -606,8 +610,12 @@ export default {
 // native/plugins/barcode/Plugin.swift
 import AVFoundation
 
-struct BarcodePlugin {
-    var bridge: Bridge?
+class BarcodePlugin {
+    weak var bridge: Bridge?
+
+    init(bridge: Bridge? = nil) {
+        self.bridge = bridge
+    }
 
     func handle(method: String, params: [String: Any], callId: String) {
         switch method {
@@ -649,10 +657,10 @@ class BarcodePlugin(private val context: Context, private val bridge: Bridge) {
 // native/plugins/barcode/Plugin.rs
 use serde_json::{json, Value};
 
-pub fn dispatch(module: &str, method: &str, params: &Value) -> (bool, Value) {
-    match (module, method) {
-        ("barcode", "scan") => (false, json!("barcode: camera not available on desktop")),
-        _ => (false, json!(format!("barcode: unknown method {}", method))),
+pub fn handle(method: &str, params: &Value) -> (bool, Value, Value) {
+    match method {
+        "scan" => (false, json!(null), json!("barcode: camera not available on desktop")),
+        _ => (false, json!(null), json!(format!("barcode: unknown method {}", method))),
     }
 }
 ```

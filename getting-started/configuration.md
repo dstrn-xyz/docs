@@ -126,6 +126,8 @@ export default {
   host: Env.value('APP_HOST', null),
   port: Env.value('APP_PORT', 8250),
   locale: Env.value('APP_LOCALE', 'en'),
+  basePath: Env.value('APP_BASE_PATH', null),
+  langPath: Env.value('APP_LANG_PATH', null),
   key: Env.value('APP_KEY'),
   hashFields: (Env.value('HASH_FIELDS') || 'password').split(',').map(s => s.trim()).filter(Boolean),
 
@@ -178,6 +180,8 @@ export default {
 | `host`                          | `APP_HOST`                          | string                                         | null (e.g. `'0.0.0.0'`, `'127.0.0.1'`, null) | `null`                                                                               | host address to bind http server (null binds to all interfaces) |
 | `port`                          | `APP_PORT`                          | integer (1 to 65535)                           | `8250`                                       | tcp port number for the http server                                                  |                                                                 |
 | `locale`                        | `APP_LOCALE`                        | string (iso language code e.g. `'en'`, `'fr'`) | `'en'`                                       | default language for view localization                                               |                                                                 |
+| `basePath`                      | `APP_BASE_PATH`                     | string (directory path) \| null                | `process.cwd()`                              | custom root directory for controllers jobs and middlewares                           |                                                                 |
+| `langPath`                      | `APP_LANG_PATH`                     | string (directory path) \| null                | `null` (resolves to `lang` under base path)  | custom directory containing localization dictionaries                                |                                                                 |
 | `key`                           | `APP_KEY`                           | string (min 32 characters)                     | none (required in production)                | application secret used for session signing and hashing                              |                                                                 |
 | `hashFields`                    | `HASH_FIELDS`                       | array of strings (comma separated in env)      | `['password']`                               | request parameters automatically hashed during database operations                   |                                                                 |
 | `maxBodySize`                   | `MAX_BODY_SIZE`                     | integer (megabytes)                            | `1`                                          | maximum incoming request payload body size in mb                                     |                                                                 |
