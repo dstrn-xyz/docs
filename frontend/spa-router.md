@@ -279,7 +279,7 @@ you can define client side validation rules using the `rules` attribute. the syn
 </d-form>
 ```
 
-the available client side rules are: `required`, `string`, `number`, `integer`, `boolean`, `array`, `email`, `min:value`, `max:value`, `in:a,b,c`, `not_in:a,b,c`, `regex:pattern`, and `nullable`.
+the available client side rules are: `required`, `string`, `number`, `integer`, `boolean`, `array`, `email`, `min:value`, `max:value`, `in:a,b,c`, `not_in:a,b,c`, and `nullable`.
 
 when validation fails, the form adds an `error` class to the nearest `.input-wrapper` ancestor (or the input itself) and inserts an `error-message` element below it. the errors are cleared automatically on the next submission attempt.
 
