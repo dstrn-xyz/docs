@@ -266,7 +266,7 @@ import { Locale } from 'dframework';
 await Locale.set('ja');
 ```
 
-the cookie is written with a 1 year lifetime (`maxAge: 365 * 24 * 60 * 60 * 1000`) so the user's language preference is preserved across browser sessions. the cookie uses `SameSite=Lax`, the `secure` flag in non local environments, and the root path `/`.
+the cookie is written with a 1 year lifetime (`maxAge: 365 * 24 * 60 * 60` in seconds) so the user's language preference is preserved across browser sessions. the cookie uses `SameSite=Lax`, the `secure` flag in non local environments, and the root path `/`.
 
 the locale value must match standard BCP 47 format (`/^[a-zA-Z]{2,8}(-[a-zA-Z0-9]{2,8})*$/`), supporting regional tags and numeric identifiers like `es-419`, `zh-Hans-CN`, and `zh-Hant-TW`. invalid values throw an error.
 

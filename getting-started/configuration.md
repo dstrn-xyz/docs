@@ -11,6 +11,7 @@
   - [config/database.js](#config-database)
   - [config/session.js](#config-session)
   - [config/storage.js](#config-storage)
+  - [config/socket.js](#config-socket)
   - [config/native.js](#config-native)
   - [config/view.js](#config-view)
 
@@ -52,7 +53,6 @@ SHIELD_ENABLED=false
 SHIELD_DIFFICULTY=4
 SHIELD_THRESHOLD=70
 
-OBJECT_POOL_SIZE=2000
 MAX_COMPILED_CACHE_SIZE=500
 MAX_TEMPLATE_SOURCE_CACHE_SIZE=500
 
@@ -358,6 +358,7 @@ the storage configuration defines the disks available through the storage facade
 import { Env } from 'dframework';
 
 export default {
+  default: 'public',
   disks: {
     local: {
       root: Env.value('STORAGE_ROOT', './storage/local'),
@@ -375,9 +376,29 @@ export default {
 
 | key                          | env variable                           | accepted values                    | default                                    | description                                             |
 | ---------------------------- | -------------------------------------- | ---------------------------------- | ------------------------------------------ | ------------------------------------------------------- |
+| `default`                    | none                                   | string (disk name)                 | `'public'`                                 | default storage disk name used when omitted in disk()   |
 | `disks`                      | none                                   | object of disk definitions         | `{ local: ..., public: ..., secure: ... }` | map of disk names to configuration objects              |
 | `disks.<name>.root`          | `STORAGE_ROOT`, `STORAGE_PUBLIC`, etc. | string (directory path)            | none (required per disk)                   | local filesystem directory path for disk root           |
 | `disks.<name>.encryptionKey` | `APP_KEY` or custom secret             | string (min 32 characters) \| null | `null`                                     | key for aes-256-gcm automatic encryption and decryption |
+
+<a name="config-socket"></a>
+
+### config/socket.js
+
+the socket configuration controls real time websocket behavior and connection limits:
+
+```javascript
+// config/socket.js
+import { Env } from 'dframework';
+
+export default {
+  maxPayload: Env.int('SOCKET_MAX_PAYLOAD', 1),
+};
+```
+
+| key          | env variable         | accepted values    | default | description                                       |
+| ------------ | -------------------- | ------------------ | ------- | ------------------------------------------------- |
+| `maxPayload` | `SOCKET_MAX_PAYLOAD` | number (megabytes) | `1`     | maximum websocket frame payload size in megabytes |
 
 <a name="config-native"></a>
 

@@ -2,6 +2,7 @@
 
 - [migrations](#migrations)
   - [introduction](#introduction)
+  - [generating migrations](#generating-migrations)
   - [creating tables](#creating-tables)
   - [column types](#column-types)
   - [column modifiers](#column-modifiers)
@@ -9,7 +10,9 @@
   - [modifying tables](#modifying-tables)
   - [dropping tables](#dropping-tables)
   - [running migrations](#running-migrations)
+    - [migration status](#migration-status)
     - [rolling back](#rolling-back)
+    - [transactional migrations and ddl statements](#transactional-ddl)
 
 <a name="introduction"></a>
 
@@ -18,6 +21,18 @@
 migrations are like version control for your database, allowing your team to define and share the application's database schema definition. if you have ever had to tell a teammate to manually add a column to their local database schema, you've faced the problem that database migrations solve.
 
 each migration file is an es module that must export an asynchronous `up` function, and optionally a `down` function. the framework automatically injects a context object containing the `Schema` service, the `table` query builder, the raw `db` connection, and a `query` helper. these properties are also made available globally during the execution of the migration.
+
+<a name="generating-migrations"></a>
+
+## generating migrations
+
+to create a new migration, use the `migrate:make` cli command with the target table name:
+
+```bash
+dstrn migrate:make users
+```
+
+this scaffolds a timestamped migration file in `database/migrations/` containing stubbed `up` and `down` functions.
 
 <a name="creating-tables"></a>
 
@@ -182,6 +197,18 @@ when running in production (`APP_ENV=production`), the command requires confirma
 ```bash
 dstrn migrate --force
 ```
+
+<a name="migration-status"></a>
+
+### migration status
+
+to inspect which migrations have been applied and which are pending, run:
+
+```bash
+dstrn migrate:status
+```
+
+this outputs a status table listing all migration files along with their applied batch number.
 
 <a name="rolling-back"></a>
 

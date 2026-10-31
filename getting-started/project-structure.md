@@ -8,6 +8,7 @@
   - [the console directory](#the-console-directory)
   - [the controllers directory](#the-controllers-directory)
   - [the database directory](#the-database-directory)
+  - [the jobs directory](#the-jobs-directory)
   - [the lang directory](#the-lang-directory)
   - [the middlewares directory](#the-middlewares-directory)
   - [the models directory](#the-models-directory)
@@ -215,6 +216,22 @@ export async function run() {
     email: 'admin@example.com',
     password: 'password' // passwords are automatically hashed
   });
+}
+```
+
+<a name="the-jobs-directory"></a>
+
+### the jobs directory
+
+the `jobs` directory houses background job classes executed asynchronously by worker threads. every job class exports a default class with a `handle(payload)` method and is dispatched throughout the application via `Job.dispatch()`.
+
+```javascript
+// jobs/SendWelcomeEmailJob.js
+export default class SendWelcomeEmailJob {
+  async handle(payload) {
+    const user = await User.find(payload.userId);
+    await Mailer.send(user.email, 'welcome', { name: user.name });
+  }
 }
 ```
 

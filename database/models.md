@@ -176,7 +176,7 @@ every method that runs a query returns a `Promise`. the result column lists what
 | `Model.all()`                                                                          | none                                                                    | `Promise<Model[]>` (hydrated instances, `[]` when no rows)                            |
 | `Model.query()`                                                                        | none                                                                    | `ModelQueryBuilder` (fresh query builder instance)                                    |
 | `Model.find(id)`                                                                       | primary key value, or `{ pk1, pk2 }` for composite keys                 | `Promise<Model\|null>`                                                                |
-| `Model.first(where?)`                                                                  | optional `{ column: value }` object                                     | `Promise<Model\|null>`                                                                |
+| `Model.first()`                                                                        | none                                                                    | `Promise<Model\|null>` (first record without filtering; use firstWhere or where().first() for conditions) |
 | `Model.firstWhere(col, op?, val?)`                                                     | column name, operator/value, optional value                             | `Promise<Model\|null>`                                                                |
 | `Model.latest(count?, column?)`                                                        | `null` or number; optional column name                                  | `null` count: `Promise<Model\|null>`; numeric count: `Promise<Model[]>`               |
 | `Model.where(...)`                                                                     | column/operator/value, or object                                        | `ModelQueryBuilder` (chainable, thenable, async iterable)                             |
@@ -185,7 +185,7 @@ every method that runs a query returns a `Promise`. the result column lists what
 | `Model.paginate(perPage, pageName?)`                                                   | rows per page (default 10), optional page param name                    | `Promise<Paginator>`                                                                  |
 | `Model.firstOrCreate(attributes, values?)`                                             | attributes object; optional extra values                                | `Promise<Model>` (existing or newly created)                                          |
 | `Model.updateOrCreate(attributes, values?)`                                            | attributes object; optional extra values                                | `Promise<Model>` (updated or newly created)                                           |
-| `Model.create(data)`                                                                   | column/value object                                                     | `Promise<Model>` (reloaded from the database using the primary key)                   |
+| `Model.create(data)`                                                                   | column/value object                                                     | `Promise<Model\|null>` (hydrated instance with assigned primary key; null if aborted by lifecycle hook; not reloaded via SELECT) |
 | `Model.isFillable(key)`                                                                | attribute name string                                                   | `boolean` (true if attribute is mass assignable)                                      |
 | `Model.filterAttributes(data)`                                                         | column/value object                                                     | `object` (shallow copy containing only fillable attributes)                           |
 | `Model.getCasts()`                                                                     | none                                                                    | `object` (merged cast definitions resolved across inheritance chain)                  |
@@ -276,7 +276,7 @@ const user = new User();
 user.name = 'tarou';
 user.email = 'tarou@example.com';
 await user.save();
-// returns undefined. the instance now carries the assigned primary key
+// returns true (or false if aborted by hook). the instance now carries the assigned primary key
 // (if the table has an auto increment column).
 ```
 
@@ -415,7 +415,7 @@ to delete a model, call the `delete` method on a model instance.
 ```javascript
 const user = await User.find(1);
 await user.delete();
-// returns undefined. throws a diagnostic error when the instance
+// returns true (or false if aborted by hook). throws a diagnostic error when the instance
 // is missing the primary key value(s) required to scope the delete.
 ```
 

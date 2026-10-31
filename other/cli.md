@@ -153,6 +153,12 @@ dstrn serve
 
 this loads the application configuration, imports all route files, boots the socket server, starts the scheduler, and begins listening for http requests. the startup banner displays the application url and port.
 
+you can specify a custom host or port using `--host` and `--port`:
+
+```bash
+dstrn serve --host=0.0.0.0 --port=3000
+```
+
 <a name="tinker"></a>
 
 ## tinker
@@ -506,6 +512,12 @@ asymmetric translation keys across locales
 ```
 
 if all translations are complete and match view usage, a success status is returned.
+
+pass `--strict` to fail with a non zero exit code if unused translation keys exist in dictionaries:
+
+```bash
+dstrn lang:lint --strict
+```
 
 <a name="the-compiler"></a>
 
