@@ -1247,8 +1247,6 @@ enhanced input field with icon prefixes, keyboard shortcut binding, number stepp
 | `min`          | `min`          | `string`  | `""`     | no   | minimum number value                                        |
 | `max`          | `max`          | `string`  | `""`     | no   | maximum number value                                        |
 | `step`         | `step`         | `string`   | `"1"`    | no   | step value for number controls                              |
-| `endpoint`     | `endpoint`     | `string`   | `""`     | no   | live input debounced fetch endpoint                         |
-| `callback`     | `callback`     | `function` | `null`   | no   | callback function invoked during live input updates         |
 
 #### programmatic api
 
@@ -1261,6 +1259,10 @@ input.value = 'search term';
 // read or modify properties
 input.placeholder = 'type command';
 input.disabled = false;
+
+// programmatic focus and blur
+input.focus();
+input.blur();
 ```
 
 #### events
