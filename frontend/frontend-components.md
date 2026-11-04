@@ -449,7 +449,7 @@ collapsible accordion dropdown container, perfect for faqs.
 <d-dropdown header="account security">
   <div class="p-1 flex-column g-1">
     <d-checkbox text="two factor authentication"></d-checkbox>
-    <a href="/sessions" class="btn btn-sm">manage active sessions</a>
+    <a href="/sessions" class="btn fs-08">manage active sessions</a>
   </div>
 </d-dropdown>
 ```
@@ -955,8 +955,8 @@ modal dialog container with page scroll locking and backdrop dismiss protection.
     <h3>confirm deletion</h3>
     <p class="text-content-l">this action cannot be undone.</p>
     <div class="flex-row justify-end g-1 mt-1">
-      <button class="btn btn-sm" onclick="this.closest('d-modal').close()">cancel</button>
-      <button class="btn btn-sm btn-red">delete</button>
+      <button class="btn fs-08" onclick="this.closest('d-modal').close()">cancel</button>
+      <button class="btn btn-red fs-08">delete</button>
     </div>
   </div>
 </d-modal>

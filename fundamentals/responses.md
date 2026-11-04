@@ -175,7 +175,11 @@ export default class AuthController {
 }
 ```
 
-the `back()` helper redirects the user to their previous location based on the session's internal history tracking.
+the `back()` helper redirects the user to their previous location. it resolves the destination in the following order:
+
+1. the session recorded previous url (`req.previousUrl` from the preceding successful GET request)
+2. the incoming HTTP `Referer` header (validated to ensure origin matches the host)
+3. the provided `fallback` url (defaults to `'/'`)
 
 ```javascript
 export default class PostController {
@@ -184,6 +188,12 @@ export default class PostController {
     return back('/fallback-url');
   }
 }
+```
+
+you can also pass a custom status code and force a full page redirect:
+
+```javascript
+return back('/home', 303, true);
 ```
 
 <a name="error-responses"></a>
