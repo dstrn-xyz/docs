@@ -52,6 +52,30 @@ export default class SendWelcomeEmailJob {
 
 the `handle` method can be asynchronous. the worker waits for the returned promise to resolve before reporting completion.
 
+<a name="job-configuration"></a>
+
+### job configuration
+
+jobs can define default execution options as static properties directly on the class. these apply automatically whenever the job is dispatched unless overridden at the call site.
+
+```javascript
+export default class ProcessVideoJob {
+  static timeout = 30000;
+  static tries = 3;
+  static backoff = 1000;
+
+  async handle(payload) {
+    await this.transcode(payload.videoId);
+  }
+}
+```
+
+| property  | type     | default | description                                                                 |
+| --------- | -------- | ------- | --------------------------------------------------------------------------- |
+| `timeout` | `number` | `60000` | execution timeout in milliseconds; workers exceeding this timeout terminate |
+| `tries`   | `number` | `1`     | maximum attempt count before the job is marked as failed                    |
+| `backoff` | `number` | `1000`  | exponential backoff base delay in milliseconds between retry attempts       |
+
 <a name="generating-jobs"></a>
 
 ### generating jobs
@@ -144,7 +168,7 @@ the `Job` global is a proxy facade that delegates to the application's `Queue` i
 Job.dispatch('JobName', { key: 'value' });
 ```
 
-`Job.dispatch()` accepts an optional third argument for per job execution options:
+`Job.dispatch()` accepts an optional third argument for execution options (overriding any static properties defined on the job class):
 
 ```javascript
 Job.dispatch('ProcessVideoJob', { videoId: 42 }, {
