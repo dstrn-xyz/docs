@@ -96,7 +96,7 @@ the built in rules cover the most common validation scenarios:
 | rule             | description                                                        |
 | ---------------- | ------------------------------------------------------------------ |
 | `required`       | the field must be present and not empty                            |
-| `nullable`       | the field is optional; if empty, subsequent rules are skipped      |
+| `nullable`       | the field is optional; if empty, validation rules for the field are skipped regardless of rule position |
 | `string`         | the field must be a string                                         |
 | `number`         | the field must be a valid number (integer or float)                |
 | `integer`        | the field must be a valid integer                                  |

@@ -443,7 +443,7 @@ if violations are found, each one is printed with a description.
 
 ### dead code detection
 
-the `dead` command performs reachability analysis starting from all registered routes and socket wires. it traverses the dependency graph and reports any controllers, models, jobs, or middleware that are never referenced by any route.
+the `dead` command performs reachability analysis starting from all registered routes, socket wires, and scheduled tasks (`console/Schedule.js`). it traverses the dependency graph and reports any controllers, models, jobs, or middleware that are never referenced.
 
 ```bash
 dstrn dead

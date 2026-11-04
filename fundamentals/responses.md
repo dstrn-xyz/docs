@@ -52,13 +52,13 @@ export default class DownloadController {
 }
 ```
 
-to set a cookie, use the `.cookie()` method. the `maxAge` option sets the `Max-Age` header in seconds. passing a boolean (such as `maxAge: false`) or an empty string is safely ignored so the cookie remains a standard session cookie.
+to set a cookie, use the `.cookie()` method. the `maxAge` option sets the `Max-Age` header in seconds (passing a boolean or an empty string is safely ignored so the cookie remains a standard session cookie). the `sameSite` option configures cookie isolation (`'lax'`, `'strict'`, `'none'`, or a boolean where `true` resolves to `SameSite=Strict`).
 
 ```javascript
 export default class ThemeController {
   async update() {
     return status(200)
-      .cookie('theme', 'dark', { httpOnly: false, path: '/', maxAge: 31536000 })
+      .cookie('theme', 'dark', { httpOnly: false, path: '/', maxAge: 31536000, sameSite: 'lax' })
       .json({ success: true });
   }
 }
@@ -118,7 +118,7 @@ export default class SettingsController {
 
 ## streaming responses
 
-the `stream(writer)` helper sends a response body in chunks with backpressure support. it receives an async function `(write, close)` where `write(chunk)` sends a chunk and returns a promise that resolves when the transport is ready for more data, and `close()` ends the response.
+the `stream(writer)` helper sends a response body in chunks with backpressure support. it receives a synchronous or async function `(write, close)` where `write(chunk)` sends a chunk and returns a promise that resolves when the transport is ready for more data, and `close()` ends the response.
 
 streaming is ideal for proxying large files (audio, video, documents) without buffering the entire payload in memory. set headers (content type, range, cache control) before calling `stream()`, just like any other response method.
 

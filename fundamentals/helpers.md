@@ -502,7 +502,7 @@ the validation result provides the following methods:
 | `max:value`    | maximum length (string/array) or maximum value (number)             |
 | `in:a,b,c`     | value must be one of the listed values                              |
 | `not_in:a,b,c` | value must not be one of the listed values                          |
-| `nullable`     | if the value is empty, skip all subsequent rules                    |
+| `nullable`     | if the value is empty, skip validation rules for the field          |
 
 **file validation rules**
 
