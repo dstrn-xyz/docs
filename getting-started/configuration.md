@@ -392,7 +392,7 @@ the socket configuration controls real time websocket behavior and connection li
 import { Env } from 'dframework';
 
 export default {
-  maxPayload: Env.int('SOCKET_MAX_PAYLOAD', 1),
+  maxPayload: Env.value('SOCKET_MAX_PAYLOAD', 1),
 };
 ```
 

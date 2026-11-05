@@ -158,7 +158,7 @@ you can scaffold a new command file using the cli.
 dstrn make:command PruneOldLogs
 ```
 
-this creates `console/commands/PruneOldLogs.js` with the correct boilerplate structure.
+this creates `console/commands/PruneOldLogsCommand.js` with the correct boilerplate structure (the generator automatically appends the `Command` suffix if omitted).
 
 <a name="running-commands"></a>
 

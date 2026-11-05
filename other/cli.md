@@ -98,7 +98,7 @@ passing a command name to `dstrn help <command>` or appending `--help` / `-h` to
 | command                                 | description                                                                   |
 | --------------------------------------- | ----------------------------------------------------------------------------- |
 | `dstrn run <CommandName>`               | run a user command from `console/commands`                                    |
-| `dstrn dispatch <JobName> [--payload=]` | dispatch a background job from the command line with an optional json payload |
+| `dstrn dispatch <JobName> [--payload=]` | run a job directly in the current process with an optional json payload       |
 | `dstrn logs:clear`                     | clear or archive log files with date filtering                                |
 | `dstrn deploy`                         | generate production deployment and service configurations                     |
 | `dstrn cert`                           | inspect and manage ssl certificates                                           |
@@ -257,10 +257,10 @@ scaffold a new command file using the `make:command` generator:
 dstrn make:command PruneExpiredSessions
 ```
 
-this creates `console/commands/PruneExpiredSessions.js`. the generated file exports a default class with an `async handle(args, options)` method where you write the execution logic. the task has direct access to all framework globals (`DB`, `Log`, `Config`, models):
+this creates `console/commands/PruneExpiredSessionsCommand.js` (the generator automatically appends the `Command` suffix if omitted). the generated file exports a default class with an `async handle(args, options)` method where you write the execution logic. the task has direct access to all framework globals (`DB`, `Log`, `Config`, models):
 
 ```javascript
-export default class PruneExpiredSessions {
+export default class PruneExpiredSessionsCommand {
   async handle(args, options) {
     const isDryRun = this.hasOption('dry-run');
     const batchSize = parseInt(this.option('batch', 500), 10);
@@ -313,7 +313,7 @@ dframework automatically parses the cli arguments and injects helper methods ont
 | `this.arguments`                 | array containing all positional arguments                            |
 | `options` (2nd parameter)        | the parsed options object passed directly to `handle(args, options)` |
 
-dframework imports the class from `console/commands/PruneExpiredSessions.js`, instantiates it, calls `handle(args, options)`, and reports the elapsed execution time on completion.
+dframework imports the class from `console/commands/PruneExpiredSessionsCommand.js` (or `PruneExpiredSessions.js`), instantiates it, calls `handle(args, options)`, and reports the elapsed execution time on completion.
 
 tasks in `console/commands` are also used by the scheduler. when scheduled in `console/Schedule.js`, the scheduler calls `handle([], {})` where `this.option()` safely returns the configured fallback values.
 
@@ -321,7 +321,7 @@ tasks in `console/commands` are also used by the scheduler. when scheduled in `c
 
 ### dispatching jobs
 
-you can dispatch background jobs on demand from the command line using `dstrn dispatch`:
+you can execute jobs directly on demand from the command line using `dstrn dispatch` (runs synchronously in the current process without queuing):
 
 ```bash
 dstrn dispatch CleanupExpiredSessionsJob

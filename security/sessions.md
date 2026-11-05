@@ -118,12 +118,12 @@ await Session.forget('key');
 // destroy the entire session
 await Session.forget();
 
-// clear all session payload keys without invalidating authentication
+// remove all data from the current session including authentication data
 await Session.flush();
 ```
 
 > [!NOTE]
-> `Session.flush()` removes all custom data keys stored in the active session payload without touching authentication guards or disconnecting active websocket connections. to revoke authenticated credentials and drop authorized websocket clients, call `Auth.logout()` or `Auth.flush()`.
+> `Session.flush()` removes all data stored in the current session (including authentication credentials and custom payload keys) and invalidates the session. to selectively remove a single key while keeping the session intact, call `Session.forget(key)`.
 
 <a name="session-id-and-regeneration"></a>
 
