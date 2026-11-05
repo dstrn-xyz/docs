@@ -1,7 +1,7 @@
 # request lifecycle
 
 - [introduction](#introduction)
-
+- [single application instance](#single-application-instance)
 - [lifecycle overview](#lifecycle-overview)
 
   - [the fast path](#the-fast-path)
@@ -15,6 +15,14 @@
 ## introduction
 
 understanding how requests flow through dframework is critical for building predictable applications. the framework operates as a closed loop. every incoming http request is intercepted parsed and routed internally by the framework engine. you do not need to configure external web servers for basic request handling during development.
+
+<a name="single-application-instance"></a>
+
+## single application instance
+
+dframework enforces a single application instance per node process. the application container manages process level singletons including configuration, storage disks, database connection pools, and loggers.
+
+attempting to instantiate multiple application instances concurrently within the same process throws an error.
 
 <a name="lifecycle-overview"></a>
 

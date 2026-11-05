@@ -65,11 +65,12 @@ if you need to render unescaped html, use the `{!! !!}` syntax.
 {!! user.bio_html !!}
 ```
 
-you can convert objects to json strings using the `@json` directive.
+you can convert objects to json strings using the `@json` directive. `@json` also supports awaiting asynchronous expressions.
 
 ```html
 <script>
     const userState = @json(user);
+    const remoteData = @json(await fetchStats());
 </script>
 ```
 
@@ -187,11 +188,12 @@ you can translate strings using the `@t()` directive. the framework automaticall
 
 ### japanese furigana (ruby) support
 
-dframework provides built in support for japanese furigana (ruby text) annotations using the `@ruby()` directive. you can pass two arguments (kanji and reading) or a single string with `漢字[かんじ]` notation.
+dframework provides built in support for japanese furigana (ruby text) annotations using the `@ruby()` directive. you can pass two arguments (kanji and reading) or a single string with `漢字[かんじ]` notation. asynchronous expressions with `await` are supported.
 
 ```html
 <h1>@ruby("漢字", "かんじ")</h1>
 <p>@ruby("日本[にほん]語")</p>
+<p>@ruby(await fetchWord())</p>
 ```
 
 <a name="pagination"></a>

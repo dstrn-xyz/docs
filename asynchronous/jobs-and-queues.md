@@ -144,6 +144,12 @@ the `--payload` flag accepts a json string that is parsed and passed to the job'
 dstrn dispatch CleanupExpiredSessionsJob
 ```
 
+file names ending with `.js` are also accepted to facilitate shell tab completion:
+
+```bash
+dstrn dispatch CleanupExpiredSessionsJob.js
+```
+
 <a name="payload-data"></a>
 
 ### payload data

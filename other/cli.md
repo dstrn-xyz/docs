@@ -16,6 +16,7 @@
   - [user commands](#user-commands)
   - [creating a command](#creating-a-command)
   - [running a command](#running-a-command)
+  - [dispatching jobs](#dispatching-jobs)
   - [logs management](#logs-management)
   - [deployment and certificates](#deployment-and-certificates)
     - [deploying applications](#deploying-applications)
@@ -159,6 +160,12 @@ you can specify a custom host or port using `--host` and `--port`:
 dstrn serve --host=0.0.0.0 --port=3000
 ```
 
+providing `--host` as a standalone flag without a value binds the server to `0.0.0.0` to expose it to the local network:
+
+```bash
+dstrn serve --host
+```
+
 <a name="tinker"></a>
 
 ## tinker
@@ -281,6 +288,12 @@ you can execute any command on demand from the terminal using the `run` command:
 dstrn run PruneExpiredSessions
 ```
 
+file names ending with `.js` are also accepted to facilitate shell tab completion:
+
+```bash
+dstrn run PruneExpiredSessions.js
+```
+
 to pass parameters when running manually, include them after the task name. options and flags can be passed using either `--key value` or `--key=value` format, alongside positional arguments:
 
 ```bash
@@ -303,6 +316,28 @@ dframework automatically parses the cli arguments and injects helper methods ont
 dframework imports the class from `console/commands/PruneExpiredSessions.js`, instantiates it, calls `handle(args, options)`, and reports the elapsed execution time on completion.
 
 tasks in `console/commands` are also used by the scheduler. when scheduled in `console/Schedule.js`, the scheduler calls `handle([], {})` where `this.option()` safely returns the configured fallback values.
+
+<a name="dispatching-jobs"></a>
+
+### dispatching jobs
+
+you can dispatch background jobs on demand from the command line using `dstrn dispatch`:
+
+```bash
+dstrn dispatch CleanupExpiredSessionsJob
+```
+
+file names ending with `.js` are also accepted to facilitate shell tab completion:
+
+```bash
+dstrn dispatch CleanupExpiredSessionsJob.js
+```
+
+you can pass a json payload using the `--payload` flag:
+
+```bash
+dstrn dispatch SendWelcomeEmailJob.js --payload '{"userId": 1}'
+```
 
 <a name="logs-management"></a>
 
