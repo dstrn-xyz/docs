@@ -106,7 +106,7 @@ export default class PreferencesController {
 }
 ```
 
-the available response helpers are `render()`, `json()`, `redirect()`, `back()`, `abort()`, `status()`, `cookie()`, and `stream()`.
+the available response helpers are `render()`, `json()`, `redirect()`, `back()`, `abort()`, `status()`, `cookie()`, and `stream()`. controller methods must always return one of these helpers. never return raw model instances or plain objects directly, as only response helpers manage status codes, content types, and view compilation.
 
 > \[!NOTE]
 > the `abort(statusCode, message)` helper is generally preferred over manually setting `status()`. `abort()` is context aware: if the request was made via ajax, it automatically returns a json error payload. if it was a standard browser request, it renders the appropriate html error page (e.g. 404, 500).
