@@ -407,6 +407,8 @@ Route.post('/api/playback/track', 'app.PlaybackController@get_track').name('api.
 
 the `.views()` modifier tells the route compiler exactly which view templates this route renders. during the production build the compiler analyzes those templates to determine what session data locale detection and body parsing the compiled handler actually needs. providing explicit view names is an optimization hint that removes ambiguity from the static analysis step.
 
+dynamic view names (such as rendering through a variable) cannot be statically inspected by the compiler. dynamic view names are discouraged in performance sensitive routes. when dynamic view rendering is required, you must supply `.views(['template.name'])` with all possible view names so the compiler can detect translation tags, layout dependencies, and middleware requirements.
+
 ```javascript
 Route.get('/dashboard', 'app.IndexController@dashboard').name('dashboard').views(['app.home.index']);
 ```
