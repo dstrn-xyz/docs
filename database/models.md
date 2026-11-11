@@ -235,6 +235,12 @@ you can also specify a custom page query parameter name as the second argument:
 const users = await User.paginate(15, 'user_page');
 ```
 
+to configure the base url, parameter name, or extra query parameters fluently before passing the paginator to views:
+
+```javascript
+results.setPath('/search').setPageName('p').appends({ q: 'query' });
+```
+
 <a name="latest-rows"></a>
 
 ### latest rows

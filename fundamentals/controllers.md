@@ -260,6 +260,8 @@ the `Paginator` instance supports dual snake_case and camelCase property access,
 - `onFirstPage()`: returns true if on page 1
 - `onLastPage()`: returns true if on the last page
 - `url(page)`: builds a url for a specific page with query parameters preserved
+- `setPath(path)`: sets the base url path for generated pagination links (chainable)
+- `setPageName(name)`: sets the query parameter name used for page navigation (chainable)
 - `appends(params)`: appends custom query parameters to generated urls
 
 to paginate multiple distinct collections on the same page, specify a custom page parameter name:

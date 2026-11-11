@@ -63,6 +63,8 @@ the `DB` facade exposes the following methods. the `returns` column reflects the
 | `DB.table(name)`                   | table name string                                                 | a `TableQuery` query builder bound to this table, chainable; never null                                                                                                     |
 | `DB.insert(table, data)`           | table name; column/value object                                   | normalized mutation header (use `result.insertId` or `result.affectedRows`)                                                                                                 |
 | `DB.transaction(fn)`               | `async (conn) => result`                                          | whatever the `fn` callback resolves to; supports nested savepoints (`sp_1`, `sp_2`) and rethrows after rollback                                                             |
+| `DB.inTransaction()`               | none                                                              | `boolean` (true if current async execution context is inside an active transaction)                                                                                         |
+| `DB.transactionDepth`              | none                                                              | `number` (nesting level of the current transaction, 0 when outside)                                                                                                         |
 | `DB.databaseExists()`              | none                                                              | `Promise<boolean>`                                                                                                                                                          |
 | `DB.ensureDatabaseExists()`        | none                                                              | `Promise<void>`; throws a diagnostic error when `database.name` is missing                                                                                                  |
 | `DB.ensureTableExists(table)`      | table name                                                        | `Promise<void>`; throws when the table is absent (used internally by the query builder)                                                                                     |
@@ -139,6 +141,29 @@ to intentionally skip batching (for example inside a batcher's own callback or f
 
 > [!NOTE]
 > query batching is managed per request. when multiple components, relations, or helpers query the same table and column during the same event loop tick, `QueryBatcher` pools them and schedules a batch execution on the microtask queue. up to 1024 unique keys are merged into a single database roundtrip, with row sets mapped back to each original caller's promise. when the request lifecycle ends, the batcher is closed to prevent state leaks across concurrent requests.
+
+<a name="transactions"></a>
+
+## transactions
+
+wrap database operations in `DB.transaction` to ensure atomic execution. transactions automatically propagate the dedicated connection across nested model queries and raw `DB.query` calls within the same async context:
+
+```javascript
+await DB.transaction(async (conn) => {
+  await DB.table('users').where({ id: 1 }).update({ status: 'active' });
+  await DB.table('audit_logs').insert({ user_id: 1, action: 'activated' });
+});
+```
+
+nested calls automatically create savepoints (`sp_1`, `sp_2`) and release or roll back to savepoints when inner blocks fail.
+
+to inspect transaction state inside application services or event listeners:
+
+```javascript
+if (DB.inTransaction()) {
+  const depth = DB.transactionDepth;
+}
+```
 
 <a name="sql-helpers"></a>
 
