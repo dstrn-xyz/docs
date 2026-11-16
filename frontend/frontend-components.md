@@ -257,17 +257,17 @@ searchable, extensible select combobox with automatic floating placement, keyboa
 
 #### attributes and properties
 
-| attribute      | property       | type      | default | form | description                                                                         |
-| :------------- | :------------- | :-------- | :------ | :--- | :---------------------------------------------------------------------------------- |
-| `placeholder`  | `placeholder`  | `string`  | `""`    | no   | placeholder text displayed when no option is selected                               |
-| `value`        | `value`        | `string`  | `null`  | yes  | currently selected option value                                                     |
-| `allow-search` | `allowSearch`  | `boolean` | `false` | no   | enables real time search filtering input                                            |
-| `allow-input`  | `allowInput`   | `boolean` | `false` | no   | allows adding custom options via input and plus button                              |
-| `horizontal`   | `isHorizontal` | `boolean` | `false`         | no   | switches option layout from vertical list to horizontal chips                       |
-| `empty-text`   | `emptyText`    | `string`  | `"no results"`  | no   | custom empty state message displayed when no options match                           |
-| `name`         | `name`         | `string`  | `""`            | no   | form field name                                                                     |
-| `id`           | `id`           | `string`  | `""`            | no   | component id                                                                        |
-| `options`      | `options`      | `array`   | `[]`            | no   | array of `{value, text, content, html}` objects (set `html: true` for rich content) |
+| attribute      | property       | type      | default        | form | description                                                                         |
+| :------------- | :------------- | :-------- | :------------- | :--- | :---------------------------------------------------------------------------------- |
+| `placeholder`  | `placeholder`  | `string`  | `""`           | no   | placeholder text displayed when no option is selected                               |
+| `value`        | `value`        | `string`  | `null`         | yes  | currently selected option value                                                     |
+| `allow-search` | `allowSearch`  | `boolean` | `false`        | no   | enables real time search filtering input                                            |
+| `allow-input`  | `allowInput`   | `boolean` | `false`        | no   | allows adding custom options via input and plus button                              |
+| `horizontal`   | `isHorizontal` | `boolean` | `false`        | no   | switches option layout from vertical list to horizontal chips                       |
+| `empty-text`   | `emptyText`    | `string`  | `"no results"` | no   | custom empty state message displayed when no options match                          |
+| `name`         | `name`         | `string`  | `""`           | no   | form field name                                                                     |
+| `id`           | `id`           | `string`  | `""`           | no   | component id                                                                        |
+| `options`      | `options`      | `array`   | `[]`           | no   | array of `{value, text, content, html}` objects (set `html: true` for rich content) |
 
 #### programmatic api
 
@@ -996,7 +996,7 @@ await modal.destroy();
 - displays an overlay dialog and prevents page scrolling while visible.
 - when `persistent` is omitted (or `false`), clicking the backdrop closes and destroys the element (`destroy()`), removing it from the dom.
 - when `persistent` is present (`<d-modal persistent>`), clicking the backdrop closes the dialog (`close()`) without removing the element from the dom, allowing it to be reopened.
-- `<d-modal>` automatically injects `.d-modal-wrapper` (which provides `var(--container-l)` background, border, radius, shadow, and padding) and `.d-modal-content` (flex container with scroll management).
+- `<d-modal>` automatically injects `.d-modal-wrapper` (which provides `var(--container-l)` background, border, radius and shadow) and `.d-modal-content` (flex container with scroll management).
 - to customize or restyle the modal appearance, target `d-modal .d-modal-wrapper` or `d-modal .d-modal-content` in your css.
 
 ---
@@ -1246,7 +1246,7 @@ enhanced input field with icon prefixes, keyboard shortcut binding, number stepp
 | `readonly`     | `readonly`     | `boolean` | `false`  | no   | sets input to read only mode                                |
 | `min`          | `min`          | `string`  | `""`     | no   | minimum number value                                        |
 | `max`          | `max`          | `string`  | `""`     | no   | maximum number value                                        |
-| `step`         | `step`         | `string`   | `"1"`    | no   | step value for number controls                              |
+| `step`         | `step`         | `string`  | `"1"`    | no   | step value for number controls                              |
 
 #### programmatic api
 
