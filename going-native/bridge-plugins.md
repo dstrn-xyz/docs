@@ -442,13 +442,13 @@ three rules govern this layout:
 
 ### the javascript reference implementation
 
-`index.js` is a plain module that exports a default object whose keys are method names and whose values are functions. the function body runs in the browser or webview and has access to all the normal browser globals: `window`, `localStorage`, `navigator`, `fetch`, `crypto.subtle`, `MediaSession`, `Notification`, `Audio`, and so on.
+`index.js` returns an object whose keys are method names and whose values are functions. the function body runs in the browser or webview and has access to all the normal browser globals: `window`, `localStorage`, `navigator`, `fetch`, `crypto.subtle`, `MediaSession`, `Notification`, `Audio`, and so on.
 
 the methods run with the full power of the host environment. treat them like ordinary frontend javascript, just packaged into a plugin so the native side can override them per method per platform.
 
 ```javascript
 // native/plugins/barcode/index.js
-export default {
+return {
   scan() {
     return { ok: false, error: 'not implemented on this platform' };
   },
@@ -474,15 +474,14 @@ this creates `native/plugins/barcode/` with `index.js`, `Plugin.swift`, `Plugin.
 because the javascript impl is the fallback for any missing native file, design it to work everywhere and treat native impls as performance or capability upgrades on top of it. if a feature genuinely cannot work on the web (camera capture, for example), return a clear error from the javascript impl:
 
 ```javascript
-export default {
+return {
   async scan() {
     if (typeof navigator === 'undefined' || !navigator.mediaDevices) {
       throw new Error('barcode: camera unavailable in this environment');
     }
     const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    // ... decode the stream ...
     stream.getTracks().forEach((t) => t.stop());
-    return { value: '...', format: 'qr_code' };
+    return { value: 'scanned-value', format: 'qr_code' };
   },
 };
 ```
@@ -590,14 +589,13 @@ a complete minimal plugin that scans a barcode and returns its value, with a wor
 
 ```javascript
 // native/plugins/barcode/index.js
-export default {
+return {
   async scan() {
     if (typeof navigator === 'undefined' || !navigator.mediaDevices) {
       throw new Error('barcode: camera unavailable');
     }
     const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
     try {
-      // decoder logic, returns { value, format }
       return { value: 'placeholder-decoded-value', format: 'qr_code' };
     } finally {
       stream.getTracks().forEach((t) => t.stop());

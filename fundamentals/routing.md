@@ -90,11 +90,14 @@ export default class IndexController {
 
 ### parameter constraints
 
-you can constrain the format of route parameters using the `.where()` method on a route definition. the `.where()` method accepts the name of the parameter and a regex pattern string or object:
+you can constrain the format of route parameters using the `.where()` method on a route definition. the `.where()` method accepts the name of the parameter and a regex pattern string, numeric value, or an object of constraints. numeric constraints are automatically compiled into strict exact match regular expressions:
 
 ```javascript
 Route.get('/user/:id', 'app.IndexController@user').where('id', '[0-9]+');
 Route.get('/user/:name', 'app.IndexController@show').where('name', '[a-zA-Z]+');
+
+// numeric values compile to strict regex
+Route.get('/special/:id', 'app.IndexController@special').where('id', 42);
 
 // object syntax for multiple parameters
 Route.get('/posts/:year/:slug', 'app.PostController@show').where({
