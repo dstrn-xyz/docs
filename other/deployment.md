@@ -319,6 +319,8 @@ dstrn cert:status
 
 the transport supports server name indication (sni). when multiple domain directories exist in `storage/certs/`, each domain receives its matching certificate during the tls handshake.
 
+wildcard certificates can be stored in underscore prefixed directories (for example `storage/certs/_.example.com/` for `*.example.com`). wildcard matching follows strict single level subdomain rules: `_.example.com` matches `api.example.com`, but does not match nested subdomains (`a.b.example.com`) or the apex domain (`example.com`). in multi certificate setups that also serve the apex domain, place the apex certificate in its own exact directory (`storage/certs/example.com/`).
+
 pair this with domain route groups in your application routes:
 
 ```javascript

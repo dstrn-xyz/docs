@@ -164,6 +164,7 @@ export default {
   queue: {
     maxWorkers: Env.value('QUEUE_MAX_WORKERS', 4),
     timeout: Env.value('QUEUE_TIMEOUT', 60000),
+    bootstrapTimeout: Env.value('QUEUE_BOOTSTRAP_TIMEOUT', 30000),
     shutdownTimeout: Env.value('QUEUE_SHUTDOWN_TIMEOUT', 30000),
   },
 };
@@ -204,6 +205,7 @@ export default {
 | `tls.redirect`                  | `TLS_REDIRECT`                      | boolean (`true \| false`)                      | `true`                                       | automatically redirect cleartext http traffic to https                               |                                                                 |
 | `queue.maxWorkers`              | `QUEUE_MAX_WORKERS`                 | integer (positive integer)                     | `4`                                          | maximum concurrent background queue worker processes                                 |                                                                 |
 | `queue.timeout`                 | `QUEUE_TIMEOUT`                     | integer (milliseconds)                         | `60000`                                      | execution timeout per queued job before termination                                  |                                                                 |
+| `queue.bootstrapTimeout`        | `QUEUE_BOOTSTRAP_TIMEOUT`           | integer (milliseconds)                         | `30000`                                      | startup timeout for a new queue worker to finish bootstrapping before termination    |                                                                 |
 | `queue.shutdownTimeout`         | `QUEUE_SHUTDOWN_TIMEOUT`            | integer (milliseconds)                         | `30000`                                      | graceful shutdown drain timeout for queue workers                                    |                                                                 |
 
 <a name="config-auth"></a>

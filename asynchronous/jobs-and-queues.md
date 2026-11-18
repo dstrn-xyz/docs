@@ -305,11 +305,12 @@ if the worker thread itself crashes (for example due to an out of memory conditi
 
 the queue system reads its configuration from the `app.queue` config namespace.
 
-| key                         | type     | default | description                                                                             |
-| --------------------------- | -------- | ------- | --------------------------------------------------------------------------------------- |
-| `app.queue.maxWorkers`      | `number` | `4`     | maximum number of concurrent worker threads                                             |
-| `app.queue.timeout`         | `number` | `60000` | default job execution timeout in milliseconds                                           |
-| `app.queue.shutdownTimeout` | `number` | `30000` | maximum time in milliseconds to wait for active jobs to finish during graceful shutdown |
+| key                          | type     | default | description                                                                             |
+| ---------------------------- | -------- | ------- | --------------------------------------------------------------------------------------- |
+| `app.queue.maxWorkers`       | `number` | `4`     | maximum number of concurrent worker threads                                             |
+| `app.queue.timeout`          | `number` | `60000` | default job execution timeout in milliseconds                                           |
+| `app.queue.bootstrapTimeout` | `number` | `30000` | maximum time in milliseconds to wait for a newly spawned worker to finish bootstrapping |
+| `app.queue.shutdownTimeout`  | `number` | `30000` | maximum time in milliseconds to wait for active jobs to finish during graceful shutdown |
 
 ```javascript
 // config/app.js
@@ -317,6 +318,7 @@ export default {
   queue: {
     maxWorkers: Env.value('QUEUE_MAX_WORKERS', 4),
     timeout: Env.value('QUEUE_TIMEOUT', 60000),
+    bootstrapTimeout: Env.value('QUEUE_BOOTSTRAP_TIMEOUT', 30000),
     shutdownTimeout: Env.value('QUEUE_SHUTDOWN_TIMEOUT', 30000),
   },
 };
