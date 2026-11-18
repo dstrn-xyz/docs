@@ -382,7 +382,7 @@ Route.shield(false, (publicApi) => {
 
 ### middleware
 
-you can attach route level middleware by chaining `.middleware()` directly onto any route definition. it accepts a middleware string, an array of middleware, or an instantiated middleware object. multiple `.middleware()` calls can also be chained sequentially.
+you can attach route level middleware by chaining `.middleware()` directly onto any route definition. it accepts a middleware string, an array of middleware, or a `RateLimiter` instance. multiple `.middleware()` calls can also be chained sequentially.
 
 ```javascript
 Route.get('/profile', 'ProfileController@show').middleware('AuthMiddleware@requireAuth');
