@@ -1308,10 +1308,10 @@ segmented toggle control with magnetic hover indicators and animated transitions
 | `id`              | `id`              | `string` | `""`                          | no   | component id                                      |
 | `color`           | `color`           | `string` | `"var(--container-l)"`        | no   | container background color variable               |
 | `activecolor`     | `activeColor`     | `string` | `"var(--accent)"`             | no   | active option highlight color                     |
-| `textcolor`       | `textColor`       | `string` | `"var(--content-l)"`          | no   | inactive option text color                        |
-| `textactivecolor` | `textActiveColor` | `string` | `""`                          | no   | active option text color                          |
+| `textcolor`       | `textColor`       | `string` | `""`                          | no   | inactive option text color (auto contrast by default) |
+| `textactivecolor` | `textActiveColor` | `string` | `""`                          | no   | active option text color (auto contrast by default) |
 | `bgcolor`         | `bgColor`         | `string` | `"var(--container-l)"`        | no   | base background color                             |
-| `hovercolor`      | `hoverColor`      | `string` | `"rgba(255, 255, 255, 0.05)"` | no   | hover background color                            |
+| `hovercolor`      | `hoverColor`      | `string` | `""`                          | no   | hover background color (theme adaptive by default) |
 
 #### programmatic api
 
