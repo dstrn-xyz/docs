@@ -399,7 +399,7 @@ displays a non blocking toast notification. auto dismisses after the timer expir
 
 ```javascript
 notify('profile updated');
-notify('upload failed — please try again', 6000); // custom duration in ms
+notify('upload failed (please try again)', 6000); // custom duration in ms
 ```
 
 pass a setup callback to attach interaction to notification elements. use `.listen()` inside the callback for automatic cleanup when the notification closes:

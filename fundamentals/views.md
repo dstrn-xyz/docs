@@ -177,7 +177,7 @@ since the view engine compiles directly to javascript functions, you can execute
 
 ## localization
 
-you can translate strings using the `@t()` directive. the framework automatically resolves the current locale from the request context and fetches the corresponding translation string.
+you can translate strings using the `@t()` directive. the framework automatically resolves the current locale from the request context and fetches the corresponding translation string. `@t()` compiles to an asynchronous `await t()` call, which marks the compiled view as async.
 
 ```html
 <h1>@t('home.welcome_message')</h1>

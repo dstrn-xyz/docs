@@ -139,7 +139,7 @@ in view templates, use the `@t()` directive. the framework automatically resolve
 <button>@t('common.buttons.save')</button>
 ```
 
-the `@t()` directive is syntactic sugar for calling the `t()` helper with the current request object. you do not need to pass the request manually.
+the `@t()` directive is syntactic sugar that compiles to an asynchronous `await t()` call with the current request object (marking the compiled template as async). you do not need to pass the request manually.
 
 <a name="fallback-behavior"></a>
 
@@ -229,9 +229,9 @@ both `ruby()` and furigana annotated translations output safe html when rendered
 
 dframework detects the user's locale automatically using the following priority:
 
-1. **locale cookie** — if a `locale` cookie is present and contains a valid locale code (2-10 alphanumeric characters), it is used immediately
-2. **accept-language header** — if no cookie is found, the framework parses the `Accept-Language` http header, matching regional locale codes (e.g. `en-US`, `zh-CN`) if supported in `lang/`, or falling back to the base language code (`en`, `zh`)
-3. **default locale** — if neither source provides a valid locale, the configured default locale is used
+1. **locale cookie**: if a `locale` cookie is present and contains a valid locale code (2 to 10 alphanumeric characters), it is used immediately
+2. **accept-language header**: if no cookie is found, the framework parses the `Accept-Language` http header, matching regional locale codes (e.g. `en-US`, `zh-CN`) if supported in `lang/`, or falling back to the base language code (`en`, `zh`)
+3. **default locale**: if neither source provides a valid locale, the configured default locale is used
 
 this detection happens automatically during request processing. the detected locale is stored on the request object as `req.locale`.
 

@@ -351,6 +351,9 @@ menu.close();
 // toggle context menu
 menu.toggle();
 
+// close all open context menus across the document (optionally excluding one instance)
+dContextMenu.closeAll();
+
 // listen to item selection (e.detail is the clicked element)
 listen(menu, 'click', (e) => {
   const target = e.target;

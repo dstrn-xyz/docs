@@ -72,24 +72,24 @@ passing a command name to `dstrn help <command>` or appending `--help` / `-h` to
 | `dstrn migrate`              | run all pending migrations                              |
 | `dstrn migrate:status`       | display migration status                                |
 | `dstrn migrate:rollback`     | rollback the last migration batch                       |
-| `dstrn migrate:make <table>` | create a new migration template                         |
+| `dstrn migrate:make <name>`  | create a new migration template (infers table name from naming patterns) |
 | `dstrn seed [name]`          | run database seeders                                    |
 | `dstrn seed:make <Name>`     | create a new seeder template                            |
-| `dstrn drop [--force]`                 | drop all tables in the database with confirmation (or --force) |
+| `dstrn drop [--force]`       | drop all tables in non production environments with confirmation (or `--force`; always disabled in production) |
 | `dstrn advisor [--apply]`    | inspect unindexed relationships and generate migrations |
 
 <a name="generators"></a>
 
 ### generators
 
-| command                        | description                  |
-| ------------------------------ | ---------------------------- |
-| `dstrn make:model <Name>`      | create a new model           |
-| `dstrn make:controller <Name>` | create a new controller      |
-| `dstrn make:middleware <Name>` | create a new middleware      |
-| `dstrn make:command <Name>`    | create a new console command |
-| `dstrn make:job <Name>`        | create a new background job  |
-| `dstrn make:component <Name>`  | create a new view component  |
+| command                        | description                                                    |
+| ------------------------------ | -------------------------------------------------------------- |
+| `dstrn make:model <Name>`      | create a new model                                             |
+| `dstrn make:controller <Name>` | create a new controller                                        |
+| `dstrn make:middleware <Name>` | create a new middleware                                        |
+| `dstrn make:command <Name>`    | create a new console command                                   |
+| `dstrn make:job <Name>`        | create a new background job                                    |
+| `dstrn make:component <Name>`  | create a new client web component (`dComponent`) in `public/js/components` |
 
 <a name="system"></a>
 
@@ -358,7 +358,7 @@ dstrn logs:clear --preview
 | `--env=prod` or `--env=dev` | target a specific environment log directory       |
 | `--before=YYYY-MM-DD`       | clear logs before the specified date              |
 | `--after=YYYY-MM-DD`        | clear logs after the specified date               |
-| `--archive`                 | compress logs into a zip instead of deleting      |
+| `--archive`                 | compress each matched log into a `.gz` file inside an `archives` subdirectory and remove the original |
 | `--preview`                 | show which files would be affected without acting |
 
 <a name="deployment-and-certificates"></a>

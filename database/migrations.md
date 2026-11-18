@@ -26,13 +26,14 @@ each migration file is an es module that must export an asynchronous `up` functi
 
 ## generating migrations
 
-to create a new migration, use the `migrate:make` cli command with the target table name:
+to create a new migration, use the `migrate:make` cli command with a migration name:
 
 ```bash
-dstrn migrate:make users
+dstrn migrate:make create_users_table
+dstrn migrate:make add_role_to_users_table
 ```
 
-this scaffolds a timestamped migration file in `database/migrations/` containing stubbed `up` and `down` functions.
+this scaffolds a timestamped migration file in `database/migrations/` containing stubbed `up` and `down` functions. the generator automatically infers the target table name from common naming patterns (such as `create_<table>_table` or `add_<col>_to_<table>_table`), and also accepts a bare table name (for example `users`).
 
 <a name="creating-tables"></a>
 

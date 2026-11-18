@@ -80,12 +80,12 @@ if (granted !== 'granted') {
 
 the framework registers six core plugins automatically. each one is documented in full below:
 
-- `auth` — local session id plus a generic key value store
-- `device` — platform and model metadata
-- `storage` — generic string key value store
-- `crypto` — ecdsa p 256 sha 256 keypair, sign, verify, digest
-- `audio` — single url playback with media session metadata
-- `notifications` — show and cancel local notifications
+- `auth`: local session id plus a generic key value store
+- `device`: platform and model metadata
+- `storage`: generic string key value store
+- `crypto`: ecdsa p 256 sha 256 keypair, sign, verify, digest
+- `audio`: single url playback with media session metadata
+- `notifications`: show and cancel local notifications
 
 <a name="auth-plugin"></a>
 
@@ -180,7 +180,7 @@ if (platform === 'ios' || platform === 'android') {
 
 ## storage plugin
 
-a small, generic key value store for user preferences and ui state. on the web it is backed by `localStorage`; on ios by `UserDefaults`; on android by `SharedPreferences`; on desktop by a json file in the platform's application data directory. values are always strings — the plugin coerces non string values to strings on write and returns them unchanged on read.
+a small, generic key value store for user preferences and ui state. on the web it is backed by `localStorage`; on ios by `UserDefaults`; on android by `SharedPreferences`; on desktop by a json file in the platform's application data directory. values are always strings (the plugin coerces non string values to strings on write and returns them unchanged on read).
 
 the storage plugin and the auth db store are independent namespaces; use whichever fits the semantics of what you're storing.
 
@@ -225,7 +225,7 @@ await App.native.storage.remove('theme');
 
 the crypto plugin gives every device a stable ecdsa p 256 sha 256 keypair, plus helpers for signing, verifying, and digesting. every platform returns the same keys and signatures byte for byte, so a signature generated on ios verifies on android, the web, and desktop.
 
-the keypair is persisted to a stable alias on every platform: `com.dstrn.crypto.main_key` in the ios keychain, `dstrn_crypto_main_key` in the android keystore, and the same alias in the web's indexeddb. calling `generate()` is idempotent — the first call creates and persists the keypair, every later call returns the same public key. the private key never leaves the secure store.
+the keypair is persisted to a stable alias on every platform: `com.dstrn.crypto.main_key` in the ios keychain, `dstrn_crypto_main_key` in the android keystore, and the same alias in the web's indexeddb. calling `generate()` is idempotent (the first call creates and persists the keypair, and every later call returns the same public key). the private key never leaves the secure store.
 
 #### `App.native.crypto.generate()`
 
@@ -294,7 +294,7 @@ const ok = await App.native.crypto.verify(data, signature, peerPublicKey);
 
 ## audio plugin
 
-single url audio playback with media session metadata, so the operating system can show title, artist, album, artwork, and playback controls on the lock screen and in the notification shade. a single shared player per page, so calling `load()` swaps the source. there is no queue and no multi url mode — one track at a time.
+single url audio playback with media session metadata, so the operating system can show title, artist, album, artwork, and playback controls on the lock screen and in the notification shade. a single shared player per page, so calling `load()` swaps the source. there is no queue and no multi url mode (one track at a time).
 
 on ios the plugin uses `AVPlayer` and supports background playback and native now playing controls. on android it uses `MediaPlayer` plus `MediaSessionCompat` for the same effect. on the web and on desktop, the plugin falls back to `HTMLAudioElement` plus `MediaSession`, which is enough for in app playback and lock screen controls but cannot continue playing when the app is suspended.
 
@@ -579,7 +579,7 @@ deciding which implementation runs is per method per platform:
 - if `Plugin.swift` declares a `case "scan":` branch on ios, the bridge registers `barcode.scan` as native and every call from javascript is forwarded over the bridge.
 - if you delete that branch (or the entire file), the bridge does not register `barcode.scan` as native on ios, so the javascript impl runs in the webview. this is what "fallback" means in practice: there is no platform code path that fails because a native file is missing.
 - if the bridge registers a method as native but the native call rejects, the bridge surfaces the rejection to your promise; it does not silently fall back to javascript. design your native impls to either succeed or reject with a clear message.
-- desktop audio, desktop notifications, desktop crypto, and desktop device all currently fall back to javascript — there is no `Plugin.rs` for those in the core framework. write one only if you need platform specific behavior on desktop.
+- desktop audio, desktop notifications, desktop crypto, and desktop device all currently fall back to javascript (there is no `Plugin.rs` for those in the core framework). write one only if you need platform specific behavior on desktop.
 
 <a name="end-to-end-example-a-barcode-scanner"></a>
 
