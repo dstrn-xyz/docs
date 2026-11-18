@@ -436,6 +436,19 @@ the available profile keys are:
 Route.get('/feed', 'app.FeedController@index').profile({ needsSession: true, needsFlash: true });
 ```
 
+for mutating routes (`POST`, `PUT`, `PATCH`, `DELETE`) with both `.csrf(false)` and `.shield(false)`, the production route compiler only parses the request body when static analysis detects body access (`req.body`, `req.files`, `req.file()`, `req.hasFile()`, `req.input()`, `req.all()` or `validate()`). indirect patterns such as passing `req` directly into a `Model` method (`await Post.createFromRequest(req)`), nested destructuring before `body` or `files` (`async update({ params: { id }, body })`), or aliasing `req` locally before calling `.input()` or `.all()` (`const r = req; r.input('name')`) are discouraged because the analyzer does not treat them as body access.
+if you intentionally rely on any of those patterns on a route where csrf and shield are disabled, enforce body parsing explicitly with `.profile({ needsBody: true })`:
+
+```javascript
+Route.post('/api/posts/:id', 'ApiPostController@update')
+  .csrf(false)
+  .shield(false)
+  .profile({ needsBody: true });
+```
+
+> [!NOTE]
+> in local development, mutating routes always parse the request body unconditionally (returning `400` on malformed json and `413` on payloads exceeding `app.maxBodySize`). in production, compiled routes with `.csrf(false)` and `.shield(false)` that neither access the body nor set `.profile({ needsBody: true })` skip body parsing entirely, so malformed json or oversized bodies sent to those endpoints will not trigger automatic `400` or `413` responses.
+
 <a name="basic-auth"></a>
 
 ### basic auth

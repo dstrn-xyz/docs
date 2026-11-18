@@ -89,7 +89,7 @@ if (req.hasFile('document')) {
 }
 ```
 
-as detailed in the [controllers documentation](controllers.md), `req.body` and `req.files` are populated automatically for mutating requests (`POST`, `PUT`, `PATCH`, `DELETE`) by the route compiler. you can also use `req.file(key)` to retrieve the first file directly, or `req.hasFile(key)` to verify that an uploaded file is present.
+as detailed in the [controllers documentation](controllers.md), `req.body` and `req.files` are populated automatically for mutating requests (`POST`, `PUT`, `PATCH`, `DELETE`) when csrf, shield, or body access is active on the route. if a route disables both csrf and shield and accesses the body through an indirect pattern not detected by static analysis, set `.profile({ needsBody: true })` as described in [routing](routing.md#profile). you can also use `req.file(key)` to retrieve the first file directly, or `req.hasFile(key)` to verify that an uploaded file is present.
 
 <a name="streaming-requests"></a>
 
