@@ -200,6 +200,8 @@
 
 dframework ships a complete library of zero dependency, high performance custom web components compiled into the frontend bundle. components are standard custom elements with no virtual dom, no compiler requirements, and no client build step. the framework compiles and bundles component files in `public/js/components/` automatically on server boot.
 
+built in components support native client side localization out of the box with english and japanese dictionaries and automatic tag scoped resolution (`this.t()`). for a guide on switching locales, customizing strings, or translating custom elements, see the [localization guide](../other/localization.md#dcomponent-localization).
+
 <a name="built-in-components"></a>
 
 ## built in components

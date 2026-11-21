@@ -20,6 +20,13 @@
     - [request-only locale](#request-only-locale)
     - [reading the locale](#reading-the-locale)
   - [caching and hot reload](#caching-and-hot-reload)
+  - [dcomponent localization](#dcomponent-localization)
+    - [declaring component translations](#component-translations)
+    - [translating inside components](#translating-inside-components)
+    - [locale resolution order](#component-locale-resolution-order)
+    - [switching locale at runtime](#switching-locale-at-runtime)
+    - [registering translations](#registering-translations)
+    - [reading the locale and static helpers](#static-helpers)
 
 <a name="introduction"></a>
 
@@ -309,3 +316,108 @@ translation files are cached in memory after their first read. subsequent calls 
 in the `local` environment, the framework sets up file watchers on each loaded translation file. when you edit a translation file and save it, the cache for that specific file and locale is automatically invalidated. the next call to `t()` will reread the updated file from disk. this provides instant feedback during development without restarting the server.
 
 the file watchers are automatically cleaned up when the application shuts down. in production, no file watchers are created and the cache persists for the lifetime of the process.
+
+<a name="dcomponent-localization"></a>
+
+## dcomponent localization
+
+all built in and custom dcomponents support unified client side localization through `dComponent`. core components encapsulate their own english and japanese dictionaries out of the box with zero network overhead.
+
+<a name="component-translations"></a>
+
+### declaring component translations
+
+each component encapsulates its own default translations cleanly using a static getter. this maintains single responsibility and keeps the base class lightweight.
+
+```javascript
+class MyUploader extends dComponent {
+  static get tag() { return "my-uploader"; }
+
+  static get translations() {
+    return {
+      en: {
+        select_files: "choose files to upload",
+        selected_count: ":count files selected"
+      },
+      ja: {
+        select_files: "アップロードするファイルを選択",
+        selected_count: ":count個のファイルが選択されました"
+      }
+    };
+  }
+
+  mount() {
+    const label = this.t("select_files", "choose files to upload");
+    const counter = this.t("selected_count", { count: 3 }, ":count files selected");
+  }
+}
+```
+
+when registering components via `dComponent.define()`, declared translations are automatically registered for the component tag.
+
+<a name="translating-inside-components"></a>
+
+### translating inside components
+
+inside any `dComponent` subclass, use `this.t(key, params, fallback)` to retrieve translated strings. translation keys resolve in the following order:
+
+1. global user overrides registered through `dComponent.setTranslations()`
+2. component translations declared on the class (`static get translations`)
+3. registered component dictionary entries for the tag name
+4. fallback value or raw key string
+
+keys support parameter interpolation using `:name` tokens.
+
+<a name="component-locale-resolution-order"></a>
+
+### locale resolution order
+
+each component resolves its active locale using a clean hierarchy:
+
+1. explicit component prop or attribute (`<d-calendar locale="ja">`)
+2. nearest ancestor with a `lang` or `locale` attribute (`<div lang="ja"><d-file-input></div>`)
+3. global client locale set via `dComponent.setLocale()`
+4. document language attribute on the root html element (`document.documentElement.lang`)
+5. navigator language in the browser
+6. default fallback locale (`en`)
+
+<a name="switching-locale-at-runtime"></a>
+
+### switching locale at runtime
+
+calling `dComponent.setLocale()` updates the global active locale and immediately re renders all mounted component instances on the page without requiring a page reload.
+
+```javascript
+// switches language and immediately updates all visible dcomponents
+dComponent.setLocale("ja");
+```
+
+<a name="registering-translations"></a>
+
+### registering translations
+
+use `dComponent.setTranslations()` to register external language packs or override existing component translations globally.
+
+```javascript
+dComponent.setTranslations("fr", {
+  "d-file-input": {
+    placeholder: "déposez le fichier ici",
+    subtitle: "ou cliquez pour parcourir"
+  }
+});
+```
+
+<a name="static-helpers"></a>
+
+### reading the locale and static helpers
+
+outside of component instances, `dComponent` provides static helpers for reading the active client locale and translating strings directly:
+
+```javascript
+// returns active client locale code (e.g. "ja", "en-US")
+const active = dComponent.getLocale();
+
+// translates string using active or specified locale
+const label = dComponent.t("common.save", "save");
+const welcome = dComponent.t("welcome.user", { name: "alice" }, "hello :name");
+```

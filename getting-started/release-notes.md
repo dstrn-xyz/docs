@@ -70,10 +70,10 @@ applications can safely update to newer patch versions without modifying applica
 
 dframework provides support focused on the latest release series to ensure development efforts remain focused.
 
-| version series | status | bug fixes | security fixes |
-| -------------- | ------ | --------- | -------------- |
-| 0.21.x (current) | active | supported | supported |
-| 0.20.x and prior | end of life | none | none |
+| version series   | status      | bug fixes | security fixes |
+| ---------------- | ----------- | --------- | -------------- |
+| 0.21.x (current) | active      | supported | supported      |
+| 0.20.x and prior | end of life | none      | none           |
 
 <a name="active-support"></a>
 
