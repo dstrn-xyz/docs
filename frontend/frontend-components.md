@@ -343,6 +343,7 @@ interactive calendar featuring single, range, and multiple date selection, nativ
 | `min`               | `min`             | `string`  | `""`       | no   | minimum selectable date in `YYYY-MM-DD` ISO format                       |
 | `max`               | `max`             | `string`  | `""`       | no   | maximum selectable date in `YYYY-MM-DD` ISO format                       |
 | `locale`            | `locale`          | `string`  | `""`       | no   | BCP 47 locale code (defaults to document or navigator language)          |
+| `era`               | `era`             | `string`  | `""`       | no   | calendar era system (`"japanese"` for Wareki display)                    |
 | `week-starts-on`    | `weekStartsOn`    | `number`  | `0`        | no   | first day of week (`0` Sunday or `1` Monday)                             |
 | `show-outside-days` | `showOutsideDays` | `boolean` | `true`     | no   | whether to show adjacent month padding days in the grid                  |
 | `disabled`          | `disabled`        | `boolean` | `false`    | no   | disables interaction and dims grid opacity                               |
@@ -413,6 +414,7 @@ form associated date picker component combining `<d-popover>` and `<d-calendar>`
 | `mode`              | `mode`            | `string`  | `"single"` | no   | selection mode (`"single"`, `"multiple"`, or `"range"`)                             |
 | `placeholder`       | `placeholder`     | `string`  | `""`       | no   | trigger placeholder when empty (defaults to `"pick a date"` or `"pick date range"`) |
 | `format`            | `format`          | `string`  | `""`       | no   | display text format (`"localized"` for formatted date, or empty for ISO)            |
+| `era`               | `era`             | `string`  | `""`       | no   | calendar era system (`"japanese"` for Wareki display)                               |
 | `min`               | `min`             | `string`  | `""`       | no   | minimum selectable date in `YYYY-MM-DD` format                                      |
 | `max`               | `max`             | `string`  | `""`       | no   | maximum selectable date in `YYYY-MM-DD` format                                      |
 | `locale`            | `locale`          | `string`  | `""`       | no   | BCP 47 locale code for calendar and localized date formatting                       |
