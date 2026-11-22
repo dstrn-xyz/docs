@@ -7,6 +7,7 @@
 - [streaming requests](#streaming-requests)
 - [headers](#headers)
 - [csrf management](#csrf-management)
+- [request tracking](#request-tracking)
 
 <a name="introduction"></a>
 
@@ -135,4 +136,20 @@ const isValid = req.verifyCsrfToken(submittedToken);
 
 // rotate the csrf secret and generate a fresh token (invalidates previous tokens)
 const newToken = req.rotateCsrfToken();
+```
+
+<a name="request-tracking"></a>
+
+## request tracking
+
+every tracked request has an assigned correlation id accessible through `req.trackingId`. you can also capture a full snapshot of the request state at any point using `req.capture()`, which records duration, headers, query, body, user, executed database queries, and error details.
+
+```javascript
+export default class CheckoutController {
+  process(req) {
+    const trackingId = req.trackingId;
+    const snapshot = req.capture();
+    return json({ trackingId, success: true });
+  }
+}
 ```

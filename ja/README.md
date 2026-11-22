@@ -221,6 +221,7 @@ dframeworkは強力な前提を持つクローズドワールドランタイム�
 ## その他
 
 - [CLI](other/cli.md)
+- [テスト](other/testing.md)
 - [ローカライゼーション](other/localization.md)
 - [ロギングとエラー](other/logging-and-errors.md)
 - [デプロイ](other/deployment.md)

@@ -27,7 +27,7 @@ dframeworkは返されたヘルパーを検出し、httpレスポンスを自動
 
 ```javascript
 export default class WebhookController {
-  async handle() {
+  handle() {
     // responds with a 202 accepted and empty body
     return status(202).send('');
   }
@@ -56,7 +56,7 @@ cookieを設定するには、`.cookie()`メソッドを使用します。`maxAg
 
 ```javascript
 export default class ThemeController {
-  async update() {
+  update() {
     return status(200)
       .cookie('theme', 'dark', { httpOnly: false, path: '/', maxAge: 31536000, sameSite: 'lax' })
       .json({ success: true });
@@ -89,7 +89,7 @@ export default class ApiController {
 
 ```javascript
 export default class ProfileController {
-  async show() {
+  show() {
     const user = Auth.user();
     
     return render('app.profile.show', { user })
@@ -102,7 +102,7 @@ export default class ProfileController {
 
 ```javascript
 export default class SettingsController {
-  async update(req) {
+  update(req) {
     const validation = validate(req.body, rules);
     
     if (validation.fails()) {

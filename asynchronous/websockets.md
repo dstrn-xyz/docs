@@ -104,7 +104,7 @@ export default class ChatController {
     Socket.broadcast('chat:new', { text, user: req.user.name });
   }
 
-  async onTyping() {
+  onTyping() {
     return json({ typing: true });
   }
 }

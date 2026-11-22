@@ -7,6 +7,7 @@
 - [ストリーミングリクエスト](#ストリーミングリクエスト)
 - [ヘッダー](#ヘッダー)
 - [csrf管理](#csrf管理)
+- [リクエストトラッキング](#リクエストトラッキング)
 
 <a name="はじめに"></a>
 
@@ -135,4 +136,20 @@ const isValid = req.verifyCsrfToken(submittedToken);
 
 // rotate the csrf secret and generate a fresh token (invalidates previous tokens)
 const newToken = req.rotateCsrfToken();
+```
+
+<a name="リクエストトラッキング"></a>
+
+## リクエストトラッキング
+
+トラッキング対象の各リクエストには`req.trackingId`でアクセス可能な関連付けidが割り当てられます。また`req.capture()`を使用すると、実行時間、ヘッダー、クエリ、ボディ、ユーザー、実行されたデータベースクエリ、エラー詳細を含むリクエスト状態の完全なスナップショットをいつでも取得できます。
+
+```javascript
+export default class CheckoutController {
+  process(req) {
+    const trackingId = req.trackingId;
+    const snapshot = req.capture();
+    return json({ trackingId, success: true });
+  }
+}
 ```

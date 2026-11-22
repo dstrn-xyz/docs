@@ -28,16 +28,16 @@ controllers organize your request handling logic into focused classes. dframewor
 
 ## writing controllers
 
-a controller is a class with a default export. each method corresponds to a route action. all methods must be `async`.
+a controller is a class with a default export. each method corresponds to a route action.
 
 ```javascript
 // controllers/app/IndexController.js
 export default class IndexController {
-  async index() {
+  index() {
     return render('auth.index');
   }
 
-  async register() {
+  register() {
     return render('auth.register');
   }
 }
@@ -71,7 +71,7 @@ controller methods receive `req` and `res` as arguments. both are optional. you 
 
 ```javascript
 export default class IndexController {
-  async index() {
+  index() {
     return render('auth.index');
   }
 
@@ -100,7 +100,7 @@ export default class PreferencesController {
     return json({ success: true });
   }
 
-  async destroy() {
+  destroy() {
     return status(500).json({ success: false, message: 'failed to reset preference' });
   }
 }
@@ -218,7 +218,7 @@ incoming cookies are available on `req.cookies` as a plain object. the framework
 
 ```javascript
 export default class LocaleController {
-  async set(req) {
+  set(req) {
     const preferred = req.cookies.locale;
     return json({ preferred });
   }
@@ -279,7 +279,7 @@ the global `validate()` helper is available inside any controller method. you pa
 
 ```javascript
 export default class UserProfileController {
-  async updateUsername(req) {
+  updateUsername(req) {
     const validation = validate(req.body, {
       username: 'required|string|min:3|max:20'
     });
@@ -291,7 +291,7 @@ export default class UserProfileController {
     // proceed with update
   }
 
-  async updateProfileImage(req) {
+  updateProfileImage(req) {
     const validation = validate(req, {
       profileImage: 'file_required|file_size:8mb|file_max_count:1'
     });

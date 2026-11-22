@@ -178,12 +178,12 @@ export default function (scheduler) {
 
 ### controllersディレクトリ
 
-`controllers`ディレクトリには受信リクエストロジックを処理するクラスが含まれます。コントローラーはルーターによって自動的に呼び出されるシンプルな非同期メソッドへと振る舞いをまとめます。継承すべきベースコントローラークラスは存在しません。ロジックで必要としない場合、リクエストやレスポンスオブジェクトなどの引数は完全に任意です。
+`controllers`ディレクトリには受信リクエストロジックを処理するクラスが含まれます。コントローラーはルーターによって自動的に呼び出されるメソッドへと振る舞いをまとめます。継承すべきベースコントローラークラスは存在しません。ロジックで必要としない場合、リクエストやレスポンスオブジェクトなどの引数は完全に任意です。
 
 ```javascript
 // controllers/IndexController.js
 export default class IndexController {
-  async index() {
+  index() {
     return render('index');
   }
 }

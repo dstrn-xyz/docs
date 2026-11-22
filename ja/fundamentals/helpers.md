@@ -409,7 +409,7 @@ ruby('日本[にほん]語[ご]');
 
 ```javascript
 export default class HomeController {
-  async index() {
+  index() {
     return render('home', { title: 'welcome' });
   }
 

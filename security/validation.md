@@ -25,7 +25,7 @@ the `fails()` method returns `true` if any rule was violated.
 
 ```javascript
 export default class AuthController {
-  async register(req) {
+  register(req) {
     const validation = validate(req.body, {
       username: 'required|string|min:3|max:20',
       email:    'required|email',
@@ -57,7 +57,7 @@ when returning an html response rather than json, you typically use the `.withEr
 
 ```javascript
 export default class SettingsController {
-  async update(req) {
+  update(req) {
     const validation = validate(req.body, {
       display_name: 'nullable|string|max:50'
     });
@@ -119,7 +119,7 @@ file sizes can be specified in bytes, or with shorthand suffixes (`kb`, `mb`, `g
 
 ```javascript
 export default class UserProfileController {
-  async updateProfileImage(req) {
+  updateProfileImage(req) {
     const validation = validate(req, {
       profileImage: 'file_required|file_size:8mb|file_max_count:1|file_mimes:jpg,png,jpeg'
     });

@@ -12,6 +12,8 @@
   - [creating a project](#creating-a-project)
   - [running the server](#running-the-server)
   - [tinker](#tinker)
+  - [running tests](#running-tests)
+  - [generating tests](#generating-tests)
   - [database advisor](#database-advisor)
   - [user commands](#user-commands)
   - [creating a command](#creating-a-command)
@@ -60,6 +62,7 @@ passing a command name to `dstrn help <command>` or appending `--help` / `-h` to
 | --------------------- | ------------------------------------------------------- |
 | `dstrn init <dir>`    | scaffold a minimal project                              |
 | `dstrn serve`         | run the server in the current directory                 |
+| `dstrn test [target]` | run application tests via node test runner              |
 | `dstrn tinker [code]` | open an interactive repl shell or execute code directly |
 | `dstrn key:generate`  | generate a random encryption key                        |
 
@@ -90,6 +93,7 @@ passing a command name to `dstrn help <command>` or appending `--help` / `-h` to
 | `dstrn make:command <Name>`    | create a new console command                                   |
 | `dstrn make:job <Name>`        | create a new background job                                    |
 | `dstrn make:component <Name>`  | create a new client web component (`dComponent`) in `public/js/components` |
+| `dstrn make:test <Name>`       | create a new test file (`--feature`, `--browser`, `--unit`)                |
 
 <a name="system"></a>
 
@@ -201,6 +205,31 @@ dstrn tinker -e "const u = await User.first(); return u.email;"
 ```
 
 inline execution supports top level await expressions and multi statement blocks. all models in `models/` are loaded into global scope before execution starts.
+
+<a name="running-tests"></a>
+
+## running tests
+
+the `test` command runs your test suites using node's built in test runner with automatic environment isolation (`APP_ENV=testing`), discovering all test files matching `*.test.js` under the `tests/` directory. running tests strictly requires a `.env.testing` file in the project root:
+
+```bash
+dstrn test
+dstrn test tests/feature/UserTest.test.js
+dstrn test --watch
+dstrn test --only
+```
+
+<a name="generating-tests"></a>
+
+## generating tests
+
+the `make:test` command scaffolds a test file structured with appropriate imports and lifecycle assertions:
+
+```bash
+dstrn make:test UserTest
+dstrn make:test LoginTest --browser
+dstrn make:test CalculatorTest --unit
+```
 
 <a name="database-advisor"></a>
 

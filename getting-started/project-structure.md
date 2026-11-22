@@ -176,12 +176,12 @@ export default function (scheduler) {
 
 ### the controllers directory
 
-the `controllers` directory contains the classes that handle your incoming request logic. controllers organize your behavior into simple async methods that are invoked automatically by the router. there is no base controller class to extend. arguments like the request and response objects are entirely optional if your logic does not require them.
+the `controllers` directory contains the classes that handle your incoming request logic. controllers organize your behavior into methods that are invoked automatically by the router. there is no base controller class to extend. arguments like the request and response objects are entirely optional if your logic does not require them.
 
 ```javascript
 // controllers/IndexController.js
 export default class IndexController {
-  async index() {
+  index() {
     return render('index');
   }
 }

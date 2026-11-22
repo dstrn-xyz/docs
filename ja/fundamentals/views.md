@@ -39,7 +39,7 @@ dframeworkにはカスタムビューエンジンが搭載されています。�
 
 ```javascript
 export default class GreetingController {
-  async hello() {
+  hello() {
     return render('greetings.hello', { name: 'world' });
   }
 }

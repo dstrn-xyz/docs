@@ -123,6 +123,8 @@ logs/
 
 the `local` environment writes to `logs/dev/` and production writes to `logs/prod/`. ansi color codes are automatically stripped from file output.
 
+when request tracking is active, the logger automatically prepends the request correlation id (`[<requestId>]`) to both persisted log lines and route access records, allowing developers to trace log lines across distributed services and debugging sessions. in local development, console route output deliberately omits the correlation badge to prevent clobbering the terminal in crowded ide windows, while persisted log files and production console output preserve the correlation tag.
+
 <a name="log-file-rotation"></a>
 
 ### log file rotation and retention
@@ -168,16 +170,18 @@ when three or more queries with identical normalized shapes execute in a single 
 
 the logger reads its configuration from the application config.
 
-| config key  | effect                                                                        |
-| ----------- | ----------------------------------------------------------------------------- |
-| `app.env`   | determines the log file directory (`dev` vs `prod`) and console color mode    |
-| `app.debug` | when `true`, enables the `debug` log level and activates the debug error page |
+| config key     | effect                                                                                        |
+| -------------- | --------------------------------------------------------------------------------------------- |
+| `app.env`      | determines the log file directory (`dev` vs `prod`) and console color mode                    |
+| `app.debug`    | when `true`, enables the `debug` log level and activates the debug error page                 |
+| `app.tracking` | request tracking mode (`'off'`, `'errors'`, `'all'`). defaults to `'all'` when in local debug |
 
 ```javascript
 // config/app.js
 export default {
-  env: 'local',
-  debug: true
+  env: 'production',
+  debug: false,
+  tracking: 'errors'
 };
 ```
 
@@ -194,6 +198,8 @@ the `ErrorHandler` class manages error rendering and logging throughout the appl
 dframework includes built in error page templates for `404` and `500` (along with `debug` in local development). each page uses the framework's view template syntax and displays a styled error screen to the user.
 
 when an error occurs, the error handler selects the appropriate template based on the status code. if no view template exists for the specific code, the error handler sends a plain text `${status} Error` response.
+
+the error handler also correlates every failure with a tracking id. the correlation uuid is passed to error view templates as `{{ requestId }}` and included in json error responses as `id`. in debug error pages, the request correlation id is displayed directly in the header banner.
 
 <a name="custom-error-pages"></a>
 

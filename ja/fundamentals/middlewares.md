@@ -20,19 +20,19 @@
 
 ## ミドルウェアの定義
 
-すべてのカスタムミドルウェアは`middlewares`ディレクトリに配置します。ミドルウェアは非同期メソッドを持つクラスとして定義します。各メソッドは独立したミドルウェアハンドラーとして機能します。
+すべてのカスタムミドルウェアは`middlewares`ディレクトリに配置します。ミドルウェアはクラスとして定義します。各メソッドは独立したミドルウェアハンドラーとして機能します。
 
 ```javascript
 // middlewares/AuthMiddleware.js
 export default class AuthMiddleware {
-  async requireAuth(req, next) {
+  requireAuth(req, next) {
     if (!Auth.check()) {
       return redirect('/login', true);
     }
     return next();
   }
 
-  async requireGuest(req, next) {
+  requireGuest(req, next) {
     if (Auth.check()) {
       return redirect('/home', true);
     }
@@ -86,7 +86,7 @@ return next().with({ devices, currentDevice });
 
 ```javascript
 export default class CustomMiddleware {
-  async intercept(req, res, next) {
+  intercept(req, res, next) {
     res.set('X-Custom-Header', 'dstrn');
     return next();
   }
@@ -102,7 +102,7 @@ export default class CustomMiddleware {
 ```javascript
 // middlewares/AdminMiddleware.js
 export default class AdminMiddleware {
-  async requireAdmin(req, next) {
+  requireAdmin(req, next) {
     if (!Auth.check()) return redirect('/login');
     if (Auth.user().power < 5) return abort(403, 'unauthorized access');
     

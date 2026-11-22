@@ -18,19 +18,19 @@ middleware provides a convenient mechanism for inspecting and filtering http req
 
 ## defining middleware
 
-all custom middleware lives in the `middlewares` directory. you define middleware as a class with async methods. each method acts as an independent middleware handler.
+all custom middleware lives in the `middlewares` directory. you define middleware as a class. each method acts as an independent middleware handler.
 
 ```javascript
 // middlewares/AuthMiddleware.js
 export default class AuthMiddleware {
-  async requireAuth(req, next) {
+  requireAuth(req, next) {
     if (!Auth.check()) {
       return redirect('/login', true);
     }
     return next();
   }
 
-  async requireGuest(req, next) {
+  requireGuest(req, next) {
     if (Auth.check()) {
       return redirect('/home', true);
     }
@@ -84,7 +84,7 @@ some middleware may need access to the response object. you can declare `res` as
 
 ```javascript
 export default class CustomMiddleware {
-  async intercept(req, res, next) {
+  intercept(req, res, next) {
     res.set('X-Custom-Header', 'dstrn');
     return next();
   }
@@ -100,7 +100,7 @@ to halt the request and prevent it from reaching the controller simply return a 
 ```javascript
 // middlewares/AdminMiddleware.js
 export default class AdminMiddleware {
-  async requireAdmin(req, next) {
+  requireAdmin(req, next) {
     if (!Auth.check()) return redirect('/login');
     if (Auth.user().power < 5) return abort(403, 'unauthorized access');
     

@@ -409,7 +409,7 @@ these helpers are shortcuts for calling methods on the current request context's
 
 ```javascript
 export default class HomeController {
-  async index() {
+  index() {
     return render('home', { title: 'welcome' });
   }
 

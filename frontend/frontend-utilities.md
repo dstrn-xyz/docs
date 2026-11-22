@@ -132,9 +132,9 @@ any utility class can be prefixed with a viewport breakpoint. prefixed classes a
 | `.grow` / `.grow-0`             | individual flex-grow control   |
 | `.shrink` / `.shrink-0`         | individual flex-shrink control |
 | `.order-[1-5]` / `.order-[first | last                           | none]` | flex/grid item order |
-| `.justify-[start                | end                            | center | between              | around     | evenly]`                      | main axis alignment |
-| `.align-[start                  | end                            | center | baseline             | stretch]`  | cross axis alignment          |
-| `.self-[start                   | end                            | center | stretch              | baseline]` | per item cross axis alignment |
+| `.justify-[start \| end \| center \| between \| around \| evenly]`                      | main axis alignment |
+| `.align-[start \| end \| center \| baseline \| stretch]`  | cross axis alignment          |
+| `.self-[start \| end \| center \| stretch \| baseline]` | per item cross axis alignment |
 
 <a name="spacing"></a>
 
@@ -181,17 +181,17 @@ values available for all spacing classes: `0`, `01` (`.1em`), `02` (`.2em`), `02
 | `.bold`                                          | `font-weight: 700`                                |
 | `.uppercase` / `.lowercase` / `.capitalize`      | text-transform                                    |
 | `.italic` / `.not-italic`                        | font-style control                                |
-| `.text-[left                                     | center                                            | right                                 | justify               | start    | end]`               | text alignment |
+| `.text-[left \| center \| right \| justify \| start \| end]`               | text alignment |
 | `.text-vertical`                                 | vertical writing mode                             |
 | `.lh-[1-3]`                                      | line height (1, 1.1, 1.15, 1.2, 1.25, … , 3)      |
 | `.underline` / `.line-through` / `.no-underline` | text decoration                                   |
-| `.decoration-[dotted                             | dashed                                            | wavy]`                                | text-decoration-style |
-| `.underline-offset-[1                            | 2]`                                               | text-underline-offset in `.1em` steps |
+| `.decoration-[dotted \| dashed \| wavy]`                                | text-decoration-style |
+| `.underline-offset-[1 \| 2]`                                               | text-underline-offset in `.1em` steps |
 | `.truncate`                                      | truncate with ellipsis (alias)                    |
 | `.overflow-ellipsis`                             | truncate with ellipsis                            |
 | `.line-clamp-[1-4]`                              | clamp to N lines with ellipsis                    |
 | `.indent-[1-3]`                                  | text-indent in em                                 |
-| `.whitespace-[pre                                | pre-wrap                                          | pre-line                              | normal                | nowrap]` | white-space control |
+| `.whitespace-[pre \| pre-wrap \| pre-line \| normal \| nowrap]` | white-space control |
 | `.break-words` / `.break-all` / `.break-keep`    | word-breaking                                     |
 
 <a name="appearance"></a>
@@ -202,24 +202,24 @@ values available for all spacing classes: `0`, `01` (`.1em`), `02` (`.2em`), `02
 | --------------------------------------------- | ---------------------------------------------------------------------------- |
 | `.bdr-[0-2]`                                  | border-radius in `.1em` steps                                                |
 | `.bdr-circle`                                 | `border-radius: 50%`                                                         |
-| `.border-[s                                   | m                                                                            | l]`    | all borders |
-| `.border-[top                                 | bottom                                                                       | left   | right       | x                    | y]-[0                | s | m | l]` | directional borders |
+| `.border-[s \| m \| l]`    | all borders |
+| `.border-[top \| bottom \| left \| right \| x \| y]-[0 \| s \| m \| l]` | directional borders |
 | `.bg-[color]`                                 | background (`container`, `accent`, `red`, `blue`, `green`, …)                |
 | `.text-[color]`                               | text color (same values)                                                     |
-| `.shadow-[s                                   | m                                                                            | l]`    | box shadow  |
+| `.shadow-[s \| m \| l]`    | box shadow  |
 | `.opacity-[0, 05-100]`                        | opacity in 5% steps (`opacity-0`, `opacity-05`, `opacity-50`, `opacity-100`) |
 | `.invert`                                     | `filter: invert(1)`                                                          |
 | `.grayscale` / `.grayscale-0`                 | full / remove grayscale filter                                               |
-| `.blur-[sm                                    | md                                                                           | lg     | xl]`        | `filter: blur()`     |
-| `.brightness-[50                              | 75                                                                           | 100    | 125         | 150]`                | brightness filter    |
-| `.contrast-[50                                | 75                                                                           | 100    | 125         | 150]`                | contrast filter      |
-| `.saturate-[0                                 | 50                                                                           | 100    | 150         | 200]`                | saturation filter    |
+| `.blur-[sm \| md \| lg \| xl]`        | `filter: blur()`     |
+| `.brightness-[50 \| 75 \| 100 \| 125 \| 150]`                | brightness filter    |
+| `.contrast-[50 \| 75 \| 100 \| 125 \| 150]`                | contrast filter      |
+| `.saturate-[0 \| 50 \| 100 \| 150 \| 200]`                | saturation filter    |
 | `.sepia`                                      | sepia filter                                                                 |
-| `.hue-rotate-[15                              | 30                                                                           | 60     | 90          | 180]`                | hue-rotate filter    |
+| `.hue-rotate-[15 \| 30 \| 60 \| 90 \| 180]`                | hue-rotate filter    |
 | `.filter-none`                                | remove all filters                                                           |
-| `.backdrop-blur-[sm                           | md                                                                           | lg     | xl]`        | backdrop blur filter |
-| `.object-[cover                               | contain                                                                      | fill   | none]`      | image/video fitting  |
-| `.object-[center                              | top                                                                          | bottom | left        | right]`              | image/video position |
+| `.backdrop-blur-[sm \| md \| lg \| xl]`        | backdrop blur filter |
+| `.object-[cover \| contain \| fill \| none]`      | image/video fitting  |
+| `.object-[center \| top \| bottom \| left \| right]`              | image/video position |
 | `.visible` / `.invisible`                     | visibility (preserves layout space)                                          |
 | `.list-none` / `.list-disc` / `.list-decimal` | list style type                                                              |
 | `.list-inside` / `.list-outside`              | list style position                                                          |
@@ -242,7 +242,7 @@ values available for all spacing classes: `0`, `01` (`.1em`), `02` (`.2em`), `02
 | -------------------------------------------------------------- | ---------------------------------- |
 | `.pointer`                                                     | `cursor: pointer`                  |
 | `.no-events`                                                   | `pointer-events: none`             |
-| `.click-haptic-[small                                          | med]`                              | scale-down effect on click |
+| `.click-haptic-[small \| med]`                              | scale-down effect on click |
 | `.hover:bg-[color]`                                            | background change on hover         |
 | `.hover:text-[color]`                                          | text color change on hover         |
 | `.shadow-hover-[s,m,l]`                                        | shadow change on hover             |

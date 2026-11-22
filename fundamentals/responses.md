@@ -27,7 +27,7 @@ the `status()` helper is used to set the http status code. it returns a chainabl
 
 ```javascript
 export default class WebhookController {
-  async handle() {
+  handle() {
     // responds with a 202 accepted and empty body
     return status(202).send('');
   }
@@ -56,7 +56,7 @@ to set a cookie, use the `.cookie()` method. the `maxAge` option sets the `Max-A
 
 ```javascript
 export default class ThemeController {
-  async update() {
+  update() {
     return status(200)
       .cookie('theme', 'dark', { httpOnly: false, path: '/', maxAge: 31536000, sameSite: 'lax' })
       .json({ success: true });
@@ -89,7 +89,7 @@ the `render()` helper evaluates a view template and sends the resulting html. re
 
 ```javascript
 export default class ProfileController {
-  async show() {
+  show() {
     const user = Auth.user();
     
     return render('app.profile.show', { user })
@@ -102,7 +102,7 @@ if a form submission fails, you can flash the validation errors and the old inpu
 
 ```javascript
 export default class SettingsController {
-  async update(req) {
+  update(req) {
     const validation = validate(req.body, rules);
     
     if (validation.fails()) {

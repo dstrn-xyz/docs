@@ -39,7 +39,7 @@ you return views from your controllers using the `render()` helper.
 
 ```javascript
 export default class GreetingController {
-  async hello() {
+  hello() {
     return render('greetings.hello', { name: 'world' });
   }
 }

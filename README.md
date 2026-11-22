@@ -221,6 +221,7 @@ benchmark results and methodology:
 ## other
 
 - [cli](other/cli.md)
+- [testing](other/testing.md)
 - [localization](other/localization.md)
 - [logging and errors](other/logging-and-errors.md)
 - [deployment](other/deployment.md)

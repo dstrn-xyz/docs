@@ -12,6 +12,8 @@
   - [プロジェクトの作成](#プロジェクトの作成)
   - [サーバーの実行](#サーバーの実行)
   - [tinker](#tinker)
+  - [テストの実行](#テストの実行)
+  - [テストの生成](#テストの生成)
   - [データベースアドバイザー](#データベースアドバイザー)
   - [スケジュールタスクと手動実行](#スケジュールタスクと手動実行)
   - [コマンドの作成](#コマンドの作成)
@@ -60,6 +62,7 @@ dstrn --version
 | --------------------- | ------------------------------------------------------- |
 | `dstrn init <dir>`    | 最小限のプロジェクトをスキャフォールディング |
 | `dstrn serve`         | 現在のディレクトリでサーバーを実行 |
+| `dstrn test [target]` | nodeテストランナーでアプリケーションテストを実行 |
 | `dstrn tinker [code]` | 対話型replシェルを開く、またはコードを直接実行 |
 | `dstrn key:generate`  | ランダムな暗号化キーを生成 |
 
@@ -90,6 +93,7 @@ dstrn --version
 | `dstrn make:command <Name>`    | 新しいコンソールコマンドを作成 |
 | `dstrn make:job <Name>`        | 新しいバックグラウンドジョブを作成 |
 | `dstrn make:component <Name>`  | `public/js/components`に新しいクライアントwebコンポーネント（`dComponent`）を作成 |
+| `dstrn make:test <Name>`       | 新しいテストファイルを作成（`--feature`、`--browser`、`--unit`） |
 
 <a name="システム"></a>
 
@@ -201,6 +205,31 @@ dstrn tinker -e "const u = await User.first(); return u.email;"
 ```
 
 インライン実行はトップレベルのawait式と複数文ブロックをサポートします。`models/`内のすべてのモデルは実行開始前にグローバルスコープにロードされます。
+
+<a name="テストの実行"></a>
+
+## テストの実行
+
+`test`コマンドは、ノード組み込みのテストランナーを使用して、自動環境分離（`APP_ENV=testing`）のもとでテストスイートを実行します。`tests/`配下の`*.test.js`に一致するすべてのテストファイルを自動検出します。テストの実行にはプロジェクトルートに`.env.testing`が存在することが必須です:
+
+```bash
+dstrn test
+dstrn test tests/feature/UserTest.test.js
+dstrn test --watch
+dstrn test --only
+```
+
+<a name="テストの生成"></a>
+
+## テストの生成
+
+`make:test`コマンドは、適切なインポートとライフサイクルのアサーションを備えたテストファイルをスキャフォールドします。
+
+```bash
+dstrn make:test UserTest
+dstrn make:test LoginTest --browser
+dstrn make:test CalculatorTest --unit
+```
 
 <a name="データベースアドバイザー"></a>
 

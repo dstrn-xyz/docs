@@ -23,6 +23,7 @@
     - [shield](#shield)
     - [middleware](#route-level-middleware)
     - [log](#log)
+    - [track](#track)
     - [views](#views)
     - [profile](#profile)
     - [basic auth](#basic-auth)
@@ -402,6 +403,34 @@ request and response logging is automatic in the `local` environment. you can fo
 
 ```javascript
 Route.post('/api/playback/track', 'app.PlaybackController@get_track').name('api.playback.track').log();
+```
+
+<a name="track"></a>
+
+### track
+
+the `.track()` modifier enables high performance request tracking with a unique correlation uuid. when tracking is active, the framework generates a request id, sets the `X-Request-Id` response header, correlates database queries and log output, and includes the tracking id in error views and json error payloads.
+
+```javascript
+Route.post('/checkout', 'CheckoutController@process').track();
+```
+
+you can also enable tracking across an entire route group:
+
+```javascript
+Route.group({ track: true }, () => {
+  Route.post('/payments/charge', 'PaymentController@charge');
+  Route.get('/payments/status', 'PaymentController@status');
+});
+```
+
+or wrap a callback block using `Route.track`:
+
+```javascript
+Route.track(true, (group) => {
+  group.post('/payments/charge', 'PaymentController@charge');
+  group.get('/payments/status', 'PaymentController@status');
+});
 ```
 
 <a name="views"></a>

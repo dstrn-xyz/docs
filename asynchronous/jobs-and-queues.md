@@ -100,7 +100,7 @@ the most common way to dispatch a job is from a controller after handling the us
 
 ```javascript
 export default class RegistrationController {
-  async register(req, res) {
+  async register(req) {
     const user = await User.create(req.body);
     Job.dispatch('SendWelcomeEmailJob', { userId: user.id });
     return redirect('/dashboard');

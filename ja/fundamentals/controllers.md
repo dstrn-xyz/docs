@@ -28,16 +28,16 @@
 
 ## コントローラの記述
 
-コントローラはデフォルトエクスポートを持つクラスです。各メソッドはルートアクションに対応します。すべてのメソッドは`async`である必要があります。
+コントローラはデフォルトエクスポートを持つクラスです。各メソッドはルートアクションに対応します。
 
 ```javascript
 // controllers/app/IndexController.js
 export default class IndexController {
-  async index() {
+  index() {
     return render('auth.index');
   }
 
-  async register() {
+  register() {
     return render('auth.register');
   }
 }
@@ -71,7 +71,7 @@ Route.get('/locale/:locale', 'LocaleController@set');
 
 ```javascript
 export default class IndexController {
-  async index() {
+  index() {
     return render('auth.index');
   }
 
@@ -100,7 +100,7 @@ export default class PreferencesController {
     return json({ success: true });
   }
 
-  async destroy() {
+  destroy() {
     return status(500).json({ success: false, message: 'failed to reset preference' });
   }
 }
@@ -218,7 +218,7 @@ export default class UserProfileController {
 
 ```javascript
 export default class LocaleController {
-  async set(req) {
+  set(req) {
     const preferred = req.cookies.locale;
     return json({ preferred });
   }
@@ -279,7 +279,7 @@ const logs = await AuditLog.paginate(10, 'log_page');
 
 ```javascript
 export default class UserProfileController {
-  async updateUsername(req) {
+  updateUsername(req) {
     const validation = validate(req.body, {
       username: 'required|string|min:3|max:20'
     });
@@ -291,7 +291,7 @@ export default class UserProfileController {
     // proceed with update
   }
 
-  async updateProfileImage(req) {
+  updateProfileImage(req) {
     const validation = validate(req, {
       profileImage: 'file_required|file_size:8mb|file_max_count:1'
     });

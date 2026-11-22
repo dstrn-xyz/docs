@@ -25,6 +25,7 @@
     - [シールド](#シールド)
     - [ルートレベルミドルウェア](#ルートレベルミドルウェア)
     - [ログ](#ログ)
+    - [トラッキング](#トラッキング)
     - [ビュー](#ビュー)
     - [プロファイル](#プロファイル)
     - [ベーシック認証](#ベーシック認証)
@@ -406,6 +407,34 @@ Route.get('/settings', 'SettingsController@index')
 
 ```javascript
 Route.post('/api/playback/track', 'app.PlaybackController@get_track').name('api.playback.track').log();
+```
+
+<a name="トラッキング"></a>
+
+### トラッキング
+
+`.track()`修飾子を使用すると一意のuuid関連付けidによる高パフォーマンスなリクエストトラッキングが有効になります。トラッキングが有効な場合、リクエストidが自動生成され、`X-Request-Id`レスポンスヘッダーが設定され、データベースクエリとログ出力が関連付けられ、エラービューやjsonエラーペイロードにトラッキングidが含まれます。
+
+```javascript
+Route.post('/checkout', 'CheckoutController@process').track();
+```
+
+ルートグループ全体でトラッキングを有効にすることもできます:
+
+```javascript
+Route.group({ track: true }, () => {
+  Route.post('/payments/charge', 'PaymentController@charge');
+  Route.get('/payments/status', 'PaymentController@status');
+});
+```
+
+または`Route.track`を使用してコールバックブロックをラップします:
+
+```javascript
+Route.track(true, (group) => {
+  group.post('/payments/charge', 'PaymentController@charge');
+  group.get('/payments/status', 'PaymentController@status');
+});
 ```
 
 <a name="ビュー"></a>

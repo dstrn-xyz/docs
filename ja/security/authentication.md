@@ -67,7 +67,7 @@ export default {
 import { Hash } from 'dframework';
 import User from '../models/User.js';
 
-export async function authenticate(req, res) {
+export async function authenticate(req) {
   const user = await User.findByEmail('tarou@example.com');
 
   if (user && await Hash.verify('secret', user.password)) {
