@@ -11,6 +11,7 @@
     - [from the command line](#from-the-command-line)
     - [payload data](#payload-data)
   - [the job facade](#the-job-facade)
+    - [request tracking and logging correlation](#request-tracking-and-logging)
   - [how the worker pool works](#how-the-worker-pool-works)
     - [worker isolation](#worker-isolation)
     - [concurrency limits](#concurrency-limits)
@@ -138,7 +139,11 @@ you can also dispatch a job from the command line using the `dstrn dispatch` com
 dstrn dispatch SendWelcomeEmailJob --payload '{"userId": 1}'
 ```
 
-the `--payload` flag accepts a json string that is parsed and passed to the job's `handle` method. if omitted, the job receives an empty object. the command bootstraps the full application context including database connectivity and all framework globals, exactly as a worker thread does. execution time is reported on completion.
+the `--payload` flag accepts a json string that is parsed and passed to the job's `handle` method. if omitted, the job receives an empty object. you can also pass an optional `--tracking-id` flag to assign a correlation id to the job instance. the command bootstraps the full application context including database connectivity and all framework globals, exactly as a worker thread does. execution time is reported on completion.
+
+```bash
+dstrn dispatch SendWelcomeEmailJob --payload '{"userId": 1}' --tracking-id 'custom-correlation-id'
+```
 
 ```bash
 dstrn dispatch CleanupExpiredSessionsJob
@@ -184,11 +189,24 @@ Job.dispatch('ProcessVideoJob', { videoId: 42 }, {
 });
 ```
 
-| option    | type     | default | description                                                                 |
-| --------- | -------- | ------- | --------------------------------------------------------------------------- |
-| `timeout` | `number` | `60000` | execution timeout in milliseconds; workers exceeding this timeout terminate |
-| `tries`   | `number` | `1`     | maximum attempt count before the job is marked as failed                    |
-| `backoff` | `number` | `1000`  | exponential backoff base delay in milliseconds between retry attempts       |
+| option       | type      | default     | description                                                                 |
+| ------------ | --------- | ----------- | --------------------------------------------------------------------------- |
+| `timeout`    | `number`  | `60000`     | execution timeout in milliseconds; workers exceeding this timeout terminate |
+| `tries`      | `number`  | `1`         | maximum attempt count before the job is marked as failed                    |
+| `backoff`    | `number`  | `1000`      | exponential backoff base delay in milliseconds between retry attempts       |
+| `trackingId` | `string`  | `inherited` | correlation identifier automatically inherited from tracked requests        |
+| `log`        | `boolean` | `inherited` | whether to output dispatch and completion logs at info level in production  |
+
+<a name="request-tracking-and-logging"></a>
+
+### request tracking and logging correlation
+
+when background jobs are dispatched from incoming http requests, the framework automatically correlates the job execution with the initiating request:
+
+1. **request tracking (`.track()`)**: if the dispatching route has `.track()` enabled or global tracking is active, the job automatically inherits the correlation id. inside the job class, the id is accessible via `this.trackingId` (or `this.requestId`). all logs emitted inside the job handler (`Log.info()`, `Log.error()`) are automatically prefixed with `[<trackingId>]`. sub jobs dispatched from within the worker thread inherit the same correlation id.
+2. **route logging (`.log()`)**: by default, job dispatch and completion logs run at `debug` level to avoid production log noise. if the dispatching route is marked with `.log()`, dispatch and completion are logged at `info` level instead, making them visible in production logs.
+3. **combined `.track()` and `.log()`**: when both modifiers are active, job dispatch and completion logs are output at `info` level with the `[<trackingId>]` correlation prefix.
+4. **snapshot visibility**: when a request snapshot is captured via `req.capture()`, all background jobs dispatched during that request are recorded under the `jobs` array with their names and correlation ids.
 
 if you attempt to use the `Job` facade before the application has initialized, it will throw a descriptive error.
 

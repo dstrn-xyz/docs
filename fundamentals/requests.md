@@ -142,7 +142,7 @@ const newToken = req.rotateCsrfToken();
 
 ## request tracking
 
-every tracked request has an assigned correlation id accessible through `req.trackingId`. you can also capture a full snapshot of the request state at any point using `req.capture()`, which records duration, headers, query, body, user, executed database queries, and error details.
+every tracked request has an assigned correlation id accessible through `req.trackingId`. you can also capture a full snapshot of the request state at any point using `req.capture()`, which records duration, headers, query, body, user, executed database queries, dispatched background jobs, and error details.
 
 ```javascript
 export default class CheckoutController {

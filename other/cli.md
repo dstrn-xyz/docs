@@ -102,7 +102,7 @@ passing a command name to `dstrn help <command>` or appending `--help` / `-h` to
 | command                                 | description                                                                   |
 | --------------------------------------- | ----------------------------------------------------------------------------- |
 | `dstrn run <CommandName>`               | run a user command from `console/commands`                                    |
-| `dstrn dispatch <JobName> [--payload=]` | run a job directly in the current process with an optional json payload       |
+| `dstrn dispatch <JobName> [--payload=] [--tracking-id=]` | run a job directly in the current process with optional payload and correlation id |
 | `dstrn logs:clear`                     | clear or archive log files with date filtering                                |
 | `dstrn deploy`                         | generate production deployment and service configurations                     |
 | `dstrn cert`                           | inspect and manage ssl certificates                                           |
@@ -365,7 +365,13 @@ dstrn dispatch CleanupExpiredSessionsJob.js
 you can pass a json payload using the `--payload` flag:
 
 ```bash
-dstrn dispatch SendWelcomeEmailJob.js --payload '{"userId": 1}'
+dstrn dispatch SendWelcomeEmailJob --payload '{"userId": 1}'
+```
+
+you can also assign an explicit correlation identifier using the `--tracking-id` flag:
+
+```bash
+dstrn dispatch SendWelcomeEmailJob --payload '{"userId": 1}' --tracking-id 'custom-correlation-id'
 ```
 
 <a name="logs-management"></a>

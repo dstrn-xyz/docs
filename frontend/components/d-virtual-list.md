@@ -48,7 +48,3 @@ list.checkBottom();
 - detects scroll container via parent hierarchy, `scroll-parent` selector, or window viewport.
 - uses an anchor element and intersection observer to reliably detect bottom proximity and emit `reachbottom` events for infinite scrolling.
 - clears and pauses bottom checks when offscreen.
-
----
-
-<a name="overriding-built-in-components"></a>

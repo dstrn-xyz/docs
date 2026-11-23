@@ -123,7 +123,7 @@ logs/
 
 the `local` environment writes to `logs/dev/` and production writes to `logs/prod/`. ansi color codes are automatically stripped from file output.
 
-when request tracking is active, the logger automatically prepends the request correlation id (`[<requestId>]`) to both persisted log lines and route access records, allowing developers to trace log lines across distributed services and debugging sessions. in local development, console route output deliberately omits the correlation badge to prevent clobbering the terminal in crowded ide windows, while persisted log files and production console output preserve the correlation tag.
+when request tracking is active, the logger automatically prepends the request correlation id (`[<requestId>]`) to both persisted log lines and route access records, allowing developers to trace log lines across distributed services and debugging sessions. in addition, background jobs dispatched from tracked requests inherit this correlation id, ensuring all worker logs (`Log.info()`, `Log.error()`) and queue lifecycle events carry the matching request correlation tag. in local development, console route output deliberately omits the correlation badge to prevent clobbering the terminal in crowded ide windows, while persisted log files and production console output preserve the correlation tag.
 
 <a name="log-file-rotation"></a>
 

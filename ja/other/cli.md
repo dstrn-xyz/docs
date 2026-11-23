@@ -102,7 +102,7 @@ dstrn --version
 | コマンド | 説明 |
 | --------------------------------------- | ----------------------------------------------------------------------------- |
 | `dstrn run <CommandName>`               | `console/commands`からユーザーコマンドを実行 |
-| `dstrn dispatch <JobName> [--payload=]` | オプションのjsonペイロードを使用して現在のプロセスでジョブを直接実行 |
+| `dstrn dispatch <JobName> [--payload=] [--tracking-id=]` | オプションのペイロードおよび関連付けidを使用して現在のプロセスでジョブを直接実行 |
 | `dstrn logs:clear`                     | 日付フィルタリング付きでログファイルをクリアまたはアーカイブ |
 | `dstrn deploy`                         | 本番デプロイおよびサービス設定を生成 |
 | `dstrn cert`                           | ssl証明書を検査および管理 |
@@ -365,7 +365,13 @@ dstrn dispatch CleanupExpiredSessionsJob.js
 `--payload`フラグを使用してjsonペイロードを渡すことができます:
 
 ```bash
-dstrn dispatch SendWelcomeEmailJob.js --payload '{"userId": 1}'
+dstrn dispatch SendWelcomeEmailJob --payload '{"userId": 1}'
+```
+
+また`--tracking-id`フラグを使用して明示的な関連付け識別子を割り当てることもできます:
+
+```bash
+dstrn dispatch SendWelcomeEmailJob --payload '{"userId": 1}' --tracking-id 'custom-correlation-id'
 ```
 
 <a name="ログ管理"></a>

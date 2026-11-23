@@ -131,7 +131,7 @@ any utility class can be prefixed with a viewport breakpoint. prefixed classes a
 | `.flex-none`                    | `flex: none`                   |
 | `.grow` / `.grow-0`             | individual flex-grow control   |
 | `.shrink` / `.shrink-0`         | individual flex-shrink control |
-| `.order-[1-5]` / `.order-[first | last                           | none]` | flex/grid item order |
+| `.order-[1-5]` / `.order-[first \| last \| none]` | flex/grid item order |
 | `.justify-[start \| end \| center \| between \| around \| evenly]`                      | main axis alignment |
 | `.align-[start \| end \| center \| baseline \| stretch]`  | cross axis alignment          |
 | `.self-[start \| end \| center \| stretch \| baseline]` | per item cross axis alignment |
