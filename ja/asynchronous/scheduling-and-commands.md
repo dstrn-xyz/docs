@@ -176,7 +176,7 @@ dstrn run PruneOldLogs
 
 ### 実行と再スケジュール
 
-タスクの間隔が経過するとスケジューラーはタスクのハンドラー（コマンドクラスまたはインライン関数）を呼び出します。タスク完了後スケジューラーは設定された間隔から経過した実行時間を差し引くことで次回の実行時間を計算します。これによりタスクの完了に大幅な時間がかかった場合でも実行間隔の一貫性が保たれます。次回の実行は`setTimeout`を使用してスケジュールされます。
+タスクの間隔が経過するとスケジューラーはタスクのハンドラー（コマンドクラスまたはインライン関数）を呼び出します。デバッグモードではスケジューラーは実行開始と完了時の所要時間をログに記録します（`[scheduler] running scheduled task: <task>`、`[scheduler] scheduled task <task> completed in <duration>ms`）。タスク完了後スケジューラーは設定された間隔から経過した実行時間を差し引くことで次回の実行時間を計算します。これによりタスクの完了に大幅な時間がかかった場合でも実行間隔の一貫性が保たれます。次回の実行は`setTimeout`を使用してスケジュールされます。
 
 各タスクは`lastRun`タイムスタンプを追跡します。スケジューラーはこれを使用して次回実行までの適切な遅延を算出します。
 
@@ -200,7 +200,7 @@ await app.scheduler.run('CleanupExpiredSessions');
 > スケジュールされたタスクによってスローされたエラーはログに記録され分離されます。失敗したタスクは他のタスクに影響を与えたりサーバーを中断させたりすることなく自動的に再スケジュールされます。
 
 ```
-[Scheduler] PruneOldLogs caused error: ER_NO_SUCH_TABLE: Table 'logs' doesn't exist
+[scheduler] scheduled task PruneOldLogs failed after 12ms: ER_NO_SUCH_TABLE: Table 'logs' doesn't exist
 ```
 
 スケジュールフェーズ中にタスク自体が予期しないエラーを引き起こした場合個別のcatchがそれをログに記録しエラーがメインプロセスに伝播するのを防ぎます。

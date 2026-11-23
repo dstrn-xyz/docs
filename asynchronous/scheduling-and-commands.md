@@ -186,7 +186,7 @@ when the application starts, the framework checks for a `console/Schedule.js` fi
 
 ### execution and rescheduling
 
-when a task's interval elapses, the scheduler calls the task's handler (either a command class or an inline function). after the task completes, the scheduler calculates the next execution time by subtracting the elapsed execution time from the interval, ensuring consistent spacing between runs even if the task takes a significant amount of time to complete. the next run is scheduled using `setTimeout`.
+when a task's interval elapses, the scheduler calls the task's handler (either a command class or an inline function). in debug mode, the scheduler logs the execution start and duration upon completion (`[scheduler] running scheduled task: <task>`, `[scheduler] scheduled task <task> completed in <duration>ms`). after the task completes, the scheduler calculates the next execution time by subtracting the elapsed execution time from the interval, ensuring consistent spacing between runs even if the task takes a significant amount of time to complete. the next run is scheduled using `setTimeout`.
 
 each task tracks its `lastRun` timestamp. the scheduler uses this to compute the appropriate delay before the next execution.
 
@@ -210,7 +210,7 @@ this immediately executes the task once on demand without modifying its schedule
 > errors thrown by scheduled tasks are logged and isolated. a failing task is automatically rescheduled without affecting other tasks or interrupting the server.
 
 ```
-[Scheduler] PruneOldLogs caused error: ER_NO_SUCH_TABLE: Table 'logs' doesn't exist
+[scheduler] scheduled task PruneOldLogs failed after 12ms: ER_NO_SUCH_TABLE: Table 'logs' doesn't exist
 ```
 
 if the task itself causes an unexpected error during the scheduling phase, a separate catch logs it and prevents the error from propagating to the main process.
