@@ -11,6 +11,7 @@
   - [config/socket.js](#config/socket.js)
   - [config/native.js](#config/native.js)
   - [config/view.js](#config/view.js)
+  - [config/tracking.js](#config/tracking.js)
 - [設定値へのアクセス](#設定値へのアクセス)
 - [環境変数へのアクセス](#環境変数へのアクセス)
 - [設定のホットリロード](#設定のホットリロード)
@@ -472,6 +473,41 @@ export default {
 | キー | 環境変数 | 許容値 | デフォルト値 | 説明 |
 | --- | --- | --- | --- | --- |
 | `maxYieldDepth` | `VIEW_MAX_YIELD_DEPTH` | 整数（正の整数） | `30` | ネストされた`@yield`セクション解決の最大再帰深度 |
+
+<a name="config/tracking.js"></a>
+
+### config/tracking.js
+
+トラッキング設定はリクエストテレメトリモードおよびエクスポートシンクを制御します:
+
+```javascript
+// config/tracking.js
+import { Env } from 'dframework';
+
+export default {
+  mode: Env.value('TRACKING_MODE', 'off'),
+  sinks: {
+    file: {
+      enabled: Env.value('TRACKING_FILE_ENABLED', false),
+      path: Env.value('TRACKING_FILE_PATH', 'storage/framework/tracking/requests.ndjson'),
+    },
+    otlp: {
+      enabled: Env.value('TRACKING_OTLP_ENABLED', false),
+      endpoint: Env.value('OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/v1/traces'),
+      serviceName: Env.value('OTEL_SERVICE_NAME', 'dframework-app'),
+    },
+  },
+};
+```
+
+| キー | 環境変数 | 許容値 | デフォルト値 | 説明 |
+| --- | --- | --- | --- | --- |
+| `mode` | `TRACKING_MODE` | `'off' \| 'errors' \| 'all'` | `'off'` | グローバルリクエストテレメトリキャプチャモード |
+| `sinks.file.enabled` | `TRACKING_FILE_ENABLED` | 真偽値（`true \| false`） | `false` | ndjsonファイルエクスポートシンクの有効化 |
+| `sinks.file.path` | `TRACKING_FILE_PATH` | 文字列（ファイルパス） | `'storage/framework/tracking/requests.ndjson'` | ndjsonテレメトリログファイルのパス |
+| `sinks.otlp.enabled` | `TRACKING_OTLP_ENABLED` | 真偽値（`true \| false`） | `false` | opentelemetry otlpトレースエクスポートシンクの有効化 |
+| `sinks.otlp.endpoint` | `OTEL_EXPORTER_OTLP_ENDPOINT` | 文字列（url） | `'http://localhost:4318/v1/traces'` | otlpコレクターhttpエンドポイントurl |
+| `sinks.otlp.serviceName` | `OTEL_SERVICE_NAME` | 文字列 | `'dframework-app'` | otlpスパンに付与されるサービス名属性 |
 
 <a name="設定値へのアクセス"></a>
 

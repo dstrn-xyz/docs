@@ -258,14 +258,14 @@ Socket.on('panel:refresh', 'PanelController@render').targets(['#left-panel', '#r
 the `Socket.broadcast()` method sends an event to all connected websocket clients. you can optionally exclude a specific connection (typically the sender).
 
 ```javascript
-Socket.on('chat:send', (req, res, ws) => {
+Socket.on('chat:send', (req) => {
   const message = { text: req.body.text, user: req.user.name };
-  Socket.broadcast('chat:new', message, ws);
+  Socket.broadcast('chat:new', message, req.ws);
   return json({ sent: true });
 });
 ```
 
-the third argument is the websocket connection to exclude from the broadcast. passing the current `ws` prevents the sender from receiving their own message.
+the third argument is the websocket connection to exclude from the broadcast. passing the current `req.ws` prevents the sender from receiving their own message.
 
 you can also call `Socket.broadcast()` and `Socket.setState()` directly from background jobs in `jobs/`. worker threads automatically relay socket events to the main process without requiring external brokers like redis.
 

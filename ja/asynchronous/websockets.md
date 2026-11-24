@@ -259,14 +259,14 @@ Socket.on('panel:refresh', 'PanelController@render').targets(['#left-panel', '#r
 `Socket.broadcast()`メソッドは接続されているすべてのwebsocketクライアントにイベントを送信します。オプションで特定の接続（通常は送信者）を除外できます。
 
 ```javascript
-Socket.on('chat:send', (req, res, ws) => {
+Socket.on('chat:send', (req) => {
   const message = { text: req.body.text, user: req.user.name };
-  Socket.broadcast('chat:new', message, ws);
+  Socket.broadcast('chat:new', message, req.ws);
   return json({ sent: true });
 });
 ```
 
-第3引数はブロードキャストから除外するwebsocket接続です。現在の`ws`を渡すことで送信者が自身のメッセージを受信するのを防ぐことができます。
+第3引数はブロードキャストから除外するwebsocket接続です。現在の`req.ws`を渡すことで送信者が自身のメッセージを受信するのを防ぐことができます。
 
 `jobs/`内のバックグラウンドジョブから`Socket.broadcast()`および`Socket.setState()`を直接呼び出すこともできます。ワーカースレッドはredisのような外部ブローカーを必要とすることなくソケットイベントをメインプロセスに自動的にリレーします。
 

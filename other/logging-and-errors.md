@@ -170,18 +170,17 @@ when three or more queries with identical normalized shapes execute in a single 
 
 the logger reads its configuration from the application config.
 
-| config key     | effect                                                                                        |
-| -------------- | --------------------------------------------------------------------------------------------- |
-| `app.env`      | determines the log file directory (`dev` vs `prod`) and console color mode                    |
-| `app.debug`    | when `true`, enables the `debug` log level and activates the debug error page                 |
-| `app.tracking` | request tracking mode (`'off'`, `'errors'`, `'all'`). defaults to `'all'` when in local debug |
+| config key      | effect                                                                                        |
+| --------------- | --------------------------------------------------------------------------------------------- |
+| `app.env`       | determines the log file directory (`dev` vs `prod`) and console color mode                    |
+| `app.debug`     | when `true`, enables the `debug` log level and activates the debug error page                 |
+| `tracking.mode` | request tracking mode (`'off'`, `'errors'`, `'all'`). configured in `config/tracking.js`      |
 
 ```javascript
 // config/app.js
 export default {
   env: 'production',
-  debug: false,
-  tracking: 'errors'
+  debug: false
 };
 ```
 

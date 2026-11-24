@@ -206,7 +206,7 @@ when background jobs are dispatched from incoming http requests, the framework a
 1. **request tracking (`.track()`)**: if the dispatching route has `.track()` enabled or global tracking is active, the job automatically inherits the correlation id. inside the job class, the id is accessible via `this.trackingId` (or `this.requestId`). all logs emitted inside the job handler (`Log.info()`, `Log.error()`) are automatically prefixed with `[<trackingId>]`. sub jobs dispatched from within the worker thread inherit the same correlation id.
 2. **route logging (`.log()`)**: by default, job dispatch and completion logs run at `debug` level to avoid production log noise. if the dispatching route is marked with `.log()`, dispatch and completion are logged at `info` level instead, making them visible in production logs.
 3. **combined `.track()` and `.log()`**: when both modifiers are active, job dispatch and completion logs are output at `info` level with the `[<trackingId>]` correlation prefix.
-4. **snapshot visibility**: when a request snapshot is captured via `req.capture()`, all background jobs dispatched during that request are recorded under the `jobs` array with their names and correlation ids.
+4. **snapshot visibility**: when a request snapshot is captured via `Tracker.capture()`, all background jobs dispatched during that request are recorded under the `jobs` array with their names and correlation ids.
 
 if you attempt to use the `Job` facade before the application has initialized, it will throw a descriptive error.
 

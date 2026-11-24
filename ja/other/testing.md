@@ -10,6 +10,9 @@
     - [コントローラーの直接実行](#コントローラーの直接実行)
     - [ユーザーとしての認証](#ユーザーとしての認証)
     - [利用可能なアサーション](#利用可能なアサーション)
+  - [サービスフェイク](#サービスフェイク)
+    - [バックグラウンドジョブのフェイク](#バックグラウンドジョブのフェイク)
+    - [websocketイベントのフェイク](#websocketイベントのフェイク)
   - [データベースアサーション](#データベースアサーション)
     - [マイグレーション、シーダー、およびトランザクション](#マイグレーションとトランザクション)
   - [ブラウザとページ操作テスト](#ブラウザとページ操作テスト)
@@ -23,7 +26,7 @@
 
 dframeworkには外部依存ゼロの組み込みテストハーネスが含まれており、nodeのネイティブテストランナー（`node:test`）上で直接動作します。ネットワークソケットを起動することなく高速なインプロセスhttpリクエストを実行し、データベースの状態を検証し、ci環境で軽量なシミュレーテッドdomを用いてフォーム送信や画面遷移を完全にテストできます。
 
-`dframework/testing`モジュールはすべてのテストランナーおよびアサーションプリミティブ（`test`、`describe`、`it`、`before`、`after`、`beforeEach`、`afterEach`、厳格な`assert`）を再エクスポートします。アプリケーションのテストファイルは`dframework/testing`からのみインポートすればよく、`node:test`や`node:assert`を直接インポートする必要はありません。
+`dframework/testing`モジュールはトップレベルのテストランナーおよびアサーションプリミティブ（`test`、`it`、`describe`、`Tester`、厳格な`assert`）をエクスポートします。テストファイルはボイラープレート不要の統一された`Tester`ファサード（`Tester.get`、`Tester.post`、`Tester.route`、`Tester.actingAs`、`Tester.fake`、`Tester.assertDatabaseHas`）を使用します。他のファサードと同様に、`Tester`はテスト環境のglobalThisでもグローバルに利用可能です。テストランナーは各種修飾子をサポートしています: フォーカス実行用の`test.only()`、一時的にスキップする`test.skip()`、未実装の仕様を宣言する`test.todo()`（コールバック関数の有無にかかわらず指定可能）、データベースの変更を自動ロールバックする`test.transaction()`。
 
 <a name="テストの実行"></a>
 
@@ -73,39 +76,34 @@ dstrn make:test Auth/RegistrationTest
 
 ## http統合テスト
 
-`testApp()`クライアントは、フレームワークのパイプラインに合成リクエストストリームを直接渡すインプロセスhttpディスパッチャーを提供します。これによりモックの乖離を防ぎながらネットワークソケットのリッスンオーバーヘッドを排除します。
+`Tester`ファサードは、フレームワークのパイプラインに合成リクエストストリームを直接渡すインプロセスhttpディスパッチャーを提供します。これによりモックの乖離を防ぎながらネットワークソケットのリッスンオーバーヘッドを排除します。
 
 <a name="リクエストの送信"></a>
 
 ### リクエストの送信
 
 ```javascript
-import { describe, it, assert, testApp } from 'dframework/testing';
+import { test, Tester } from 'dframework/testing';
 
-describe('ユーザーapi', () => {
-  it('アクティブなユーザーを返す', async () => {
-    const app = await testApp();
-    const res = await app.get('/api/users');
+test('アクティブなユーザーを返す', async () => {
+  const res = await Tester.get('/api/users');
 
-    res.assertOk();
-    res.assertJson({ success: true });
-  });
+  res.assertOk();
+  res.assertJson({ success: true });
 });
 ```
 
-サポートされているリクエストメソッドには`get`、`post`、`put`、`patch`、`delete`、`head`があります。同一クライアントインスタンス内での連続したリクエスト間ではcookieとセッション状態が維持されます。
+サポートされているリクエストメソッドには`get`、`post`、`put`、`patch`、`delete`、`head`、`options`、および`Tester.request(method, uri, data, headers)`によるカスタムメソッドがあります。同一クライアントインスタンス内での連続したリクエスト間ではcookieとセッション状態が維持されます。
 
 カスタムヘッダーやクッキーを設定したり、csrfトークンの自動生成を無効化することもできます:
 
 ```javascript
-const app = await testApp();
-
 // カスタムヘッダーやクッキーを設定
-app.withHeaders({ 'x-test-header': 'custom' });
-app.withCookies({ theme: 'dark' });
+Tester.withHeaders({ 'x-test-header': 'custom' });
+Tester.withCookies({ theme: 'dark' });
 
 // 更新系リクエストでのcsrfトークン自動生成を無効化
-app.withoutCsrf();
+Tester.withoutCsrf();
 ```
 
 <a name="名前付きルート"></a>
@@ -116,8 +114,7 @@ app.withoutCsrf();
 
 ```javascript
 test('名前付きルートでの注文参照', async () => {
-  const app = await testApp();
-  const res = await app.route('orders.show', { id: 42 });
+  const res = await Tester.route('orders.show', { id: 42 });
 
   res.assertOk();
   res.assertJson({ orderId: '42' });
@@ -128,12 +125,11 @@ test('名前付きルートでの注文参照', async () => {
 
 ### コントローラーの直接実行
 
-`app.call()`を使用してコントローラーのアクションやミドルウェアチェーンを直接テストできます:
+`Tester.call()`を使用してコントローラーのアクションやミドルウェアチェーンを直接テストできます:
 
 ```javascript
 test('コントローラーアクションの直接実行', async () => {
-  const app = await testApp();
-  const res = await app.call('UserController@show', {
+  const res = await Tester.call('UserController@show', {
     uri: '/users/:id',
     params: { id: 1 }
   });
@@ -150,10 +146,9 @@ test('コントローラーアクションの直接実行', async () => {
 
 ```javascript
 test('認証済みプロフィールの表示', async () => {
-  const app = await testApp();
-  app.actingAs({ id: 1, email: 'alice@example.com' });
+  Tester.actingAs({ id: 1, email: 'alice@example.com' });
 
-  const res = await app.get('/profile');
+  const res = await Tester.get('/profile');
   res.assertOk();
   res.assertSee('alice@example.com');
 });
@@ -180,24 +175,97 @@ test('認証済みプロフィールの表示', async () => {
 | `assertDontSee(text)`     | レスポンス本文に指定文字列が含まれていないことを検証         |
 | `assertHeader(name, val)` | レスポンスヘッダーの値を検証                                 |
 
+<a name="サービスフェイク"></a>
+
+## サービスフェイク
+
+dframeworkは`Tester.fake({ jobs: true, socket: true })`（または`Tester.fakeJobs()` / `Tester.fakeSocket()`、あるいはサービス名を直接指定する`Tester.fake('jobs')`や`Tester.fake(['jobs', 'socket'])`）を通じてバックグラウンドジョブとwebsocketイベントのテストダブルおよびスパイを提供します。フェイクはメモリ上でディスパッチを捕捉し、実際の実行を防ぎ、表現力豊かなアサーションを提供し、テスト終了時に状態を自動復元します。
+
+<a name="バックグラウンドジョブのフェイク"></a>
+
+### バックグラウンドジョブのフェイク
+
+`Tester.fake({ jobs: true })`（または`Tester.fakeJobs()`）を呼び出すと`Job.dispatch()`への呼び出しがインターセプトされ、検証用にディスパッチされたジョブが記録されます:
+
+```javascript
+import { test, Tester } from 'dframework/testing';
+
+test('チェックアウト時に確認メールをディスパッチする', async () => {
+  Tester.fake({ jobs: true });
+
+  const res = await Tester.post('/checkout', { cartId: 10 });
+  res.assertOk();
+
+  Tester.assertDispatched('SendOrderConfirmationJob');
+  Tester.assertDispatched('SendOrderConfirmationJob', (payload) => payload.cartId === 10);
+  Tester.assertDispatchedTimes('SendOrderConfirmationJob', 1);
+  Tester.assertNotDispatched('CancelOrderJob');
+});
+```
+
+| アサーション | 説明 |
+| --- | --- |
+| `Tester.assertDispatched(job, callback)` | ジョブがディスパッチされたことを検証（コールバックでペイロード検証可能） |
+| `Tester.assertNotDispatched(job, callback)` | ジョブがディスパッチされなかったことを検証 |
+| `Tester.assertDispatchedTimes(job, count)` | ジョブが指定回数ディスパッチされたことを検証 |
+| `Tester.assertNothingDispatched()` | バックグラウンドジョブがディスパッチされていないことを検証 |
+| `Tester.dispatched(job, callback)` | フィルターに一致するディスパッチ済みジョブを取得 |
+
+<a name="websocketイベントのフェイク"></a>
+
+### websocketイベントのフェイク
+
+`Tester.fake({ socket: true })`（または`Tester.fakeSocket()`）を呼び出すと、実行中のwebsocketサーバーを必要とせずにリアルタイムのwebsocketブロードキャストと特定ユーザー宛てのメッセージをインターセプトできます:
+
+```javascript
+import { test, Tester } from 'dframework/testing';
+
+test('メッセージをブロードキャストし受信者に通知する', async () => {
+  Tester.fake({ socket: true });
+
+  await Tester.post('/messages', { toUser: 42, text: 'hello' });
+
+  Tester.assertBroadcast('message.sent');
+  Tester.assertSentToUser(42, 'notification.new');
+  Tester.assertNotSentToUser(99, 'notification.new');
+});
+```
+
+| アサーション | 説明 |
+| --- | --- |
+| `Tester.assertBroadcast(event, callback)` | 全クライアントにブロードキャストされたことを検証 |
+| `Tester.assertNotBroadcast(event, callback)` | ブロードキャストされなかったことを検証 |
+| `Tester.assertSentToUser(userOrId, event, callback)` | 特定ユーザーidに送信されたことを検証 |
+| `Tester.assertNotSentToUser(userOrId, event, callback)` | ユーザーに送信されなかったことを検証 |
+| `Tester.assertSentToSession(sessionId, event, callback)` | 特定セッションに送信されたことを検証 |
+| `Tester.assertSent(event, callback)` | いずれかのチャネルで送信されたことを検証 |
+| `Tester.assertNotSent(event, callback)` | 送信されなかったことを検証 |
+| `Tester.assertSentTimes(event, count)` | 指定回数送信されたことを検証 |
+| `Tester.assertNothingSent()` | socketイベントが送信されていないことを検証 |
+| `Tester.assertRevoked(userOrId, guardName)` | ユーザーのwebsocketセッションが無効化されたことを検証 |
+| `Tester.sent(event, callback)` | フィルターに一致する送信済みsocketイベントを取得 |
+| `Tester.broadcasted(event, callback)` | フィルターに一致するブロードキャスト済みsocketイベントを取得 |
+
 <a name="データベースアサーション"></a>
 
 ## データベースアサーション
 
-テストハーネスはテストappインスタンス上で直接データベースアサーションヘルパーを公開しています:
+`Tester`ファサードは非同期のデータベースアサーションヘルパーを公開しています:
 
 ```javascript
-test('ユーザー登録がデータベースに記録される', async () => {
-  const app = await testApp();
+import { test, Tester } from 'dframework/testing';
 
-  await app.post('/register', {
-    name: 'Bob',
+Tester.useDatabaseTransactions();
+
+test('ユーザー登録がデータベースに記録される', async () => {
+  await Tester.post('/register', {
+    name: 'bob',
     email: 'bob@example.com'
   });
 
-  await app.assertDatabaseHas('users', { email: 'bob@example.com' });
-  await app.assertDatabaseMissing('users', { email: 'charlie@example.com' });
-  await app.assertDatabaseCount('users', 1);
+  await Tester.assertDatabaseHas('users', { email: 'bob@example.com' });
+  await Tester.assertDatabaseMissing('users', { email: 'charlie@example.com' });
+  await Tester.assertDatabaseCount('users', 1);
 });
 ```
 
@@ -209,18 +277,17 @@ test('ユーザー登録がデータベースに記録される', async () => {
 
 ```javascript
 test('データベーストランザクションとシーディング', async () => {
-  const app = await testApp();
-  await app.migrate();
-  await app.rollback();
-  await app.migrate();
-  await app.seed('UserSeeder');
+  await Tester.migrate();
+  await Tester.rollback();
+  await Tester.migrate();
+  await Tester.seed('UserSeeder');
 
-  await app.useTransaction(async () => {
-    await app.post('/users', { name: 'Alice' });
-    await app.assertDatabaseHas('users', { name: 'Alice' });
+  await Tester.useTransaction(async () => {
+    await Tester.post('/users', { name: 'Alice' });
+    await Tester.assertDatabaseHas('users', { name: 'Alice' });
   });
 
-  await app.assertDatabaseMissing('users', { name: 'Alice' });
+  await Tester.assertDatabaseMissing('users', { name: 'Alice' });
 });
 ```
 
@@ -235,18 +302,16 @@ test('データベーストランザクションとシーディング', async ()
 ### ページのナビゲーション
 
 ```javascript
-import { describe, it, assert, browse } from 'dframework/testing';
+import { test, browse } from 'dframework/testing';
 
-describe('ホームページ', () => {
-  it('訪問してリンクをクリックし遷移する', async () => {
-    const page = await browse('/');
+test('訪問してリンクをクリックし遷移する', async () => {
+  const page = await browse('/');
 
-    page.assertSee('welcome to dframework');
-    page.assertElement('nav');
+  page.assertSee('welcome to dframework');
+  page.assertElement('nav');
 
-    await page.click('#docs-link');
-    page.assertPath('/docs');
-  });
+  await page.click('#docs-link');
+  page.assertPath('/docs');
 });
 ```
 

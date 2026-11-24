@@ -10,6 +10,9 @@
     - [direct controller execution](#direct-controller-execution)
     - [acting as a user](#acting-as-a-user)
     - [available assertions](#available-assertions)
+  - [service fakes](#service-fakes)
+    - [faking background jobs](#faking-background-jobs)
+    - [faking websocket events](#faking-websocket-events)
   - [database assertions](#database-assertions)
     - [migrations, seeders, and transactions](#migrations-and-transactions)
   - [browser and page interaction tests](#browser-and-page-interaction-tests)
@@ -23,7 +26,7 @@
 
 dframework includes a built in test harness with zero external dependencies, running directly on node's native test runner (`node:test`). applications can perform fast in process http requests without spinning up network sockets, test database state, and simulate browser interactions with full form and navigation fidelity in continuous integration pipelines.
 
-the `dframework/testing` module exports all test runner and assertion primitives (`test`, `describe`, `it`, `before`, `after`, `beforeEach`, `afterEach`, and strict `assert`). application test files only need to import from `dframework/testing` without requiring any direct `node:test` or `node:assert` imports.
+the `dframework/testing` module exports top level runner and assertion primitives (`test`, `it`, `describe`, `Tester`, and strict `assert`). test files use the unified `Tester` facade (`Tester.get`, `Tester.post`, `Tester.route`, `Tester.actingAs`, `Tester.fake`, `Tester.assertDatabaseHas`) with zero wrapper boilerplate. like other facades, `Tester` is also available globally on globalThis in the test environment. the runner supports modifiers: `test.only()` to isolate focus, `test.skip()` to temporarily ignore cases, `test.todo()` to define pending specifications with or without implementation callbacks, and `test.transaction()` to automatically isolate database changes.
 
 <a name="running-tests"></a>
 
@@ -73,39 +76,34 @@ dstrn make:test Auth/RegistrationTest
 
 ## http integration tests
 
-the `testApp()` client provides an in process http dispatcher that passes synthetic request streams directly through the framework pipeline. this guarantees zero mock drift while avoiding live socket binding overhead.
+the `Tester` facade provides an in process http dispatcher that passes synthetic request streams directly through the framework pipeline. this guarantees zero mock drift while avoiding live socket binding overhead.
 
 <a name="making-requests"></a>
 
 ### making requests
 
 ```javascript
-import { describe, it, assert, testApp } from 'dframework/testing';
+import { test, Tester } from 'dframework/testing';
 
-describe('users api', () => {
-  it('returns active users', async () => {
-    const app = await testApp();
-    const res = await app.get('/api/users');
+test('returns active users', async () => {
+  const res = await Tester.get('/api/users');
 
-    res.assertOk();
-    res.assertJson({ success: true });
-  });
+  res.assertOk();
+  res.assertJson({ success: true });
 });
 ```
 
-supported request methods include `get`, `post`, `put`, `patch`, `delete`, and `head`. cookies and session state are preserved across sequential requests within the same client instance.
+supported request methods include `get`, `post`, `put`, `patch`, `delete`, `head`, `options`, and custom verbs via `Tester.request(method, uri, data, headers)`. cookies and session state are preserved across sequential requests within the same client instance.
 
 you can configure custom headers, cookies, or disable automated csrf token generation:
 
 ```javascript
-const app = await testApp();
-
 // attach custom headers or cookies
-app.withHeaders({ 'x-test-header': 'custom' });
-app.withCookies({ theme: 'dark' });
+Tester.withHeaders({ 'x-test-header': 'custom' });
+Tester.withCookies({ theme: 'dark' });
 
 // disable automatic csrf token generation for mutating requests
-app.withoutCsrf();
+Tester.withoutCsrf();
 ```
 
 <a name="named-routes"></a>
@@ -116,8 +114,7 @@ dispatch requests using defined route names and parameter maps:
 
 ```javascript
 test('named route order lookup', async () => {
-  const app = await testApp();
-  const res = await app.route('orders.show', { id: 42 });
+  const res = await Tester.route('orders.show', { id: 42 });
 
   res.assertOk();
   res.assertJson({ orderId: '42' });
@@ -128,12 +125,11 @@ test('named route order lookup', async () => {
 
 ### direct controller execution
 
-test controller actions or middleware chains directly using `app.call()`:
+test controller actions or middleware chains directly using `Tester.call()`:
 
 ```javascript
 test('direct controller action', async () => {
-  const app = await testApp();
-  const res = await app.call('UserController@show', {
+  const res = await Tester.call('UserController@show', {
     uri: '/users/:id',
     params: { id: 1 }
   });
@@ -150,10 +146,9 @@ use `actingAs` to authenticate a user before executing requests:
 
 ```javascript
 test('authenticated profile view', async () => {
-  const app = await testApp();
-  app.actingAs({ id: 1, email: 'alice@example.com' });
+  Tester.actingAs({ id: 1, email: 'alice@example.com' });
 
-  const res = await app.get('/profile');
+  const res = await Tester.get('/profile');
   res.assertOk();
   res.assertSee('alice@example.com');
 });
@@ -180,24 +175,97 @@ the response object returned by synthetic requests provides chainable assertion 
 | `assertDontSee(text)`     | assert response does not contain the given substring               |
 | `assertHeader(name, val)` | assert response header value                                       |
 
+<a name="service-fakes"></a>
+
+## service fakes
+
+dframework provides test doubles and spies for background jobs and websocket events via `Tester.fake({ jobs: true, socket: true })` (or `Tester.fakeJobs()` / `Tester.fakeSocket()`, or passing service names like `Tester.fake('jobs')` or `Tester.fake(['jobs', 'socket'])`). fakes intercept dispatches in memory, prevent real execution, provide expressive assertions, and automatically restore state when the test completes.
+
+<a name="faking-background-jobs"></a>
+
+### faking background jobs
+
+calling `Tester.fake({ jobs: true })` (or `Tester.fakeJobs()`) intercepts calls to `Job.dispatch()` and records dispatched jobs for inspection:
+
+```javascript
+import { test, Tester } from 'dframework/testing';
+
+test('dispatches confirmation email on checkout', async () => {
+  Tester.fake({ jobs: true });
+
+  const res = await Tester.post('/checkout', { cartId: 10 });
+  res.assertOk();
+
+  Tester.assertDispatched('SendOrderConfirmationJob');
+  Tester.assertDispatched('SendOrderConfirmationJob', (payload) => payload.cartId === 10);
+  Tester.assertDispatchedTimes('SendOrderConfirmationJob', 1);
+  Tester.assertNotDispatched('CancelOrderJob');
+});
+```
+
+| assertion | description |
+| --- | --- |
+| `Tester.assertDispatched(job, callback)` | assert job was dispatched, optionally matching payload predicate |
+| `Tester.assertNotDispatched(job, callback)` | assert job was not dispatched |
+| `Tester.assertDispatchedTimes(job, count)` | assert job was dispatched an exact number of times |
+| `Tester.assertNothingDispatched()` | assert no background jobs were dispatched |
+| `Tester.dispatched(job, callback)` | retrieve dispatched job instances matching filter |
+
+<a name="faking-websocket-events"></a>
+
+### faking websocket events
+
+calling `Tester.fake({ socket: true })` (or `Tester.fakeSocket()`) intercepts real time websocket broadcasts and direct user messages without requiring a running websocket server:
+
+```javascript
+import { test, Tester } from 'dframework/testing';
+
+test('broadcasts message and notifies recipient', async () => {
+  Tester.fake({ socket: true });
+
+  await Tester.post('/messages', { toUser: 42, text: 'hello' });
+
+  Tester.assertBroadcast('message.sent');
+  Tester.assertSentToUser(42, 'notification.new');
+  Tester.assertNotSentToUser(99, 'notification.new');
+});
+```
+
+| assertion | description |
+| --- | --- |
+| `Tester.assertBroadcast(event, callback)` | assert event was broadcast to all clients |
+| `Tester.assertNotBroadcast(event, callback)` | assert event was not broadcast |
+| `Tester.assertSentToUser(userOrId, event, callback)` | assert event was sent to specific user id |
+| `Tester.assertNotSentToUser(userOrId, event, callback)` | assert event was not sent to user |
+| `Tester.assertSentToSession(sessionId, event, callback)` | assert event was sent to specific session |
+| `Tester.assertSent(event, callback)` | assert event was sent across any channel |
+| `Tester.assertNotSent(event, callback)` | assert event was not sent across any channel |
+| `Tester.assertSentTimes(event, count)` | assert event was sent an exact number of times |
+| `Tester.assertNothingSent()` | assert no socket events were emitted |
+| `Tester.assertRevoked(userOrId, guardName)` | assert user websocket session was revoked |
+| `Tester.sent(event, callback)` | retrieve sent socket events matching filter |
+| `Tester.broadcasted(event, callback)` | retrieve broadcasted socket events matching filter |
+
 <a name="database-assertions"></a>
 
 ## database assertions
 
-the test harness exposes database assertion helpers directly on the test app instance:
+the `Tester` facade exposes asynchronous database assertion helpers:
 
 ```javascript
-test('user registration records to database', async () => {
-  const app = await testApp();
+import { test, Tester } from 'dframework/testing';
 
-  await app.post('/register', {
-    name: 'Bob',
+Tester.useDatabaseTransactions();
+
+test('user registration records to database', async () => {
+  await Tester.post('/register', {
+    name: 'bob',
     email: 'bob@example.com'
   });
 
-  await app.assertDatabaseHas('users', { email: 'bob@example.com' });
-  await app.assertDatabaseMissing('users', { email: 'charlie@example.com' });
-  await app.assertDatabaseCount('users', 1);
+  await Tester.assertDatabaseHas('users', { email: 'bob@example.com' });
+  await Tester.assertDatabaseMissing('users', { email: 'charlie@example.com' });
+  await Tester.assertDatabaseCount('users', 1);
 });
 ```
 
@@ -209,18 +277,17 @@ manage database state with dedicated helpers and automatically isolate test muta
 
 ```javascript
 test('database transactions and seeding', async () => {
-  const app = await testApp();
-  await app.migrate();
-  await app.rollback();
-  await app.migrate();
-  await app.seed('UserSeeder');
+  await Tester.migrate();
+  await Tester.rollback();
+  await Tester.migrate();
+  await Tester.seed('UserSeeder');
 
-  await app.useTransaction(async () => {
-    await app.post('/users', { name: 'Alice' });
-    await app.assertDatabaseHas('users', { name: 'Alice' });
+  await Tester.useTransaction(async () => {
+    await Tester.post('/users', { name: 'Alice' });
+    await Tester.assertDatabaseHas('users', { name: 'Alice' });
   });
 
-  await app.assertDatabaseMissing('users', { name: 'Alice' });
+  await Tester.assertDatabaseMissing('users', { name: 'Alice' });
 });
 ```
 
@@ -235,18 +302,16 @@ the `browse()` client runs a lightweight simulated dom parser that executes form
 ### navigating pages
 
 ```javascript
-import { describe, it, assert, browse } from 'dframework/testing';
+import { test, browse } from 'dframework/testing';
 
-describe('homepage', () => {
-  it('visits and navigates via link', async () => {
-    const page = await browse('/');
+test('visits and navigates via link', async () => {
+  const page = await browse('/');
 
-    page.assertSee('welcome to dframework');
-    page.assertElement('nav');
+  page.assertSee('welcome to dframework');
+  page.assertElement('nav');
 
-    await page.click('#docs-link');
-    page.assertPath('/docs');
-  });
+  await page.click('#docs-link');
+  page.assertPath('/docs');
 });
 ```
 

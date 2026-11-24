@@ -8,6 +8,7 @@
 - [ヘッダー](#ヘッダー)
 - [csrf管理](#csrf管理)
 - [リクエストトラッキング](#リクエストトラッキング)
+  - [エクスポートシンク](#エクスポートシンク)
 
 <a name="はじめに"></a>
 
@@ -128,13 +129,13 @@ const referer = req.header('referrer'); // handles both referer and referrer
 > 明示的に無効化されていない限り、ルートコンパイラはすべての変更系ルート（`POST`、`PUT`、`PATCH`、`DELETE`）に対して検証ロジックを自動的に挿入するため、これらのメソッドを手動で呼び出すことはほとんどありません。
 
 ```javascript
-// generate a new token valid for 6 hours
+// 6時間有効な新しいトークンを生成
 const token = req.csrfToken();
 
-// verify a submitted token
+// 送信されたトークンを検証
 const isValid = req.verifyCsrfToken(submittedToken);
 
-// rotate the csrf secret and generate a fresh token (invalidates previous tokens)
+// csrfシークレットをローテーションし新しいトークンを生成（以前のトークンは無効化）
 const newToken = req.rotateCsrfToken();
 ```
 
@@ -142,14 +143,68 @@ const newToken = req.rotateCsrfToken();
 
 ## リクエストトラッキング
 
-トラッキング対象の各リクエストには`req.trackingId`でアクセス可能な関連付けidが割り当てられます。また`req.capture()`を使用すると、実行時間、ヘッダー、クエリ、ボディ、ユーザー、実行されたデータベースクエリ、ディスパッチされたバックグラウンドジョブ、エラー詳細を含むリクエスト状態の完全なスナップショットをいつでも取得できます。
+トラッキング対象の各リクエストには`req.trackingId`でアクセス可能な関連付けidが割り当てられます。またグローバルな`Tracker.capture()`ファサードを使用すると（オプションでエラーインスタンスや明示的なステータスコードの上書きを指定可能、例: `Tracker.capture(err, 500)`）、実行時間、ヘッダー、クエリ、ボディ、ユーザー、実行されたデータベースクエリ、ディスパッチされたバックグラウンドジョブ、エラー詳細を含むリクエスト状態の完全なスナップショットをいつでも取得できます。`Tracker.capture()`を呼び出すと進行中のスナップショットが登録済みシンクへエクスポートされますが、その後未処理例外が発生した場合でも下流のエラーエクスポートは抑制されません。
+
+本番環境ではトラッキングモードのデフォルトは`off`（ゼロオーバーヘッド）です。トラッキングモードが`off`または未設定の場合、通常のルートはトラッキングの初期化を完全にスキップしオーバーヘッドはゼロです。特定のルートに`.track()`が指定されている場合やリクエスト中に`Tracker.capture()`が手動で呼び出された場合、そのルートのみ遅延的にトラッキングが有効化され、アプリケーション全体の他のルートに影響を与えることなく登録済みシンクへエクスポートされます。
+
+> [!NOTE]
+> トラッキングモードが`off`でルートに`.track()`が指定されていない場合、`Tracker.capture()`を呼び出すとその時点から遅延的にテレメトリが有効化されます。リクエスト開始時からのデータベースクエリやバックグラウンドジョブを記録するには、ルート定義で`.track()`を指定してください。
 
 ```javascript
 export default class CheckoutController {
   process(req) {
     const trackingId = req.trackingId;
-    const snapshot = req.capture();
+    const snapshot = Tracker.capture();
     return json({ trackingId, success: true });
   }
 }
+```
+
+<a name="エクスポートシンク"></a>
+
+### エクスポートシンク
+
+エクスポートシンクを使用して、リクエストスナップショットをローカルストレージ、外部監視バックエンド、またはopentelemetryコレクターへ自動的にストリーミングできます。シンクはクライアントのレスポンスをブロックすることなくバックグラウンドで非同期に実行されます。他のファサードと同様に、`Tracker`はインポート不要でグローバルに利用可能です。
+
+```javascript
+// テストおよびローカル検証用のインメモリリングバッファシンク
+const memSink = Tracker.sink('memory', { maxEntries: 100 });
+
+// スナップショットを改行区切りjson (ndjson) としてストレージに追記
+Tracker.sink('file', {
+  path: 'storage/framework/tracking/requests.ndjson'
+});
+
+// opentelemetryトレースとしてotlpコレクターへストリーミング
+Tracker.sink('otlp', {
+  endpoint: 'http://localhost:4318/v1/traces',
+  serviceName: 'checkout-api'
+});
+
+// カスタムコールバックシンク
+Tracker.sink('observability', (snapshot) => {
+  sendToTelemetry(snapshot);
+});
+```
+
+シンクは`config/tracking.js`で宣言的に設定することも可能です。
+
+```javascript
+// config/tracking.js
+import { Env } from 'dframework';
+
+export default {
+  mode: Env.value('TRACKING_MODE', 'off'),
+  sinks: {
+    file: {
+      enabled: Env.value('TRACKING_FILE_ENABLED', false),
+      path: Env.value('TRACKING_FILE_PATH', 'storage/framework/tracking/requests.ndjson')
+    },
+    otlp: {
+      enabled: Env.value('TRACKING_OTLP_ENABLED', false),
+      endpoint: Env.value('OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/v1/traces'),
+      serviceName: Env.value('OTEL_SERVICE_NAME', 'dframework-app')
+    }
+  }
+};
 ```

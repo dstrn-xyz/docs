@@ -159,6 +159,26 @@ export default {
 };
 ```
 
+```javascript
+// config/tracking.js
+import { Env } from 'dframework';
+
+export default {
+  mode: Env.value('TRACKING_MODE', 'off'),
+  sinks: {
+    file: {
+      enabled: Env.value('TRACKING_FILE_ENABLED', false),
+      path: Env.value('TRACKING_FILE_PATH', 'storage/framework/tracking/requests.ndjson'),
+    },
+    otlp: {
+      enabled: Env.value('TRACKING_OTLP_ENABLED', false),
+      endpoint: Env.value('OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/v1/traces'),
+      serviceName: Env.value('OTEL_SERVICE_NAME', 'dframework-app'),
+    },
+  },
+};
+```
+
 <br />
 
 ### the console directory

@@ -77,14 +77,14 @@ a `d-wire` handler must call render or json. the rendered html replaces the targ
 > to prevent arbitrary dom injection, socket routes rendering partials must explicitly restrict allowed client targets by chaining `.targets(['#target-id'])`.
 
 ```javascript
-Socket.on('counter:increment', async (req, res) => {
+Socket.on('counter:increment', async (req) => {
   const count = await Counter.increment(req.body.id);
-  return res.render('partials.counter', { count });
+  return render('partials.counter', { count });
 }).targets(['#counter']);
 
-Socket.on('user:search', async (req, res) => {
+Socket.on('user:search', async (req) => {
   const users = await User.where('name', 'LIKE', `%${req.body.q}%`).limit(10).get();
-  return res.render('partials.user-list', { users });
+  return render('partials.user-list', { users });
 }).targets(['#user-list']);
 ```
 

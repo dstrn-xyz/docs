@@ -14,6 +14,7 @@
   - [config/socket.js](#config-socket)
   - [config/native.js](#config-native)
   - [config/view.js](#config-view)
+  - [config/tracking.js](#config-tracking)
 
 - [accessing configuration values](#accessing-configuration-values)
 
@@ -478,6 +479,41 @@ export default {
 | key | env variable | accepted values | default | description |
 | --- | --- | --- | --- | --- |
 | `maxYieldDepth` | `VIEW_MAX_YIELD_DEPTH` | integer (positive integer) | `30` | maximum recursion depth for nested `@yield` section resolution |
+
+<a name="config-tracking"></a>
+
+### config/tracking.js
+
+the tracking configuration controls request telemetry mode and export sinks:
+
+```javascript
+// config/tracking.js
+import { Env } from 'dframework';
+
+export default {
+  mode: Env.value('TRACKING_MODE', 'off'),
+  sinks: {
+    file: {
+      enabled: Env.value('TRACKING_FILE_ENABLED', false),
+      path: Env.value('TRACKING_FILE_PATH', 'storage/framework/tracking/requests.ndjson'),
+    },
+    otlp: {
+      enabled: Env.value('TRACKING_OTLP_ENABLED', false),
+      endpoint: Env.value('OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/v1/traces'),
+      serviceName: Env.value('OTEL_SERVICE_NAME', 'dframework-app'),
+    },
+  },
+};
+```
+
+| key | env variable | accepted values | default | description |
+| --- | --- | --- | --- | --- |
+| `mode` | `TRACKING_MODE` | `'off' \| 'errors' \| 'all'` | `'off'` | global request telemetry capture mode |
+| `sinks.file.enabled` | `TRACKING_FILE_ENABLED` | boolean (`true \| false`) | `false` | enable ndjson file export sink |
+| `sinks.file.path` | `TRACKING_FILE_PATH` | string (file path) | `'storage/framework/tracking/requests.ndjson'` | path to ndjson telemetry log file |
+| `sinks.otlp.enabled` | `TRACKING_OTLP_ENABLED` | boolean (`true \| false`) | `false` | enable opentelemetry otlp trace export sink |
+| `sinks.otlp.endpoint` | `OTEL_EXPORTER_OTLP_ENDPOINT` | string (url) | `'http://localhost:4318/v1/traces'` | otlp collector http endpoint url |
+| `sinks.otlp.serviceName` | `OTEL_SERVICE_NAME` | string | `'dframework-app'` | service name attribute attached to otlp spans |
 
 
 <a name="accessing-configuration-values"></a>
