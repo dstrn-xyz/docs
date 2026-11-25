@@ -1,6 +1,6 @@
 # d-sidebar
 
-レイアウトスラッシングを完全に排除したオフキャンバス開閉、アイコン縮小モード、モバイルドロワー対応のアプリケーションサイドバーです。
+オフキャンバス開閉、アイコン縮小モード、モバイルドロワー対応のアプリケーションサイドバーです。
 
 ```html
 <d-sidebar id="app-sidebar" collapsible="icon" variant="sidebar" persist="app_sidebar">
@@ -49,6 +49,7 @@
 | `shortcut` | `shortcut` | string | `"cmd+b"` | いいえ | 開閉をトグルするキーボードショートカット |
 | `persist` | `persist` | string | `""` | いいえ | 開閉状態を保存するlocalstorageのキー |
 | `contained` | `contained` | boolean | `false` | いいえ | ビューポートではなく親要素内にサイドバーを収める |
+| `toggle-button` | `toggleButton` | boolean | `true` | いいえ | 端に常時表示される開閉トグルボタン（無効化する場合は`false`） |
 
 <a name="プログラム用apid-sidebar"></a>
 ## プログラム用api（d-sidebar）
@@ -75,7 +76,7 @@ console.log(sidebar.isMobile); // ブレークポイント以下のモバイル�
 <a name="動作仕様d-sidebar"></a>
 ## 動作仕様（d-sidebar）
 
-- 静的スペーサーとcss変数による固定幅、gpu変形アニメーションによりレイアウト再計算スラッシングを防止。
+- 上部端に枠線をまたぐトグルボタン（dstrn-left-lineとdstrn-right-lineが切り替わる）が常時表示され、オフキャンバス折りたたみ時も画面端に収まり操作可能。
 - アイコンモード（`collapsible="icon"`）時はラベルを隠して幅を縮小し、各アイコンに自動的にツールチップを表示。
 - 折りたたみ可能サブメニューはcssの`grid-template-rows: 0fr to 1fr`を活用して滑らかに開閉。
 - `[d-sidebar-rail]`のクリックや外部の`[d-sidebar-trigger]`要素（id指定は`[d-sidebar-trigger="#id"]`）から簡単にトグル可能。

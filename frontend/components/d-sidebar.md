@@ -49,6 +49,7 @@ application shell sidebar designed with offcanvas sliding, icon collapse mode, a
 | `shortcut`    | `shortcut`    | `string`  | `"cmd+b"`     | no   | keyboard shortcut chord to toggle sidebar                                                         |
 | `persist`     | `persist`     | `string`  | `""`          | no   | localstorage key to remember open and closed state                                                |
 | `contained`   | `contained`   | `boolean` | `false`       | no   | contains sidebar within its parent element instead of the viewport                                |
+| `toggle-button` | `toggleButton` | `boolean` | `true`     | no   | persistent edge toggle button on sidebar border (`false` to disable)                             |
 
 <a name="programmatic-api-d-sidebar"></a>
 ## programmatic api
@@ -75,6 +76,8 @@ console.log(sidebar.isMobile); // true if active viewport is below breakpoint
 <a name="behavior-d-sidebar"></a>
 ## behavior
 
+- an overflowing toggle button sits on the top edge border (toggling between dstrn-left-line and dstrn-right-line); in offcanvas mode, it stays accessible against the viewport edge when collapsed.
 - in icon mode (`collapsible="icon"`), collapsing hides labels and submenus while automatically attaching tooltips to icons.
+- collapsible submenus leverage css grid-template-rows from 0fr to 1fr for smooth transitions.
 - clicking `[d-sidebar-rail]` toggles the sidebar; external triggers with `[d-sidebar-trigger]` toggle the sidebar (or targeting by id via `[d-sidebar-trigger="#id"]`).
 - below the configured breakpoint, converts to a mobile offcanvas drawer with an interactive backdrop dismiss.
