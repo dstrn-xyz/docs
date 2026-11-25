@@ -41,7 +41,7 @@ dstrn simulate --ios
 the framework searches for available ios simulators on your system. it prefers already booted devices and falls back to the latest available iphone model.
 
 requirements:
-- xcode installed with command line tools
+- full xcode application installed with command line tools active
 - at least one ios simulator configured in xcode
 
 the simulator displays console output from both the swift runtime and your javascript application. press `r` to reload the webview. press `q` to terminate.
@@ -59,6 +59,7 @@ the framework checks for connected physical devices first. if none are found, it
 requirements:
 - android sdk installed
 - platform tools available (adb)
+- java development kit (jdk 17 to jdk 21, or android studio bundled jbr)
 - at least one avd configured in android studio
 
 the emulator may take up to a minute to boot. the framework waits for the device to become ready before installing and launching your application.
@@ -264,7 +265,7 @@ you can filter native logs by platform:
 
 ```bash
 # ios
-xcrun simctl spawn booted log stream --predicate 'processImagePath contains "dframework"'
+xcrun simctl spawn booted log stream --predicate 'process == "dframework"'
 
 # android
 adb logcat -s dstrn:V

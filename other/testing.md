@@ -47,6 +47,10 @@ dstrn test --watch
 
 # run only tests marked with { only: true }
 dstrn test --only
+
+# use standard node test runner output or custom reporter
+dstrn test --raw
+dstrn test --reporter=./custom-reporter.js
 ```
 
 `dstrn test` automatically sets `APP_ENV=testing` and enables experimental sqlite support when running under node 22 or 23. tests strictly require a `.env.testing` file in the project root; the framework does not fall back to `.env`, preventing accidental data mutations in your development or production databases.
@@ -70,6 +74,19 @@ dstrn make:test CalculatorTest --unit
 
 # nested directories are created automatically
 dstrn make:test Auth/RegistrationTest
+```
+
+generated test files organize assertions inside `describe` blocks:
+
+```javascript
+import { test, describe, Tester } from 'dframework/testing';
+
+describe('UserTest', () => {
+  test('returns successful response', async () => {
+    const res = await Tester.get('/');
+    res.assertStatus(200);
+  });
+});
 ```
 
 <a name="http-integration-tests"></a>

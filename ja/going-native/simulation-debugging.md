@@ -41,7 +41,7 @@ dstrn simulate --ios
 フレームワークはシステム上で利用可能なiosシミュレーターを検索します。既に起動しているデバイスを優先し最新の利用可能なiphoneモデルにフォールバックします。
 
 要件:
-- コマンドラインツールがインストールされたxcode
+- コマンドラインツールがアクティブに設定された完全なxcodeアプリケーション
 - xcodeで設定された1つ以上のiosシミュレーター
 
 シミュレーターはswiftランタイムとjavascriptアプリケーションの両方からのコンソール出力を表示します。`r`キーを押してwebviewをリロードします。`q`キーを押して終了します。
@@ -59,6 +59,7 @@ dstrn simulate --android
 要件:
 - インストール済みのandroid sdk
 - 利用可能なプラットフォームツール（adb）
+- java開発キット（jdk 17からjdk 21、またはandroid studioバンドルjbr）
 - android studioで設定された1つ以上のavd
 
 エミュレーターの起動には最大1分かかる場合があります。フレームワークはアプリケーションをインストールして起動する前にデバイスの準備が整うのを待ちます。
@@ -264,7 +265,7 @@ cssまたはjavascriptファイルが404エラーを返す場合はパスがサ�
 
 ```bash
 # ios
-xcrun simctl spawn booted log stream --predicate 'processImagePath contains "dframework"'
+xcrun simctl spawn booted log stream --predicate 'process == "dframework"'
 
 # android
 adb logcat -s dstrn:V

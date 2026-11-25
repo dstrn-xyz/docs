@@ -33,16 +33,16 @@
 
 ### ios要件
 
-iosビルドにはxcodeがインストールされたmacosシステムが必要です:
-
-```bash
-xcode-select --install
-```
-
-インストールを確認します:
+iosビルドには完全なxcodeアプリケーション（mac app storeまたはapple developerポータルから入手可能）がインストールされたmacosシステムが必要です:
 
 ```bash
 xcodebuild -version
+```
+
+コマンドライン開発者ツールがアクティブなxcodeインストールを指していることを確認します:
+
+```bash
+sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 ```
 
 iosアプリケーションに署名して配信するにはアクティブなapple developerアカウントが必要です。開発ビルドはアカウントに登録されたデバイスに直接インストールできます。app storeへの配信にはapple developer programへの登録が必要です。
@@ -54,11 +54,11 @@ iosアプリケーションに署名して配信するにはアクティブなap
 androidビルドはmacos、linux、windowsで動作します。android sdkとプラットフォームツールをインストールします:
 
 ```bash
-# verify installation
+# インストールを確認
 adb --version
 ```
 
-javaランタイムが必要です。android studioのバンドルjdkが存在する場合フレームワークはそれを自動検出します。
+java開発キット（jdk 17からjdk 21に対応）が必要です。フレームワークは環境変数`JAVA_HOME`が対応バージョンのjdkを指している場合はそれを優先し、それ以外の場合はandroid studioのバンドルjbrランタイム、macosの`java_home`、または`PATH`上の`java`を自動検出します。
 
 androidリリースの署名にはキーストアが必要です。java keytoolを使用して生成します:
 
@@ -84,6 +84,8 @@ cargo install tauri-cli
 ```bash
 cargo tauri --version
 ```
+
+linuxでは、desktopビルドにシステム開発ライブラリ（`build-essential`、`libwebkit2gtk-4.0-dev`または`libwebkit2gtk-4.1-dev`、`libssl-dev`、`libgtk-3-dev`など）も必要です。
 
 desktopビルドはプラットフォーム固有のインストーラーを生成します。macosではdmgとappバンドルが出力されます。windowsではmsiインストーラーとexeが出力されます。linuxではdebおよびappimage形式が生成されます。
 

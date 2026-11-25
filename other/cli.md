@@ -79,7 +79,7 @@ passing a command name to `dstrn help <command>` or appending `--help` / `-h` to
 | `dstrn seed [name]`          | run database seeders                                    |
 | `dstrn seed:make <Name>`     | create a new seeder template                            |
 | `dstrn drop [--force]`       | drop all tables in non production environments with confirmation (or `--force`; always disabled in production) |
-| `dstrn advisor [--apply]`    | inspect unindexed relationships and generate migrations |
+| `dstrn advisor [--apply] [--force]` | inspect unindexed relationships and generate migrations |
 
 <a name="generators"></a>
 
@@ -105,7 +105,7 @@ passing a command name to `dstrn help <command>` or appending `--help` / `-h` to
 | `dstrn dispatch <JobName> [--payload=] [--tracking-id=]` | run a job directly in the current process with optional payload and correlation id |
 | `dstrn logs:clear`                     | clear or archive log files with date filtering                                |
 | `dstrn deploy`                         | generate production deployment and service configurations                     |
-| `dstrn cert`                           | inspect and manage ssl certificates                                           |
+| `dstrn cert <action>`                  | manage tls certificates (`obtain`, `renew`, `status`)                         |
 | `dstrn cert:obtain`                    | obtain let's encrypt ssl certificates                                         |
 | `dstrn cert:renew`                     | renew expiring ssl certificates                                               |
 | `dstrn cert:status`                    | display certificate validity and expiration details                           |
@@ -121,7 +121,7 @@ passing a command name to `dstrn help <command>` or appending `--help` / `-h` to
 | `dstrn build --<platform>`          | build a production binary               |
 | `dstrn make:plugin <Name>`          | scaffold a cross platform native plugin |
 | `dstrn native:status`               | display native config and readiness     |
-| `dstrn native:doctor`               | full environment diagnostic             |
+| `dstrn native:doctor [--<platform>]` | check native environment (`--desktop`, `--android`, or `--ios` to require a target) |
 | `dstrn native:clean [--<platform>]` | clean native build artifacts            |
 
 <a name="architecture"></a>
@@ -217,6 +217,8 @@ dstrn test
 dstrn test tests/feature/UserTest.test.js
 dstrn test --watch
 dstrn test --only
+dstrn test --raw
+dstrn test --reporter=./custom-reporter.js
 ```
 
 <a name="generating-tests"></a>
@@ -242,17 +244,17 @@ dstrn advisor
 ```
 
 ```
-  database index advisor found 2 recommendation(s):
+ INFO  database index advisor
 
-  table: tracks
-  index: idx_tracks_album_id (album_id)
-  reason: unindexed foreign key column
+  tracks .....................................................  WARN  [idx_tracks_album_id]
+    columns: album_id
+    reason:  foreign key column album_id lacks leading index
 
-  table: track_artists
-  index: idx_track_artists_track_id_artist_id (track_id, artist_id)
-  reason: frequently filtered column pair (track_id, artist_id) lacks composite index
+  track_artists ..............................................  WARN  [idx_track_artists_track_id_artist_id]
+    columns: track_id, artist_id
+    reason:  frequently filtered column pair (track_id, artist_id) lacks composite index
 
-run "dstrn advisor --apply" to generate and execute migrations automatically
+ OK  found 2 recommendations (run "dstrn advisor --apply" to generate and execute migrations) (12.30ms)
 ```
 
 to automatically scaffold and execute timestamped migrations with all recommended indexes, pass the `--apply` flag:
@@ -262,10 +264,27 @@ dstrn advisor --apply
 ```
 
 ```
-  generating and running migrations
-  created migration: database/migrations/2026_10_28_120000_add_idx_tracks_album_id.js
-  created migration: database/migrations/2026_10_28_120001_add_idx_track_artists_track_id_artist_id.js
-  all migrations applied successfully
+ INFO  database index advisor
+
+  tracks .....................................................  WARN  [idx_tracks_album_id]
+    columns: album_id
+    reason:  foreign key column album_id lacks leading index
+
+  track_artists ..............................................  WARN  [idx_track_artists_track_id_artist_id]
+    columns: track_id, artist_id
+    reason:  frequently filtered column pair (track_id, artist_id) lacks composite index
+
+  2026_10_28_120000_add_idx_tracks_album_id.js .................  OK  [generated]
+  2026_10_28_120001_add_idx_track_artists_track_id_artist_id.js ..  OK  [generated]
+
+ INFO  running migrations
+
+  2026_10_28_120000_add_idx_tracks_album_id.js .................  OK  [batch: 1] (4.50ms)
+  2026_10_28_120001_add_idx_track_artists_track_id_artist_id.js ..  OK  [batch: 1] (3.80ms)
+
+ OK  migrated 2 migrations (10.20ms)
+
+ OK  all migrations applied successfully (18.50ms)
 ```
 
 each generated migration file exports `up` and `down` functions with `table.index()` and `table.dropIndex()` calls, allowing full rollback support via `dstrn migrate:rollback`.
@@ -441,10 +460,10 @@ dstrn cert:status
 
 | command                                      | description                                                   |
 | -------------------------------------------- | ------------------------------------------------------------- |
-| `dstrn cert`                                 | inspect and manage installed ssl certificates                 |
-| `dstrn cert:obtain --domain=... --email=...` | obtain a new let's encrypt ssl certificate                    |
-| `dstrn cert:renew --domain=... --email=...`  | renew certificates expiring within 30 days                    |
-| `dstrn cert:status`                          | show validity and expiration dates for installed certificates |
+| `dstrn cert <obtain\|renew\|status> [--dir=...]` | manage tls certificates (`obtain`, `renew`, or `status`)      |
+| `dstrn cert:obtain --domain=... --email=... [--dir=...]` | obtain a new let's encrypt ssl certificate                    |
+| `dstrn cert:renew --domain=... --email=... [--dir=...]`  | renew certificates expiring within 30 days                    |
+| `dstrn cert:status [--domain=...] [--dir=...]` | show validity and expiration dates for installed certificates |
 
 <a name="architecture-analyzer"></a>
 
@@ -463,6 +482,8 @@ dstrn graph
 ```
 
 ```
+ INFO  dependency graph of how the application is wired
+
 http routes
 get /users (users.index)
  └─ AuthMiddleware
@@ -505,8 +526,12 @@ dstrn lint
 if violations are found, each one is printed with a description.
 
 ```
- ERROR  controller UserController depends on controller AdminController
-  controllers may not depend on controllers
+ INFO  architecture lint
+
+  UserController (controller) ................................  ERROR  [AdminController]
+    controllers may not depend on controllers
+
+ ERROR  found 1 architecture violation (12.30ms)
 ```
 
 <a name="dead-code-detection"></a>
@@ -520,13 +545,12 @@ dstrn dead
 ```
 
 ```
- ERROR  found 2 unreachable components
+ INFO  dead code analysis
 
-unused controller
-  LegacyController
+  LegacyController ...........................................  WARN  [controller]
+  TempModel ..................................................  WARN  [model]
 
-unused model
-  TempModel
+ ERROR  found 2 unreachable components (15.20ms)
 ```
 
 database tables are excluded from the analysis since they may be accessed through raw queries.
@@ -537,22 +561,25 @@ database tables are excluded from the analysis since they may be accessed throug
 
 the `doctor` command computes a quality score from 0 to 100 based on three factors:
 
-- **architecture violations** - each violation deducts 10 points, up to a maximum of 40
-- **dead code** - each unreachable component deducts 5 points, up to a maximum of 30
-- **complexity** - if the average number of edges per node exceeds 4, additional points are deducted based on the excess
+- **architecture violations** (each violation deducts 10 points, up to a maximum of 40)
+- **dead code** (each unreachable component deducts 5 points, up to a maximum of 30)
+- **complexity** (if the average number of edges per node exceeds 4, additional points are deducted based on the excess)
 
 ```bash
 dstrn doctor
 ```
 
 ```
- OK  health score 95 out of 100
+ INFO  project architecture health
 
-deductions
-  dead code minus 5 (1 unreachable components)
+  architecture structure .....................................  OK  [no violations]
+  code reachability ..........................................  WARN  [-5] (1 unreachable)
+  project complexity .........................................  OK  [2.1 edges per node]
+
+ OK  health score 95 out of 100 (10.50ms)
 ```
 
-scores of 90 and above are displayed as success, 70-89 as informational, and below 70 as an error.
+scores of 70 and above indicate passing health, and scores below 70 are reported as an error.
 
 <a name="translation-lint"></a>
 
@@ -570,15 +597,15 @@ dstrn lang:lint
 if issues are found, the command reports the exact files, line numbers, and missing locales:
 
 ```
- ERROR  found 2 translation issues
+ INFO  translation verification
 
-missing translations in views and code
-  views/index.d:4
-    key 'ui.tagline' is missing in [ja]
+missing translations:
+  views/index.d:4 ............................................  ERROR  'ui.tagline' missing in [ja]
 
-asymmetric translation keys across locales
-  locale: ja
-    missing 'ui.tagline' (defined in: en)
+asymmetric translation keys:
+  ja: ui.tagline .............................................  WARN  defined in [en]
+
+ ERROR  found 2 translation issues (14.20ms)
 ```
 
 if all translations are complete and match view usage, a success status is returned.

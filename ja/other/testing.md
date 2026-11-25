@@ -47,6 +47,10 @@ dstrn test --watch
 
 # { only: true }が付与されたテストのみを実行
 dstrn test --only
+
+# 標準のnodeテストランナー出力またはカスタムレポーターを使用
+dstrn test --raw
+dstrn test --reporter=./custom-reporter.js
 ```
 
 `dstrn test`は自動的に`APP_ENV=testing`を設定し、node 22または23で実行されている場合は実験的なsqliteサポートを有効にします。テストの実行にはプロジェクトルートに`.env.testing`ファイルが存在することが必須です。`.env`へのフォールバックは行われないため、開発や本番のデータベースに対する偶発的なデータ変更を防止します。
@@ -70,6 +74,19 @@ dstrn make:test CalculatorTest --unit
 
 # ネストされたディレクトリも自動作成
 dstrn make:test Auth/RegistrationTest
+```
+
+生成されたテストファイルは`describe`ブロック内にアサーションを整理します:
+
+```javascript
+import { test, describe, Tester } from 'dframework/testing';
+
+describe('UserTest', () => {
+  test('returns successful response', async () => {
+    const res = await Tester.get('/');
+    res.assertStatus(200);
+  });
+});
 ```
 
 <a name="http統合テスト"></a>

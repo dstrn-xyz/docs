@@ -680,10 +680,10 @@ on ios and android, the native impl runs. on the web, the javascript impl runs. 
 
 ## troubleshooting
 
-**the bridge never resolves a call.** check that the method is registered as native on the platform you're testing on. the framework ships `dstrn native:status` and `dstrn native:doctor` commands that report which methods are registered on each platform.
+**the bridge never resolves a call.** check that the method is registered as native on the platform you're testing on, and verify the native runtime and toolchain environment with `dstrn native:doctor --<platform>`.
 
 **a method returns a different value across platforms.** check that the json shape you return is the same on every platform. the bridge passes values through `JSONSerialization` on ios, `JSONObject` on android, and `serde_json` on desktop, so the wire format is the same; any difference is in the source language. compare the resolved value in your debugger.
 
-**a plugin folder is not picked up.** make sure the folder name matches `<name>/` and that `index.js` exists. `dstrn native:doctor` reports discovered plugins and flags any that are missing `index.js`.
+**a plugin folder is not picked up.** make sure the folder name matches `<name>/` and that `index.js` exists. run `dstrn native:status` to list plugin folders discovered in `native/plugins/`.
 
 **native call times out.** the default timeout is thirty seconds, configurable via `native.timeout` in `config/native.js`. if your impl needs longer (large file uploads, network bound work), raise the timeout or break the work into smaller calls.

@@ -79,7 +79,7 @@ dstrn --version
 | `dstrn seed [name]`          | データベースシーダーを実行 |
 | `dstrn seed:make <Name>`     | 新しいシーダーテンプレートを作成 |
 | `dstrn drop [--force]`       | 本番環境以外で確認（または`--force`）付きでデータベース内のすべてのテーブルを削除（本番環境では常に無効） |
-| `dstrn advisor [--apply]`    | インデックスのないリレーションを検査しマイグレーションを生成 |
+| `dstrn advisor [--apply] [--force]` | インデックスのないリレーションを検査しマイグレーションを生成 |
 
 <a name="ジェネレーター"></a>
 
@@ -105,7 +105,7 @@ dstrn --version
 | `dstrn dispatch <JobName> [--payload=] [--tracking-id=]` | オプションのペイロードおよび関連付けidを使用して現在のプロセスでジョブを直接実行 |
 | `dstrn logs:clear`                     | 日付フィルタリング付きでログファイルをクリアまたはアーカイブ |
 | `dstrn deploy`                         | 本番デプロイおよびサービス設定を生成 |
-| `dstrn cert`                           | ssl証明書を検査および管理 |
+| `dstrn cert <action>`                  | tls証明書を管理（`obtain`、`renew`、`status`） |
 | `dstrn cert:obtain`                    | let's encryptのssl証明書を取得 |
 | `dstrn cert:renew`                     | 期限切れの近いssl証明書を更新 |
 | `dstrn cert:status`                    | 証明書の有効性と有効期限の詳細を表示 |
@@ -121,7 +121,7 @@ dstrn --version
 | `dstrn build --<platform>`          | 本番バイナリをビルド |
 | `dstrn make:plugin <Name>`          | クロスプラットフォームのネイティブプラグインをスキャフォールディング |
 | `dstrn native:status`               | ネイティブ設定と準備状態を表示 |
-| `dstrn native:doctor`               | 完全な環境診断を実行 |
+| `dstrn native:doctor [--<platform>]` | ネイティブ環境を診断（特定の対象を必須化する場合は`--desktop`、`--android`、`--ios`を指定） |
 | `dstrn native:clean [--<platform>]` | ネイティブビルドアーティファクトをクリーンアップ |
 
 <a name="アーキテクチャ"></a>
@@ -217,6 +217,8 @@ dstrn test
 dstrn test tests/feature/UserTest.test.js
 dstrn test --watch
 dstrn test --only
+dstrn test --raw
+dstrn test --reporter=./custom-reporter.js
 ```
 
 <a name="テストの生成"></a>
@@ -242,17 +244,17 @@ dstrn advisor
 ```
 
 ```
-  database index advisor found 2 recommendation(s):
+ INFO  database index advisor
 
-  table: tracks
-  index: idx_tracks_album_id (album_id)
-  reason: unindexed foreign key column
+  tracks .....................................................  WARN  [idx_tracks_album_id]
+    columns: album_id
+    reason:  foreign key column album_id lacks leading index
 
-  table: track_artists
-  index: idx_track_artists_track_id_artist_id (track_id, artist_id)
-  reason: frequently filtered column pair (track_id, artist_id) lacks composite index
+  track_artists ..............................................  WARN  [idx_track_artists_track_id_artist_id]
+    columns: track_id, artist_id
+    reason:  frequently filtered column pair (track_id, artist_id) lacks composite index
 
-run "dstrn advisor --apply" to generate and execute migrations automatically
+ OK  found 2 recommendations (run "dstrn advisor --apply" to generate and execute migrations) (12.30ms)
 ```
 
 推奨されるすべてのインデックスを含むタイムスタンプ付きマイグレーションを自動的にスキャフォールディングして実行するには`--apply`フラグを渡します:
@@ -262,10 +264,27 @@ dstrn advisor --apply
 ```
 
 ```
-  generating and running migrations
-  created migration: database/migrations/2026_10_28_120000_add_idx_tracks_album_id.js
-  created migration: database/migrations/2026_10_28_120001_add_idx_track_artists_track_id_artist_id.js
-  all migrations applied successfully
+ INFO  database index advisor
+
+  tracks .....................................................  WARN  [idx_tracks_album_id]
+    columns: album_id
+    reason:  foreign key column album_id lacks leading index
+
+  track_artists ..............................................  WARN  [idx_track_artists_track_id_artist_id]
+    columns: track_id, artist_id
+    reason:  frequently filtered column pair (track_id, artist_id) lacks composite index
+
+  2026_10_28_120000_add_idx_tracks_album_id.js .................  OK  [generated]
+  2026_10_28_120001_add_idx_track_artists_track_id_artist_id.js ..  OK  [generated]
+
+ INFO  running migrations
+
+  2026_10_28_120000_add_idx_tracks_album_id.js .................  OK  [batch: 1] (4.50ms)
+  2026_10_28_120001_add_idx_track_artists_track_id_artist_id.js ..  OK  [batch: 1] (3.80ms)
+
+ OK  migrated 2 migrations (10.20ms)
+
+ OK  all migrations applied successfully (18.50ms)
 ```
 
 生成された各マイグレーションファイルは`table.index()`および`table.dropIndex()`呼び出しを含む`up`および`down`関数をエクスポートし`dstrn migrate:rollback`による完全なロールバックサポートを可能にします。
@@ -441,10 +460,10 @@ dstrn cert:status
 
 | コマンド | 説明 |
 | -------------------------------------------- | ------------------------------------------------------------- |
-| `dstrn cert`                                 | インストールされているssl証明書を検査および管理 |
-| `dstrn cert:obtain --domain=example.com --email=admin@example.com` | 新しいlet's encryptのssl証明書を取得 |
-| `dstrn cert:renew --domain=example.com --email=admin@example.com`  | 30日以内に期限切れになる証明書を更新 |
-| `dstrn cert:status`                          | インストールされている証明書の有効性と有効期限を表示 |
+| `dstrn cert <obtain\|renew\|status> [--dir=...]` | tls証明書を管理（`obtain`、`renew`、または`status`） |
+| `dstrn cert:obtain --domain=... --email=... [--dir=...]` | 新しいlet's encryptのssl証明書を取得 |
+| `dstrn cert:renew --domain=... --email=... [--dir=...]`  | 30日以内に期限切れになる証明書を更新 |
+| `dstrn cert:status [--domain=...] [--dir=...]` | インストールされている証明書の有効性と有効期限を表示 |
 
 <a name="アーキテクチャアナライザー"></a>
 
@@ -463,6 +482,8 @@ dstrn graph
 ```
 
 ```
+ INFO  dependency graph of how the application is wired
+
 http routes
 get /users (users.index)
  └─ AuthMiddleware
@@ -505,8 +526,12 @@ dstrn lint
 違反が見つかった場合それぞれが説明とともに出力されます。
 
 ```
- ERROR  controller UserController depends on controller AdminController
-  controllers may not depend on controllers
+ INFO  architecture lint
+
+  UserController (controller) ................................  ERROR  [AdminController]
+    controllers may not depend on controllers
+
+ ERROR  found 1 architecture violation (12.30ms)
 ```
 
 <a name="デッドコード検出"></a>
@@ -520,13 +545,12 @@ dstrn dead
 ```
 
 ```
- ERROR  found 2 unreachable components
+ INFO  dead code analysis
 
-unused controller
-  LegacyController
+  LegacyController ...........................................  WARN  [controller]
+  TempModel ..................................................  WARN  [model]
 
-unused model
-  TempModel
+ ERROR  found 2 unreachable components (15.20ms)
 ```
 
 データベーステーブルは生クエリを通じてアクセスされる可能性があるため分析から除外されます。
@@ -546,13 +570,16 @@ dstrn doctor
 ```
 
 ```
- OK  health score 95 out of 100
+ INFO  project architecture health
 
-deductions
-  dead code minus 5 (1 unreachable components)
+  architecture structure .....................................  OK  [no violations]
+  code reachability ..........................................  WARN  [-5] (1 unreachable)
+  project complexity .........................................  OK  [2.1 edges per node]
+
+ OK  health score 95 out of 100 (10.50ms)
 ```
 
-90点以上は成功、70点から89点は情報、70点未満はエラーとして表示されます。
+70点以上は健全、70点未満はエラーとして報告されます。
 
 <a name="翻訳lint"></a>
 
@@ -570,15 +597,15 @@ dstrn lang:lint
 問題が見つかった場合コマンドは正確なファイル、行番号、欠落しているロケールを報告します:
 
 ```
- ERROR  found 2 translation issues
+ INFO  translation verification
 
-missing translations in views and code
-  views/index.d:4
-    key 'ui.tagline' is missing in [ja]
+missing translations:
+  views/index.d:4 ............................................  ERROR  'ui.tagline' missing in [ja]
 
-asymmetric translation keys across locales
-  locale: ja
-    missing 'ui.tagline' (defined in: en)
+asymmetric translation keys:
+  ja: ui.tagline .............................................  WARN  defined in [en]
+
+ ERROR  found 2 translation issues (14.20ms)
 ```
 
 すべての翻訳が完全でビューの使用状況と一致している場合は成功ステータスが返されます。

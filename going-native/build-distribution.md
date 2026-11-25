@@ -33,16 +33,16 @@ production builds compile your application into platform specific binaries ready
 
 ### ios requirements
 
-ios builds require a macos system with xcode installed:
-
-```bash
-xcode-select --install
-```
-
-verify your installation:
+ios builds require a macos system with the full xcode application installed (available from the mac app store or apple developer portal):
 
 ```bash
 xcodebuild -version
+```
+
+ensure the command line developer tools point to your active xcode installation:
+
+```bash
+sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 ```
 
 you need an active apple developer account to sign and distribute ios applications. development builds can be installed directly on devices registered in your account. app store distribution requires enrollment in the apple developer program.
@@ -58,7 +58,7 @@ android builds work on macos, linux, and windows. install the android sdk and pl
 adb --version
 ```
 
-you need a java runtime. the framework automatically detects android studio's bundled jdk if present.
+you need a java development kit (jdk 17 to jdk 21 are supported). the framework checks `JAVA_HOME` first if it points to a supported jdk, and otherwise detects android studio's bundled jbr runtime, macos `java_home`, or `java` on `PATH`.
 
 signing android releases requires a keystore. generate one using the java keytool:
 
@@ -84,6 +84,8 @@ verify the installation:
 ```bash
 cargo tauri --version
 ```
+
+on linux, desktop builds also require system development libraries (including `build-essential`, `libwebkit2gtk-4.0-dev` or `libwebkit2gtk-4.1-dev`, `libssl-dev`, and `libgtk-3-dev`).
 
 desktop builds produce platform specific installers. on macos, the output is a dmg and app bundle. on windows, you get an msi installer and exe. on linux, the framework generates deb and appimage formats.
 
