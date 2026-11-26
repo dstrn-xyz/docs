@@ -52,12 +52,10 @@ dframework automatically creates a symbolic link from `public/storage` to `stora
 
 the preferred canonical pattern is calling `Storage.disk(name)` to obtain a disk instance. omitting the disk name resolves the default disk configured in `config/storage.js` (falling back to `public`).
 
-for convenience, the `Storage` facade also proxies operations directly (`Storage.put()`, `Storage.get()`, `Storage.delete()`, etc.) to the default disk.
+for convenience, the `Storage` facade is available globally without imports and also proxies operations directly (`Storage.put()`, `Storage.get()`, `Storage.delete()`, etc.) to the default disk.
 
 ```javascript
-import { Storage } from 'dframework';
-
-// preferred canonical pattern on default disk
+// globally available without imports
 await Storage.disk().put('notes.txt', 'hello');
 
 // direct proxy shorthand to default disk

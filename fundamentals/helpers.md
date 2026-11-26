@@ -24,6 +24,11 @@
     - [job](#job)
     - [log](#log)
     - [app](#app)
+    - [route](#route)
+    - [socket](#socket)
+    - [config](#config)
+    - [storage](#storage)
+    - [tracker](#tracker)
 
 <a name="introduction"></a>
 
@@ -708,4 +713,58 @@ const application = app();
 const db = app('db');
 const logger = app('logger');
 const env = app('env');
+```
+
+<a name="route"></a>
+
+### route
+
+the `Route` facade provides access to the application router for registering routes, groups, and middleware. see the [routing](routing.md) documentation for full details.
+
+```javascript
+Route.get('/profile', 'UserController@show');
+Route.post('/login', 'AuthController@login');
+```
+
+<a name="socket"></a>
+
+### socket
+
+the `Socket` facade manages websocket events, broadcasting, and targeted message delivery. see the [websockets](../asynchronous/websockets.md) documentation for full details.
+
+```javascript
+Socket.broadcast('orders.created', { orderId: 10 });
+Socket.toUser(userId).emit('notification', { text: 'order updated' });
+```
+
+<a name="config"></a>
+
+### config
+
+the `Config` facade retrieves configuration values loaded from the `config` directory using dot notation. see the [configuration](../getting-started/configuration.md) documentation for full details.
+
+```javascript
+const appName = Config.get('app.name', 'dframework');
+const isDebug = Config.get('app.debug', false);
+```
+
+<a name="storage"></a>
+
+### storage
+
+the `Storage` facade provides access to configured file system disks for reading, writing, and deleting files. see the [storage](../database/storage.md) documentation for full details.
+
+```javascript
+await Storage.disk('local').put('documents/report.pdf', fileBuffer);
+const exists = await Storage.exists('documents/report.pdf');
+```
+
+<a name="tracker"></a>
+
+### tracker
+
+the `Tracker` facade manages request correlation telemetry and manual telemetry snapshots. see the [requests](requests.md) documentation for full details.
+
+```javascript
+Tracker.capture(err, 500);
 ```

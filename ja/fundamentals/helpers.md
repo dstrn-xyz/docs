@@ -24,6 +24,11 @@
     - [job](#job)
     - [log](#log)
     - [app](#app)
+    - [route](#route)
+    - [socket](#socket)
+    - [config](#config)
+    - [storage](#storage)
+    - [tracker](#tracker)
 
 <a name="はじめに"></a>
 
@@ -701,11 +706,65 @@ Log.table(rows, 'query results');
 `app(key?)`ヘルパーは現在のアプリケーションインスタンスまたは登録されたサービスへのアクセスを提供します。利用可能な場合はアクティブなリクエストコンテキストから解決し、それ以外はグローバルアプリケーションインスタンスにフォールバックします。
 
 ```javascript
-// retrieve the active application instance
+// アクティブなアプリケーションインスタンスを取得
 const application = app();
 
-// access specific services or properties directly
+// 特定のサービスまたはプロパティに直接アクセス
 const db = app('db');
 const logger = app('logger');
 const env = app('env');
+```
+
+<a name="route"></a>
+
+### route
+
+`Route`ファサードはルート、グループ、ミドルウェアを登録するためのアプリケーションルーターへのアクセスを提供します。詳細については[ルーティング](routing.md)のドキュメントを参照してください。
+
+```javascript
+Route.get('/profile', 'UserController@show');
+Route.post('/login', 'AuthController@login');
+```
+
+<a name="socket"></a>
+
+### socket
+
+`Socket`ファサードはwebsocketイベント、ブロードキャスト、ターゲット配信を管理します。詳細については[websockets](../asynchronous/websockets.md)のドキュメントを参照してください。
+
+```javascript
+Socket.broadcast('orders.created', { orderId: 10 });
+Socket.toUser(userId).emit('notification', { text: 'order updated' });
+```
+
+<a name="config"></a>
+
+### config
+
+`Config`ファサードはドット記法を使用して`config`ディレクトリから読み込まれた設定値を取得します。詳細については[設定](../getting-started/configuration.md)のドキュメントを参照してください。
+
+```javascript
+const appName = Config.get('app.name', 'dframework');
+const isDebug = Config.get('app.debug', false);
+```
+
+<a name="storage"></a>
+
+### storage
+
+`Storage`ファサードはファイルの読み取り、書き込み、削除を行う設定済みファイルシステムディスクへのアクセスを提供します。詳細については[ストレージ](../database/storage.md)のドキュメントを参照してください。
+
+```javascript
+await Storage.disk('local').put('documents/report.pdf', fileBuffer);
+const exists = await Storage.exists('documents/report.pdf');
+```
+
+<a name="tracker"></a>
+
+### tracker
+
+`Tracker`ファサードはリクエスト相関テレメトリおよび手動テレメトリスナップショットを管理します。詳細については[リクエスト](requests.md)のドキュメントを参照してください。
+
+```javascript
+Tracker.capture(err, 500);
 ```

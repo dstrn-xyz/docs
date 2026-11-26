@@ -55,11 +55,9 @@ dframeworkはコンソールと永続ログファイルの両方に書き込む�
 
 ### ログメッセージの書き込み
 
-各ログレベルにはグローバルな`Log`ファサードまたは名前付きインポート（`import { Log } from 'dframework'`）を介してアクセス可能な対応メソッドがあります。すべてのメソッドは自動的にフォーマットされる可変長引数を受け付けます。
+各ログレベルにはインポート不要でグローバルな`Log`ファサードを介してアクセス可能な対応メソッドがあります。すべてのメソッドは自動的にフォーマットされる可変長引数を受け付けます。
 
 ```javascript
-import { Log } from 'dframework';
-
 Log.debug('cache miss for key:', cacheKey);
 Log.info('user registered:', user.email);
 Log.warn('rate limit approaching for ip:', clientIp);

@@ -116,18 +116,10 @@ export default class RegistrationController {
 
 ### どこからでも
 
-`Job`ファサードはグローバルに利用可能です。コントローラー、ミドルウェア、ソケットイベントハンドラー、他のジョブ、スケジュールされたコマンドからジョブをディスパッチすることもフレームワークルートから直接インポートすることもできます。
+`Job`ファサードはインポート不要でグローバルに利用可能です。コントローラー、ミドルウェア、ソケットイベントハンドラー、他のジョブ、スケジュールされたコマンドから直接ジョブをディスパッチできます。
 
 ```javascript
-import { Job } from 'dframework';
-
 Job.dispatch('SyncInventoryJob', { warehouseId: 3 });
-```
-
-またはすべてのランタイムコンテキストで自動的に利用可能なグローバル`Job`ファサードを使用します。
-
-```javascript
-Job.dispatch('GenerateReportJob', { month: 'june', year: 2026 });
 ```
 
 <a name="コマンドラインから"></a>

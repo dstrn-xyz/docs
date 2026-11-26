@@ -115,18 +115,10 @@ export default class RegistrationController {
 
 ### from anywhere
 
-the `Job` facade is available globally. you can dispatch jobs from controllers, middleware, socket event handlers, other jobs, scheduled commands, or import it directly from the framework root:
+the `Job` facade is available globally without imports. you can dispatch jobs directly from controllers, middleware, socket event handlers, other jobs, or scheduled commands:
 
 ```javascript
-import { Job } from 'dframework';
-
 Job.dispatch('SyncInventoryJob', { warehouseId: 3 });
-```
-
-or simply use the global `Job` facade that is automatically available in all runtime contexts:
-
-```javascript
-Job.dispatch('GenerateReportJob', { month: 'june', year: 2026 });
 ```
 
 <a name="from-the-command-line"></a>

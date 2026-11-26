@@ -152,8 +152,6 @@ Socket.middleware('AuthMiddleware@requireAuth').group({}, (auth) => {
 here is how socket events look in a real application:
 
 ```javascript
-import { Socket } from 'dframework';
-
 Socket.on('pair:status', 'auth.AuthController@wire_status').targets(['#qr-box']);
 
 Socket.group({ middleware: ['AuthMiddleware@requireAuth'] }, (auth) => {
@@ -402,10 +400,10 @@ all targeted methods (`toUser`, `toUserState`, `toUsers`, `toUsersState`, `toSes
 
 ## the socket facade
 
-the `Socket` global is a proxy facade that delegates all method calls to the application's `SocketRouter` instance. it is available globally after the application initializes and can be imported from the framework.
+the `Socket` facade is available globally without imports and delegates all method calls to the application's `SocketRouter` instance.
 
 ```javascript
-import { Socket } from 'dframework';
+Socket.broadcast('orders.created', { orderId: 10 });
 ```
 
 the facade exposes all methods: `on()`, `group()`, `middleware()`, `broadcast()`, `setState()`, `to()`, `toUser()`, `toUserState()`, `toUsers()`, `toUsersState()`, `toSession()`, `toSessionState()`, `guard()`, `toGuardUser()`, `toGuardUserState()`, `toGuardUsers()`, `toGuardUsersState()`, `revokeUser()`, and `liveNotify()`.

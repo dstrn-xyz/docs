@@ -51,15 +51,16 @@ dframeworkは起動時に`public/storage`から`storage/public`へのシンボ�
 
 ディスクインスタンスを取得する標準的な記述は`Storage.disk(name)`の呼び出しです。ディスク名を省略すると`config/storage.js`で設定されたデフォルトディスク（未設定時は`public`）に解決されます。
 
-利便性のために`Storage`ファサードはデフォルトディスクへの直接プロキシ操作（`Storage.put()`、`Storage.get()`、`Storage.delete()`など）も提供します。
+利便性のために`Storage`ファサードはインポート不要でグローバルに利用可能であり、デフォルトディスクへの直接プロキシ操作（`Storage.put()`、`Storage.get()`、`Storage.delete()`など）も提供します。
 
 ```javascript
-import { Storage } from 'dframework';
-
+// インポート不要でグローバルに利用可能
 await Storage.disk().put('notes.txt', 'hello');
 
+// デフォルトディスクへの直接プロキシショートハンド
 await Storage.put('notes.txt', 'hello');
 
+// 設定済みの特定ディスクを指定
 const disk = Storage.disk('local');
 ```
 

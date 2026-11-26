@@ -196,8 +196,6 @@ export default class PreferencesController {
 リクエストが`multipart/form-data`として送信された場合フレームワークはファイルを解析して`req.files`で利用可能にします。`req.files`の各キーはファイルオブジェクトの配列です。また`req.file(key)`を使用して最初のファイルを直接取得したり`req.hasFile(key)`を使用してファイルがアップロードされたかを確認したりすることもできます。
 
 ```javascript
-import { Storage } from 'dframework';
-
 export default class UserProfileController {
   async updateProfileImage(req) {
     if (!req.hasFile('profileImage')) {

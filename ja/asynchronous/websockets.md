@@ -153,8 +153,6 @@ Socket.middleware('AuthMiddleware@requireAuth').group({}, (auth) => {
 実際のアプリケーションにおけるソケットイベントの例は以下のとおりです。
 
 ```javascript
-import { Socket } from 'dframework';
-
 Socket.on('pair:status', 'auth.AuthController@wire_status').targets(['#qr-box']);
 
 Socket.group({ middleware: ['AuthMiddleware@requireAuth'] }, (auth) => {
@@ -403,10 +401,10 @@ Socket.revokeUser(adminId, 'admin');
 
 ## Socketファサード
 
-グローバルの`Socket`はすべてのメソッド呼び出しをアプリケーションの`SocketRouter`インスタンスに委譲するプロキシファサードです。アプリケーションの初期化後にグローバルに利用可能でありフレームワークからインポートすることもできます。
+`Socket`ファサードはインポート不要でグローバルに利用可能であり、すべてのメソッド呼び出しをアプリケーションの`SocketRouter`インスタンスに委譲します。
 
 ```javascript
-import { Socket } from 'dframework';
+Socket.broadcast('orders.created', { orderId: 10 });
 ```
 
 ファサードはすべてのメソッドを公開します: `on()`、`group()`、`middleware()`、`broadcast()`、`setState()`、`to()`、`toUser()`、`toUserState()`、`toUsers()`、`toUsersState()`、`toSession()`、`toSessionState()`、`guard()`、`toGuardUser()`、`toGuardUserState()`、`toGuardUsers()`、`toGuardUsersState()`、`revokeUser()`、`liveNotify()`。
