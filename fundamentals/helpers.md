@@ -29,6 +29,7 @@
     - [config](#config)
     - [storage](#storage)
     - [tracker](#tracker)
+    - [mail](#mail)
 
 <a name="introduction"></a>
 
@@ -767,4 +768,18 @@ the `Tracker` facade manages request correlation telemetry and manual telemetry 
 
 ```javascript
 Tracker.capture(err, 500);
+```
+
+<a name="mail"></a>
+
+### mail
+
+the `Mail` facade provides transactional email delivery and template rendering across configured transports. see the [mail](../asynchronous/mail.md) documentation for full details.
+
+```javascript
+await Mail.to('user@example.com')
+  .subject('welcome')
+  .send('emails.welcome', { user });
+
+await Mail.raw('plain text notification', { to: 'user@example.com', subject: 'notice' });
 ```

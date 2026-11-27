@@ -19,6 +19,7 @@
   - [コマンドの作成](#コマンドの作成)
   - [コマンドの実行](#コマンドの実行)
   - [ジョブのディスパッチ](#ジョブのディスパッチ)
+  - [キューワーカーの実行](#キューワーカーの実行)
   - [ログ管理](#ログ管理)
   - [デプロイと証明書](#デプロイと証明書)
     - [アプリケーションのデプロイ](#アプリケーションのデプロイ)
@@ -102,6 +103,7 @@ dstrn --version
 | コマンド | 説明 |
 | --------------------------------------- | ----------------------------------------------------------------------------- |
 | `dstrn run <CommandName>`               | `console/commands`からユーザーコマンドを実行 |
+| `dstrn queue:work [--queue=] [--driver=] [--once]` | バックグラウンドキュージョブをデーモンとして処理 |
 | `dstrn dispatch <JobName> [--payload=] [--tracking-id=]` | オプションのペイロードおよび関連付けidを使用して現在のプロセスでジョブを直接実行 |
 | `dstrn logs:clear`                     | 日付フィルタリング付きでログファイルをクリアまたはアーカイブ |
 | `dstrn deploy`                         | 本番デプロイおよびサービス設定を生成 |
@@ -391,6 +393,24 @@ dstrn dispatch SendWelcomeEmailJob --payload '{"userId": 1}'
 
 ```bash
 dstrn dispatch SendWelcomeEmailJob --payload '{"userId": 1}' --tracking-id 'custom-correlation-id'
+```
+
+<a name="キューワーカーの実行"></a>
+
+### キューワーカーの実行
+
+キュー内のバックグラウンドジョブを処理する専用ワーカーデーモンを実行できます。
+
+```bash
+dstrn queue:work
+```
+
+キューの指定、ドライバーの上書き、または単一ジョブのみを実行して終了することも可能です。
+
+```bash
+dstrn queue:work --queue=emails
+dstrn queue:work --driver=database
+dstrn queue:work --once
 ```
 
 <a name="ログ管理"></a>

@@ -72,16 +72,17 @@ export default class SettingsController {
 
 ## カスタムメッセージ
 
-カスタムエラーメッセージを定義するには第3引数としてオブジェクトを渡します。キーには`field.rule`のドット表記を使用する必要があります。
+カスタムエラーメッセージを定義するには第3引数としてオブジェクトを渡します。キーは特定のフィールドルール（`field.rule`）、ルールフォールバック（`rule`）、およびフィールドフォールバック（`field`）の優先順位でサポートしています。`:field`、`:attribute`、`:param`、およびルールパラメータ（`:min`や`:max`など）のプレースホルダーは自動的に展開されます。
 
 ```javascript
 const messages = {
-  'email.required': 'we really need your email address',
-  'email.email': 'that does not look like a valid email',
-  'password.min': 'your password must be at least 8 characters long'
+  'email.required': 'メールアドレスの入力が必要です',
+  'email.email': '有効なメールアドレスを入力してください',
+  'password.min': 'パスワードは:min文字以上である必要があります',
+  'required': ':fieldは必須項目です'
 };
 
-const validation = validate(req.body, rules, messages);
+const validation = validate(req, rules, messages);
 ```
 
 <a name="利用可能なルール"></a>

@@ -3,18 +3,21 @@
 - [はじめに](#はじめに)
 - [環境ファイル](#環境ファイル)
 - [設定ファイル](#設定ファイル)
-  - [config/app.js](#config/app.js)
-  - [config/auth.js](#config/auth.js)
-  - [config/database.js](#config/database.js)
-  - [config/session.js](#config/session.js)
-  - [config/storage.js](#config/storage.js)
-  - [config/socket.js](#config/socket.js)
-  - [config/native.js](#config/native.js)
-  - [config/view.js](#config/view.js)
-  - [config/tracking.js](#config/tracking.js)
+  - [config/app.js](#config-app)
+  - [config/auth.js](#config-auth)
+  - [config/database.js](#config-database)
+  - [config/session.js](#config-session)
+  - [config/storage.js](#config-storage)
+  - [config/socket.js](#config-socket)
+  - [config/native.js](#config-native)
+  - [config/view.js](#config-view)
+  - [config/tracking.js](#config-tracking)
+  - [config/queue.js](#config-queue)
+  - [config/mail.js](#config-mail)
 - [設定値へのアクセス](#設定値へのアクセス)
 - [環境変数へのアクセス](#環境変数へのアクセス)
 - [設定のホットリロード](#設定のホットリロード)
+- [設定のバリデーション](#設定のバリデーション)
 
 <a name="はじめに"></a>
 
@@ -98,12 +101,13 @@ STORAGE_PUBLIC=./storage/public
 > `local`環境でアプリケーションの実行中に`.env`ファイルを変更した場合、フレームワークは新しい値を反映するためにサーバー全体を再起動します。
 
 <a name="設定ファイル"></a>
+<a name="config-files"></a>
 
 ## 設定ファイル
 
 `config`ディレクトリ内の各ファイルはデフォルトのプレーンオブジェクトをエクスポートし、`Env.value()`を使用して環境変数から値を取得します。ファイル名はアプリケーション全体でドット記法ルックアップに使用される設定名前空間になります。
 
-<a name="config/app.js"></a>
+<a name="config-app"></a>
 
 ### config/app.js
 
@@ -203,7 +207,7 @@ export default {
 | `queue.bootstrapTimeout` | `QUEUE_BOOTSTRAP_TIMEOUT` | 整数（ミリ秒） | `30000` | 新規キューワーカーの起動完了までのタイムアウト（超過時は強制終了） |
 | `queue.shutdownTimeout` | `QUEUE_SHUTDOWN_TIMEOUT` | 整数（ミリ秒） | `30000` | キューワーカーのグレースフルシャットダウン待機タイムアウト |
 
-<a name="config/auth.js"></a>
+<a name="config-auth"></a>
 
 ### config/auth.js
 
@@ -268,7 +272,7 @@ export default {
 | `basic.password` | なし | 文字列 | なし | HTTP Basic認証に必要なパスワード |
 | `basic.realm` | なし | 文字列 | `'Restricted'` | 401 www-authenticateヘッダーで返されるレルムプロンプト文字列 |
 
-<a name="config/database.js"></a>
+<a name="config-database"></a>
 
 ### config/database.js
 
@@ -309,7 +313,7 @@ export default {
 | `queryCache.maxEntries` | `DB_QUERY_CACHE_MAX_ENTRIES` | 整数（正の整数） | `200` | LRUクエリキャッシュ内の最大キャッシュクエリプラン数 |
 | `queryCache.maxRows` | `DB_QUERY_CACHE_MAX_ROWS` | 整数（正の整数） | `1000` | LRUクエリキャッシュの対象となる結果あたりの最大行数 |
 
-<a name="config/session.js"></a>
+<a name="config-session"></a>
 
 ### config/session.js
 
@@ -344,7 +348,7 @@ export default {
 | `secure` | `SESSION_SECURE` | 真偽値 \| null（`true \| false \| null`） | `null` | セッションクッキーにHTTPSを要求（nullはリクエストから自動検出） |
 | `maxSessions` | `SESSION_MAX_SESSIONS` | 整数（正の整数） | `10000` | メモリドライバーによって保持される最大アクティブセッション数 |
 
-<a name="config/storage.js"></a>
+<a name="config-storage"></a>
 
 ### config/storage.js
 
@@ -378,7 +382,7 @@ export default {
 | `disks.<name>.root` | `STORAGE_ROOT`、`STORAGE_PUBLIC`など | 文字列（ディレクトリパス） | なし（各ディスクで必須） | ディスクルートのローカルファイルシステムディレクトリパス |
 | `disks.<name>.encryptionKey` | `APP_KEY`またはカスタムシークレット | 文字列（32文字以上）\| null | `null` | AES 256 GCM自動暗号化および復号化用のキー |
 
-<a name="config/socket.js"></a>
+<a name="config-socket"></a>
 
 ### config/socket.js
 
@@ -397,7 +401,7 @@ export default {
 | --- | --- | --- | --- | --- |
 | `maxPayload` | `SOCKET_MAX_PAYLOAD` | 数値（メガバイト） | `1` | WebSocketフレームの最大ペイロードサイズ（MB単位） |
 
-<a name="config/native.js"></a>
+<a name="config-native"></a>
 
 ### config/native.js
 
@@ -455,7 +459,7 @@ export default {
 | `desktop.resizable` | 真偽値（`true \| false`） | `true` | ユーザーによるデスクトップウィンドウのリサイズを許可 |
 | `desktop.titleBarStyle` | `'default' \| 'hidden'` | `'default'` | デスクトップウィンドウのタイトルバー外観 |
 
-<a name="config/view.js"></a>
+<a name="config-view"></a>
 
 ### config/view.js
 
@@ -474,7 +478,7 @@ export default {
 | --- | --- | --- | --- | --- |
 | `maxYieldDepth` | `VIEW_MAX_YIELD_DEPTH` | 整数（正の整数） | `30` | ネストされた`@yield`セクション解決の最大再帰深度 |
 
-<a name="config/tracking.js"></a>
+<a name="config-tracking"></a>
 
 ### config/tracking.js
 
@@ -508,6 +512,87 @@ export default {
 | `sinks.otlp.enabled` | `TRACKING_OTLP_ENABLED` | 真偽値（`true \| false`） | `false` | opentelemetry otlpトレースエクスポートシンクの有効化 |
 | `sinks.otlp.endpoint` | `OTEL_EXPORTER_OTLP_ENDPOINT` | 文字列（url） | `'http://localhost:4318/v1/traces'` | otlpコレクターhttpエンドポイントurl |
 | `sinks.otlp.serviceName` | `OTEL_SERVICE_NAME` | 文字列 | `'dframework-app'` | otlpスパンに付与されるサービス名属性 |
+
+<a name="config-queue"></a>
+
+### config/queue.js
+
+キュー設定はバックグラウンドワーカードライバー、並行処理数、およびタイムアウトを制御します:
+
+```javascript
+// config/queue.js
+import { Env } from 'dframework';
+
+export default {
+  driver: Env.value('QUEUE_DRIVER', 'memory'),
+  maxWorkers: Env.value('QUEUE_MAX_WORKERS', 4),
+  timeout: Env.value('QUEUE_TIMEOUT', 60000),
+  bootstrapTimeout: Env.value('QUEUE_BOOTSTRAP_TIMEOUT', 30000),
+  shutdownTimeout: Env.value('QUEUE_SHUTDOWN_TIMEOUT', 30000),
+  pollInterval: Env.value('QUEUE_POLL_INTERVAL', 1000),
+  retryAfter: Env.value('QUEUE_RETRY_AFTER', 90000),
+};
+```
+
+| キー | 環境変数 | 許容値 | デフォルト値 | 説明 |
+| --- | --- | --- | --- | --- |
+| `driver` | `QUEUE_DRIVER` | `'sync' \| 'memory' \| 'database'` | `'memory'` | キュー処理ドライバー |
+| `maxWorkers` | `QUEUE_MAX_WORKERS` | 整数 | `4` | 最大並行ワーカースレッド数 |
+| `timeout` | `QUEUE_TIMEOUT` | 整数（ミリ秒） | `60000` | ジョブごとの実行タイムアウト |
+| `bootstrapTimeout` | `QUEUE_BOOTSTRAP_TIMEOUT` | 整数（ミリ秒） | `30000` | ワーカースレッド起動タイムアウト |
+| `shutdownTimeout` | `QUEUE_SHUTDOWN_TIMEOUT` | 整数（ミリ秒） | `30000` | グレースフルシャットダウンタイムアウト |
+| `pollInterval` | `QUEUE_POLL_INTERVAL` | 整数（ミリ秒） | `1000` | データベースキューのポーリング間隔 |
+| `retryAfter` | `QUEUE_RETRY_AFTER` | 整数（ミリ秒） | `90000` | 停止した予約ジョブの再確保タイムアウト |
+
+<a name="config-mail"></a>
+
+### config/mail.js
+
+メール設定は配信トランスポートと送信者情報を管理します:
+
+```javascript
+// config/mail.js
+import { Env } from 'dframework';
+
+export default {
+  default: Env.value('MAIL_MAILER', 'log'),
+  mailers: {
+    log: {
+      transport: 'log'
+    },
+    smtp: {
+      transport: 'smtp',
+      host: Env.value('MAIL_HOST', '127.0.0.1'),
+      port: Env.value('MAIL_PORT', 587),
+      encryption: Env.value('MAIL_ENCRYPTION', 'tls'),
+      username: Env.value('MAIL_USERNAME'),
+      password: Env.value('MAIL_PASSWORD')
+    },
+    ses: {
+      transport: 'ses',
+      region: Env.value('AWS_DEFAULT_REGION', 'us-east-1'),
+      key: Env.value('AWS_ACCESS_KEY_ID'),
+      secret: Env.value('AWS_SECRET_ACCESS_KEY'),
+      endpoint: Env.value('MAIL_ENDPOINT')
+    },
+    webhook: {
+      transport: 'webhook',
+      url: Env.value('MAIL_WEBHOOK_URL')
+    }
+  },
+  from: {
+    address: Env.value('MAIL_FROM_ADDRESS', 'hello@example.com'),
+    name: Env.value('MAIL_FROM_NAME', 'dframework')
+  }
+};
+```
+
+| キー | 環境変数 | 許容値 | デフォルト値 | 説明 |
+| --- | --- | --- | --- | --- |
+| `default` | `MAIL_MAILER` | 文字列 | `'log'` | デフォルトのメールトランスポート |
+| `mailers` | | オブジェクト | | 設定済みのトランスポート定義 |
+| `from.address` | `MAIL_FROM_ADDRESS` | 文字列 | `'hello@example.com'` | デフォルトの送信元メールアドレス |
+| `from.name` | `MAIL_FROM_NAME` | 文字列 | `'dframework'` | デフォルトの送信元表示名 |
 
 <a name="設定値へのアクセス"></a>
 
@@ -545,3 +630,9 @@ const dbHost = Env.value('DB_HOST', 'localhost');
 ## 設定のホットリロード
 
 `local`環境ではフレームワークはファイル変更を検知するために`config`ディレクトリ全体を監視します。設定ファイルまたは`.env`を保存すると、ウォッチャーが変更を検知してサーバープロセスを再起動するため更新された設定値が即座に反映されます。
+
+<a name="設定のバリデーション"></a>
+
+## 設定のバリデーション
+
+dframeworkはアプリケーションの起動時に必要な設定値を検証します。デフォルトでは有効な環境識別子、本番環境のアプリケーションキー、サポートされているデータベースドライバーとホスト、セッションドライバー、キュードライバー、およびメール設定を検証します。必要な設定が不足または無効な場合、詳細な`DiagnosticError`とともにブートストラップが即座に停止します。

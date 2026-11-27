@@ -19,6 +19,7 @@
   - [creating a command](#creating-a-command)
   - [running a command](#running-a-command)
   - [dispatching jobs](#dispatching-jobs)
+  - [running queue workers](#running-queue-workers)
   - [logs management](#logs-management)
   - [deployment and certificates](#deployment-and-certificates)
     - [deploying applications](#deploying-applications)
@@ -102,6 +103,7 @@ passing a command name to `dstrn help <command>` or appending `--help` / `-h` to
 | command                                 | description                                                                   |
 | --------------------------------------- | ----------------------------------------------------------------------------- |
 | `dstrn run <CommandName>`               | run a user command from `console/commands`                                    |
+| `dstrn queue:work [--queue=] [--driver=] [--once]` | start processing background queue jobs as a daemon                            |
 | `dstrn dispatch <JobName> [--payload=] [--tracking-id=]` | run a job directly in the current process with optional payload and correlation id |
 | `dstrn logs:clear`                     | clear or archive log files with date filtering                                |
 | `dstrn deploy`                         | generate production deployment and service configurations                     |
@@ -391,6 +393,24 @@ you can also assign an explicit correlation identifier using the `--tracking-id`
 
 ```bash
 dstrn dispatch SendWelcomeEmailJob --payload '{"userId": 1}' --tracking-id 'custom-correlation-id'
+```
+
+<a name="running-queue-workers"></a>
+
+### running queue workers
+
+you can run a dedicated worker daemon to process background jobs from the queue:
+
+```bash
+dstrn queue:work
+```
+
+you can filter by queue, override the driver, or process a single job and exit:
+
+```bash
+dstrn queue:work --queue=emails
+dstrn queue:work --driver=database
+dstrn queue:work --once
 ```
 
 <a name="logs-management"></a>

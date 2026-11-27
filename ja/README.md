@@ -216,6 +216,7 @@ dframeworkは強力な前提を持つクローズドワールドランタイム�
 ## 非同期処理
 
 - [ジョブとキュー](asynchronous/jobs-and-queues.md)
+- [メール](asynchronous/mail.md)
 - [スケジューリングとコマンド](asynchronous/scheduling-and-commands.md)
 
 ## その他

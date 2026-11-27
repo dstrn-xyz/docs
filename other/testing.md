@@ -13,6 +13,7 @@
   - [service fakes](#service-fakes)
     - [faking background jobs](#faking-background-jobs)
     - [faking websocket events](#faking-websocket-events)
+    - [faking mail](#faking-mail)
   - [database assertions](#database-assertions)
     - [migrations, seeders, and transactions](#migrations-and-transactions)
   - [browser and page interaction tests](#browser-and-page-interaction-tests)
@@ -196,7 +197,7 @@ the response object returned by synthetic requests provides chainable assertion 
 
 ## service fakes
 
-dframework provides test doubles and spies for background jobs and websocket events via `Tester.fake({ jobs: true, socket: true })` (or `Tester.fakeJobs()` / `Tester.fakeSocket()`, or passing service names like `Tester.fake('jobs')` or `Tester.fake(['jobs', 'socket'])`). fakes intercept dispatches in memory, prevent real execution, provide expressive assertions, and automatically restore state when the test completes.
+dframework provides test doubles and spies for background jobs, websocket events, and mail via `Tester.fake({ jobs: true, socket: true, mail: true })` (or `Tester.fakeJobs()` / `Tester.fakeSocket()` / `Tester.fakeMail()`, or passing service names like `Tester.fake('jobs')` or `Tester.fake(['jobs', 'mail'])`). fakes intercept dispatches in memory, prevent real execution, provide expressive assertions, and automatically restore state when the test completes.
 
 <a name="faking-background-jobs"></a>
 
@@ -263,6 +264,32 @@ test('broadcasts message and notifies recipient', async () => {
 | `Tester.sent(event, callback)` | retrieve sent socket events matching filter |
 | `Tester.broadcasted(event, callback)` | retrieve broadcasted socket events matching filter |
 
+<a name="faking-mail"></a>
+
+### faking mail
+
+calling `Tester.fake({ mail: true })` (or `Tester.fakeMail()`) intercepts mail delivery:
+
+```javascript
+import { test, Tester } from 'dframework/testing';
+
+test('sends welcome email on registration', async () => {
+  Tester.fakeMail();
+
+  await Tester.post('/register', { email: 'user@example.com' });
+
+  Tester.assertSentMail('emails.welcome');
+  Tester.assertSentMailCount(1);
+});
+```
+
+| assertion | description |
+| --- | --- |
+| `Tester.assertSentMail(criteria)` | assert email was sent matching template or predicate callback |
+| `Tester.assertQueuedMail(criteria)` | assert email was queued matching template or predicate callback |
+| `Tester.assertNothingMailSent()` | assert no email was sent or queued |
+| `Tester.assertSentMailCount(count)` | assert exact count of sent emails |
+
 <a name="database-assertions"></a>
 
 ## database assertions
@@ -312,17 +339,17 @@ test('database transactions and seeding', async () => {
 
 ## browser and page interaction tests
 
-the `browse()` client runs a lightweight simulated dom parser that executes form serialization, link traversal, input typing, checkboxes, and select dropdowns without requiring heavy headless browser binaries in continuous integration. note that simulated dom evaluates server rendered html using whitespace separated descendant selectors and `:not()` without running a client javascript runtime or complex combinators (such as `>`, `+`, or `~`).
+the `Tester.browse()` (or exported `browse()`) client runs a lightweight simulated dom parser that executes form serialization, link traversal, input typing, checkboxes, and select dropdowns without requiring heavy headless browser binaries in continuous integration. note that simulated dom evaluates server rendered html using whitespace separated descendant selectors and `:not()` without running a client javascript runtime or complex combinators (such as `>`, `+`, or `~`).
 
 <a name="navigating-pages"></a>
 
 ### navigating pages
 
 ```javascript
-import { test, browse } from 'dframework/testing';
+import { test, Tester } from 'dframework/testing';
 
 test('visits and navigates via link', async () => {
-  const page = await browse('/');
+  const page = await Tester.browse('/');
 
   page.assertSee('welcome to dframework');
   page.assertElement('nav');
@@ -338,7 +365,7 @@ test('visits and navigates via link', async () => {
 
 ```javascript
 test('fill and submit contact form', async () => {
-  const page = await browse('/contact');
+  const page = await Tester.browse('/contact');
 
   page.type('input[name="email"]', 'visitor@example.com');
   page.type('textarea[name="message"]', 'hello framework');

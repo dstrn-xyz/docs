@@ -23,12 +23,14 @@
     - [ジョブからのブロードキャスト](#ジョブからのブロードキャスト)
     - [エラーハンドリング](#エラーハンドリング)
   - [設定](#設定)
+    - [ディスパッチ制御とデータベースキュー](#ディスパッチ制御とデータベースキュー)
+    - [キューワーカーの実行](#キューワーカーの実行)
 
 <a name="はじめに"></a>
 
 ## はじめに
 
-dframeworkは分離されたワーカースレッドでジョブを実行するネイティブのバックグラウンドジョブキューを備過しています。ジョブはアプリケーションコードからディスパッチされメインhttpプロセスをブロックすることなく非同期に実行されます。これはメール送信、画像処理、外部api同期などユーザーへの応答を遅延させるべきでないタスクに最適です。
+dframeworkは分離されたワーカースレッドでジョブを実行するネイティブのバックグラウンドジョブキューを備えています。ジョブはアプリケーションコードからディスパッチされメインhttpプロセスをブロックすることなく非同期に実行されます。これはメール送信、画像処理、外部api同期などユーザーへの応答を遅延させるべきでないタスクに最適です。
 
 > [!NOTE]
 > キューシステムはredisや個別のキューサーバーのような外部依存関係を一切必要としません。組み込みの`worker_threads`モジュールを使用してnode.jsランタイム内で完全に動作します。
@@ -219,7 +221,7 @@ Job.dispatch('ProcessVideoJob', { videoId: 42 }, {
 
 キューは同時実行ワーカーの最大数を強制します。デフォルトでは最大4つのジョブを同時に実行できます。新しいジョブがディスパッチされたときにすべてのワーカースロットが占有されている場合ジョブはメモリ内キューに配置されワーカーが利用可能になり次第実行されます。
 
-最大ワーカー数は`queue.maxWorkers`設定キーによって設定可能です。
+最大ワーカー数は`queue.maxWorkers`または`app.queue.maxWorkers`設定キーによって設定可能です。
 
 <a name="自動キューイングと永続ワーカープール"></a>
 
@@ -314,23 +316,78 @@ Error: SMTP connection refused
 
 ## 設定
 
-キューシステムは`app.queue`設定名前空間から設定を読み込みます。
+キューシステムは`queue`または`app.queue`設定名前空間から設定を読み込みます。
 
 | 設定キー | 型 | デフォルト値 | 説明 |
 | --- | --- | --- | --- |
-| `app.queue.maxWorkers` | `number` | `4` | 同時実行ワーカースレッドの最大数 |
-| `app.queue.timeout` | `number` | `60000` | ミリ秒単位のデフォルトジョブ実行タイムアウト |
-| `app.queue.bootstrapTimeout` | `number` | `30000` | 新規起動したワーカーのブートストラップ完了を待機する最大ミリ秒数 |
-| `app.queue.shutdownTimeout` | `number` | `30000` | グレースフルシャットダウン時に実行中ジョブの完了を待機する最大ミリ秒数 |
+| `queue.driver` / `app.queue.driver` | `string` | `'memory'` | キュードライバー（`'sync'`、`'memory'`、または`'database'`） |
+| `queue.maxWorkers` / `app.queue.maxWorkers` | `number` | `4` | 同時実行ワーカースレッドの最大数 |
+| `queue.timeout` / `app.queue.timeout` | `number` | `60000` | ミリ秒単位のデフォルトジョブ実行タイムアウト |
+| `queue.bootstrapTimeout` / `app.queue.bootstrapTimeout` | `number` | `30000` | 新規起動したワーカーのブートストラップ完了を待機する最大ミリ秒数 |
+| `queue.shutdownTimeout` / `app.queue.shutdownTimeout` | `number` | `30000` | グレースフルシャットダウン時に実行中ジョブの完了を待機する最大ミリ秒数 |
+| `queue.pollInterval` / `app.queue.pollInterval` | `number` | `1000` | データベースキュー待機時のポーリング間隔（ミリ秒） |
+| `queue.retryAfter` / `app.queue.retryAfter` | `number` | `90000` | 停滞した予約済みジョブが再取得可能になるまでの最大ミリ秒数 |
+
+専用の`config/queue.js`ファイルを使用する場合は、直接設定をエクスポートします。
+
+```javascript
+// config/queue.js
+import { Env } from 'dframework';
+
+export default {
+  driver: Env.value('QUEUE_DRIVER', 'memory'),
+  maxWorkers: Env.value('QUEUE_MAX_WORKERS', 4),
+  timeout: Env.value('QUEUE_TIMEOUT', 60000),
+  bootstrapTimeout: Env.value('QUEUE_BOOTSTRAP_TIMEOUT', 30000),
+  shutdownTimeout: Env.value('QUEUE_SHUTDOWN_TIMEOUT', 30000),
+  pollInterval: Env.value('QUEUE_POLL_INTERVAL', 1000),
+  retryAfter: Env.value('QUEUE_RETRY_AFTER', 90000)
+};
+```
+
+`config/app.js`内で設定する場合は、`queue`キー配下に設定を配置します。
 
 ```javascript
 // config/app.js
 export default {
   queue: {
-    maxWorkers: Env.value('QUEUE_MAX_WORKERS', 4),
-    timeout: Env.value('QUEUE_TIMEOUT', 60000),
-    bootstrapTimeout: Env.value('QUEUE_BOOTSTRAP_TIMEOUT', 30000),
-    shutdownTimeout: Env.value('QUEUE_SHUTDOWN_TIMEOUT', 30000),
-  },
+    driver: Env.value('QUEUE_DRIVER', 'memory'),
+    maxWorkers: Env.value('QUEUE_MAX_WORKERS', 4)
+  }
 };
+```
+
+<a name="ディスパッチ制御とデータベースキュー"></a>
+
+### ディスパッチ制御とデータベースキュー
+
+ディスパッチは遅延実行とリトライ回数をサポートしています。
+
+```javascript
+Job.dispatch('SendWelcomeEmailJob', { userId: user.id }, {
+  delay: 60, // 60秒後に実行
+  retry: 3,  // 最大3回リトライ
+  queue: 'emails'
+});
+```
+
+`database`ドライバーを使用する場合、ジョブは自動的な指数バックオフスケジューリングとともにデータベースクエリ経由でアトミックに予約されます。完全に失敗したジョブは`failed_jobs`テーブルに記録されます。リトライが残っている試行が失敗した場合、キューは次の試行をスケジュールする前に`job:retry`イベント（`{ job, error, attempt, delay }`）を発行します。
+
+`jobs`および`failed_jobs`テーブルはディスパッチまたは予約時にデータベースキュードライバーによって自動的に作成されるため、手動のマイグレーションファイルは不要です。`database`ドライバー使用時、`Job.dispatch()`はレコードが挿入された後に解決されるPromiseを返します。非同期ハンドラー内では、レスポンスを返す前にジョブが保存されるよう呼び出しをawaitしてください。
+
+<a name="キューワーカーの実行"></a>
+
+### キューワーカーの実行
+
+キュー内のバックグラウンドジョブを専用のワーカープロセスとして処理するには、`queue:work`コマンドを使用します（`queue:work`は`database`などの永続化キュードライバーで動作します。デフォルトの`memory`ドライバーを使用している場合は、`--driver=database`を指定するか`.env`で`QUEUE_DRIVER=database`を設定してください）。
+
+```bash
+dstrn queue:work
+```
+
+対象のキュー名やドライバーを指定したり、1つのジョブのみを処理して終了することも可能です。
+
+```bash
+dstrn queue:work --queue=emails --driver=database
+dstrn queue:work --once
 ```

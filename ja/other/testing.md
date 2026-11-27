@@ -13,6 +13,7 @@
   - [サービスフェイク](#サービスフェイク)
     - [バックグラウンドジョブのフェイク](#バックグラウンドジョブのフェイク)
     - [websocketイベントのフェイク](#websocketイベントのフェイク)
+    - [メールのフェイク](#メールのフェイク)
   - [データベースアサーション](#データベースアサーション)
     - [マイグレーション、シーダー、およびトランザクション](#マイグレーションとトランザクション)
   - [ブラウザとページ操作テスト](#ブラウザとページ操作テスト)
@@ -196,7 +197,7 @@ test('認証済みプロフィールの表示', async () => {
 
 ## サービスフェイク
 
-dframeworkは`Tester.fake({ jobs: true, socket: true })`（または`Tester.fakeJobs()` / `Tester.fakeSocket()`、あるいはサービス名を直接指定する`Tester.fake('jobs')`や`Tester.fake(['jobs', 'socket'])`）を通じてバックグラウンドジョブとwebsocketイベントのテストダブルおよびスパイを提供します。フェイクはメモリ上でディスパッチを捕捉し、実際の実行を防ぎ、表現力豊かなアサーションを提供し、テスト終了時に状態を自動復元します。
+dframeworkは`Tester.fake({ jobs: true, socket: true, mail: true })`（または`Tester.fakeJobs()` / `Tester.fakeSocket()` / `Tester.fakeMail()`、あるいはサービス名を直接指定する`Tester.fake('jobs')`や`Tester.fake(['jobs', 'mail'])`）を通じてバックグラウンドジョブ、websocketイベント、およびメールのテストダブルとスパイを提供します。フェイクはメモリ上でディスパッチを捕捉し、実際の実行を防ぎ、表現力豊かなアサーションを提供し、テスト終了時に状態を自動復元します。
 
 <a name="バックグラウンドジョブのフェイク"></a>
 
@@ -263,6 +264,32 @@ test('メッセージをブロードキャストし受信者に通知する', as
 | `Tester.sent(event, callback)` | フィルターに一致する送信済みsocketイベントを取得 |
 | `Tester.broadcasted(event, callback)` | フィルターに一致するブロードキャスト済みsocketイベントを取得 |
 
+<a name="メールのフェイク"></a>
+
+### メールのフェイク
+
+`Tester.fake({ mail: true })`（または`Tester.fakeMail()`）を呼び出すと、メール送信をインターセプトして検証できます:
+
+```javascript
+import { test, Tester } from 'dframework/testing';
+
+test('登録時にウェルカムメールを送信する', async () => {
+  Tester.fakeMail();
+
+  await Tester.post('/register', { email: 'user@example.com' });
+
+  Tester.assertSentMail('emails.welcome');
+  Tester.assertSentMailCount(1);
+});
+```
+
+| アサーション | 説明 |
+| --- | --- |
+| `Tester.assertSentMail(criteria)` | テンプレートまたはコールバックに一致するメールが送信されたことを検証 |
+| `Tester.assertQueuedMail(criteria)` | テンプレートまたはコールバックに一致するメールがキューに追加されたことを検証 |
+| `Tester.assertNothingMailSent()` | メールが送信またはキューに追加されていないことを検証 |
+| `Tester.assertSentMailCount(count)` | 送信されたメールの正確な件数を検証 |
+
 <a name="データベースアサーション"></a>
 
 ## データベースアサーション
@@ -312,17 +339,17 @@ test('データベーストランザクションとシーディング', async ()
 
 ## ブラウザとページ操作テスト
 
-`browse()`クライアントは軽量なシミュレーテッドdomパーサーを実行し、ci環境で重いヘッドレスブラウザバイナリを必要とせずにフォームのシリアライズ、リンクの遷移、入力のタイピング、チェックボックス、セレクトボックスを忠実にシミュレートします。なおシミュレーテッドdomはサーバーレンダリングされたhtmlを空白区切りの子孫セレクターおよび`:not()`で解釈する軽量パーサーであり、クライアント側のjavascriptランタイムや複合結合子（`>`、`+`、`~`など）は実行されません。
+`Tester.browse()`（またはエクスポートされた`browse()`）クライアントは軽量なシミュレーテッドdomパーサーを実行し、ci環境で重いヘッドレスブラウザバイナリを必要とせずにフォームのシリアライズ、リンクの遷移、入力のタイピング、チェックボックス、セレクトボックスを忠実にシミュレートします。なおシミュレーテッドdomはサーバーレンダリングされたhtmlを空白区切りの子孫セレクターおよび`:not()`で解釈する軽量パーサーであり、クライアント側のjavascriptランタイムや複合結合子（`>`、`+`、`~`など）は実行されません。
 
 <a name="ページのナビゲーション"></a>
 
 ### ページのナビゲーション
 
 ```javascript
-import { test, browse } from 'dframework/testing';
+import { test, Tester } from 'dframework/testing';
 
 test('訪問してリンクをクリックし遷移する', async () => {
-  const page = await browse('/');
+  const page = await Tester.browse('/');
 
   page.assertSee('welcome to dframework');
   page.assertElement('nav');
@@ -338,7 +365,7 @@ test('訪問してリンクをクリックし遷移する', async () => {
 
 ```javascript
 test('お問い合わせフォームの入力と送信', async () => {
-  const page = await browse('/contact');
+  const page = await Tester.browse('/contact');
 
   page.type('input[name="email"]', 'visitor@example.com');
   page.type('textarea[name="message"]', 'hello framework');

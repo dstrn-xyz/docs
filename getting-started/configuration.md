@@ -15,12 +15,16 @@
   - [config/native.js](#config-native)
   - [config/view.js](#config-view)
   - [config/tracking.js](#config-tracking)
+  - [config/queue.js](#config-queue)
+  - [config/mail.js](#config-mail)
 
 - [accessing configuration values](#accessing-configuration-values)
 
 - [accessing environment values](#accessing-environment-values)
 
 - [hot reloading configuration](#hot-reloading-configuration)
+
+- [configuration validation](#configuration-validation)
 
 <a name="introduction"></a>
 
@@ -515,6 +519,86 @@ export default {
 | `sinks.otlp.endpoint` | `OTEL_EXPORTER_OTLP_ENDPOINT` | string (url) | `'http://localhost:4318/v1/traces'` | otlp collector http endpoint url |
 | `sinks.otlp.serviceName` | `OTEL_SERVICE_NAME` | string | `'dframework-app'` | service name attribute attached to otlp spans |
 
+<a name="config-queue"></a>
+
+### config/queue.js
+
+the queue configuration controls the background worker driver, concurrency, and timeouts:
+
+```javascript
+// config/queue.js
+import { Env } from 'dframework';
+
+export default {
+  driver: Env.value('QUEUE_DRIVER', 'memory'),
+  maxWorkers: Env.value('QUEUE_MAX_WORKERS', 4),
+  timeout: Env.value('QUEUE_TIMEOUT', 60000),
+  bootstrapTimeout: Env.value('QUEUE_BOOTSTRAP_TIMEOUT', 30000),
+  shutdownTimeout: Env.value('QUEUE_SHUTDOWN_TIMEOUT', 30000),
+  pollInterval: Env.value('QUEUE_POLL_INTERVAL', 1000),
+  retryAfter: Env.value('QUEUE_RETRY_AFTER', 90000),
+};
+```
+
+| key | env variable | accepted values | default | description |
+| --- | --- | --- | --- | --- |
+| `driver` | `QUEUE_DRIVER` | `'sync' \| 'memory' \| 'database'` | `'memory'` | queue processing driver |
+| `maxWorkers` | `QUEUE_MAX_WORKERS` | integer | `4` | maximum concurrent worker threads |
+| `timeout` | `QUEUE_TIMEOUT` | integer (ms) | `60000` | execution timeout per job |
+| `bootstrapTimeout` | `QUEUE_BOOTSTRAP_TIMEOUT` | integer (ms) | `30000` | worker thread initialization timeout |
+| `shutdownTimeout` | `QUEUE_SHUTDOWN_TIMEOUT` | integer (ms) | `30000` | graceful shutdown timeout |
+| `pollInterval` | `QUEUE_POLL_INTERVAL` | integer (ms) | `1000` | database queue polling frequency |
+| `retryAfter` | `QUEUE_RETRY_AFTER` | integer (ms) | `90000` | reclaim timeout for stalled reserved jobs |
+
+<a name="config-mail"></a>
+
+### config/mail.js
+
+the mail configuration manages mail delivery transports and sender identities:
+
+```javascript
+// config/mail.js
+import { Env } from 'dframework';
+
+export default {
+  default: Env.value('MAIL_MAILER', 'log'),
+  mailers: {
+    log: {
+      transport: 'log'
+    },
+    smtp: {
+      transport: 'smtp',
+      host: Env.value('MAIL_HOST', '127.0.0.1'),
+      port: Env.value('MAIL_PORT', 587),
+      encryption: Env.value('MAIL_ENCRYPTION', 'tls'),
+      username: Env.value('MAIL_USERNAME'),
+      password: Env.value('MAIL_PASSWORD')
+    },
+    ses: {
+      transport: 'ses',
+      region: Env.value('AWS_DEFAULT_REGION', 'us-east-1'),
+      key: Env.value('AWS_ACCESS_KEY_ID'),
+      secret: Env.value('AWS_SECRET_ACCESS_KEY'),
+      endpoint: Env.value('MAIL_ENDPOINT')
+    },
+    webhook: {
+      transport: 'webhook',
+      url: Env.value('MAIL_WEBHOOK_URL')
+    }
+  },
+  from: {
+    address: Env.value('MAIL_FROM_ADDRESS', 'hello@example.com'),
+    name: Env.value('MAIL_FROM_NAME', 'dframework')
+  }
+};
+```
+
+| key | env variable | accepted values | default | description |
+| --- | --- | --- | --- | --- |
+| `default` | `MAIL_MAILER` | string | `'log'` | default mail transport channel |
+| `mailers` | | object | | configured transport definitions |
+| `from.address` | `MAIL_FROM_ADDRESS` | string | `'hello@example.com'` | default global sender email |
+| `from.name` | `MAIL_FROM_NAME` | string | `'dframework'` | default global sender display name |
 
 <a name="accessing-configuration-values"></a>
 
@@ -552,3 +636,9 @@ const dbHost = Env.value('DB_HOST', 'localhost');
 ## hot reloading configuration
 
 in the `local` environment the framework watches the entire `config` directory for file changes. when you save a config file or `.env`, the watcher detects the change and restarts the server process so updated configuration values take effect immediately.
+
+<a name="configuration-validation"></a>
+
+## configuration validation
+
+dframework validates required configuration values during application bootstrap. by default it verifies valid environment identifiers, application keys in production, supported database drivers and hosts, session drivers, queue drivers, and mail configurations. if any required setting is invalid or missing, bootstrap halts immediately with an actionable `DiagnosticError`.

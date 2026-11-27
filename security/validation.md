@@ -1,7 +1,6 @@
 # validation
 
 - [validation](#validation)
-
   - [introduction](#introduction)
   - [basic usage](#basic-usage)
   - [working with errors](#working-with-errors)
@@ -75,16 +74,17 @@ export default class SettingsController {
 
 ## custom messages
 
-you can provide an object as the third argument to define custom error messages. the keys must use the `field.rule` dot notation.
+you can provide an object as the third argument to define custom error messages. keys support specific field rules (`field.rule`), rule fallbacks (`rule`), and field fallbacks (`field`) in order of precedence. placeholders like `:field`, `:attribute`, `:param`, and rule parameters (such as `:min` or `:max`) are automatically interpolated.
 
 ```javascript
 const messages = {
   'email.required': 'we really need your email address',
   'email.email': 'that does not look like a valid email',
-  'password.min': 'your password must be at least 8 characters long'
+  'password.min': 'password must be at least :min characters',
+  'required': ':field cannot be left blank'
 };
 
-const validation = validate(req.body, rules, messages);
+const validation = validate(req, rules, messages);
 ```
 
 <a name="available-rules"></a>

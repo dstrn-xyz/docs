@@ -29,6 +29,7 @@
     - [config](#config)
     - [storage](#storage)
     - [tracker](#tracker)
+    - [mail](#mail)
 
 <a name="はじめに"></a>
 
@@ -767,4 +768,18 @@ const exists = await Storage.exists('documents/report.pdf');
 
 ```javascript
 Tracker.capture(err, 500);
+```
+
+<a name="mail"></a>
+
+### mail
+
+`Mail`ファサードは設定されたトランスポートを介したトランザクションメール配信とテンプレートレンダリングを提供します。詳細については[メール](../asynchronous/mail.md)のドキュメントを参照してください。
+
+```javascript
+await Mail.to('user@example.com')
+  .subject('welcome')
+  .send('emails.welcome', { user });
+
+await Mail.raw('plain text notification', { to: 'user@example.com', subject: 'notice' });
 ```

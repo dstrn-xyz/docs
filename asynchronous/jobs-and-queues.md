@@ -22,6 +22,8 @@
     - [broadcasting from jobs](#broadcasting-from-jobs)
     - [error handling](#error-handling)
   - [configuration](#configuration)
+    - [dispatch controls and database queue](#dispatch-controls-and-database-queue)
+    - [running queue workers](#running-queue-workers)
 
 <a name="introduction"></a>
 
@@ -218,7 +220,7 @@ each dispatched job runs in its own dedicated `Worker` thread using node `worker
 
 the queue enforces a maximum number of concurrent workers. by default, up to four jobs can run simultaneously. if all worker slots are occupied when a new job is dispatched, the job is placed in an in memory queue and will be executed as soon as a worker becomes available.
 
-the maximum worker count is configurable through the `queue.maxWorkers` configuration key.
+the maximum worker count is configurable through the `queue.maxWorkers` or `app.queue.maxWorkers` configuration key.
 
 <a name="automatic-queuing"></a>
 
@@ -313,23 +315,78 @@ if the worker thread itself crashes (for example due to an out of memory conditi
 
 ## configuration
 
-the queue system reads its configuration from the `app.queue` config namespace.
+the queue system reads its configuration from the `queue` or `app.queue` config namespace.
 
-| key                          | type     | default | description                                                                             |
-| ---------------------------- | -------- | ------- | --------------------------------------------------------------------------------------- |
-| `app.queue.maxWorkers`       | `number` | `4`     | maximum number of concurrent worker threads                                             |
-| `app.queue.timeout`          | `number` | `60000` | default job execution timeout in milliseconds                                           |
-| `app.queue.bootstrapTimeout` | `number` | `30000` | maximum time in milliseconds to wait for a newly spawned worker to finish bootstrapping |
-| `app.queue.shutdownTimeout`  | `number` | `30000` | maximum time in milliseconds to wait for active jobs to finish during graceful shutdown |
+| key                                    | type     | default    | description                                                                             |
+| -------------------------------------- | -------- | ---------- | --------------------------------------------------------------------------------------- |
+| `queue.driver` / `app.queue.driver`           | `string` | `'memory'` | queue driver: `'sync'`, `'memory'`, or `'database'`                                      |
+| `queue.maxWorkers` / `app.queue.maxWorkers`       | `number` | `4`        | maximum number of concurrent worker threads                                             |
+| `queue.timeout` / `app.queue.timeout`          | `number` | `60000`    | default job execution timeout in milliseconds                                           |
+| `queue.bootstrapTimeout` / `app.queue.bootstrapTimeout` | `number` | `30000`    | maximum time in milliseconds to wait for a newly spawned worker to finish bootstrapping |
+| `queue.shutdownTimeout` / `app.queue.shutdownTimeout`  | `number` | `30000`    | maximum time in milliseconds to wait for active jobs to finish during graceful shutdown |
+| `queue.pollInterval` / `app.queue.pollInterval`     | `number` | `1000`     | polling interval in milliseconds when database queue is idle                            |
+| `queue.retryAfter` / `app.queue.retryAfter`       | `number` | `90000`    | maximum time in milliseconds before stalled reserved jobs are reclaimed                |
+
+when using a dedicated `config/queue.js` file, export options directly:
+
+```javascript
+// config/queue.js
+import { Env } from 'dframework';
+
+export default {
+  driver: Env.value('QUEUE_DRIVER', 'memory'),
+  maxWorkers: Env.value('QUEUE_MAX_WORKERS', 4),
+  timeout: Env.value('QUEUE_TIMEOUT', 60000),
+  bootstrapTimeout: Env.value('QUEUE_BOOTSTRAP_TIMEOUT', 30000),
+  shutdownTimeout: Env.value('QUEUE_SHUTDOWN_TIMEOUT', 30000),
+  pollInterval: Env.value('QUEUE_POLL_INTERVAL', 1000),
+  retryAfter: Env.value('QUEUE_RETRY_AFTER', 90000)
+};
+```
+
+if configuring within `config/app.js`, wrap the options under the `queue` key:
 
 ```javascript
 // config/app.js
 export default {
   queue: {
-    maxWorkers: Env.value('QUEUE_MAX_WORKERS', 4),
-    timeout: Env.value('QUEUE_TIMEOUT', 60000),
-    bootstrapTimeout: Env.value('QUEUE_BOOTSTRAP_TIMEOUT', 30000),
-    shutdownTimeout: Env.value('QUEUE_SHUTDOWN_TIMEOUT', 30000),
-  },
+    driver: Env.value('QUEUE_DRIVER', 'memory'),
+    maxWorkers: Env.value('QUEUE_MAX_WORKERS', 4)
+  }
 };
+```
+
+<a name="dispatch-controls-and-database-queue"></a>
+
+### dispatch controls and database queue
+
+dispatching supports delay and retries:
+
+```javascript
+Job.dispatch('SendWelcomeEmailJob', { userId: user.id }, {
+  delay: 60, // delay execution by 60 seconds
+  retry: 3,  // maximum 3 retry attempts
+  queue: 'emails'
+});
+```
+
+when using the `database` driver, jobs are atomically reserved via database queries with automatic exponential backoff scheduling. permanently failing jobs are recorded in the `failed_jobs` table. when an intermediate attempt fails and retries remain, the queue emits a `job:retry` event (`{ job, error, attempt, delay }`) before scheduling the next attempt.
+
+the `jobs` and `failed_jobs` tables are created automatically by the database queue driver upon dispatch or reservation, requiring no manual migration files. when using the database driver, `Job.dispatch()` returns a promise that resolves once the record is inserted. in asynchronous handlers, await the call to ensure the job is committed to storage before responding.
+
+<a name="running-queue-workers"></a>
+
+### running queue workers
+
+to process queued background jobs as a dedicated worker process, use the `queue:work` command (note that `queue:work` operates on persistent queue drivers such as `database`; when using the default `memory` driver, pass `--driver=database` or configure `QUEUE_DRIVER=database` in `.env`):
+
+```bash
+dstrn queue:work
+```
+
+you can specify a target queue name, driver, or run a single job:
+
+```bash
+dstrn queue:work --queue=emails --driver=database
+dstrn queue:work --once
 ```

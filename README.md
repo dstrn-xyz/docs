@@ -216,6 +216,7 @@ benchmark results and methodology:
 ## asynchronous processing
 
 - [jobs and queues](asynchronous/jobs-and-queues.md)
+- [mail](asynchronous/mail.md)
 - [scheduling and commands](asynchronous/scheduling-and-commands.md)
 
 ## other
