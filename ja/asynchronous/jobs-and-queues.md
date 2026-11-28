@@ -25,6 +25,7 @@
   - [設定](#設定)
     - [ディスパッチ制御とデータベースキュー](#ディスパッチ制御とデータベースキュー)
     - [キューワーカーの実行](#キューワーカーの実行)
+    - [キューのステータス確認](#キューのステータス確認)
 
 <a name="はじめに"></a>
 
@@ -390,4 +391,15 @@ dstrn queue:work
 ```bash
 dstrn queue:work --queue=emails --driver=database
 dstrn queue:work --once
+```
+
+<a name="キューのステータス確認"></a>
+
+### キューのステータス確認
+
+ワーカープールの状態、保留中・予約済みジョブ数、リトライバックオフ、失敗したジョブを確認するには`queue:status`を使用します:
+
+```bash
+dstrn queue:status
+dstrn queue:status --queue=emails --json
 ```

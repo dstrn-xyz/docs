@@ -26,6 +26,7 @@
     - [automatic startup](#automatic-startup)
     - [execution and rescheduling](#execution-and-rescheduling)
     - [manual execution](#manual-execution)
+    - [inspecting scheduled tasks](#inspecting-scheduled-tasks)
 
   - [error handling](#error-handling)
 
@@ -201,6 +202,17 @@ await app.scheduler.run('CleanupExpiredSessions');
 ```
 
 this immediately executes the task once on demand without modifying its scheduled recurrence timer.
+
+<a name="inspecting-scheduled-tasks"></a>
+
+### inspecting scheduled tasks
+
+to inspect registered tasks, intervals, next expected run timestamps, and last exit statuses from the cli:
+
+```bash
+dstrn schedule:list
+dstrn schedule:list --json
+```
 
 <a name="error-handling"></a>
 

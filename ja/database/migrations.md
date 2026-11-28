@@ -12,6 +12,7 @@
   - [マイグレーションの実行](#マイグレーションの実行)
     - [マイグレーションステータス](#マイグレーションステータス)
     - [ロールバック](#ロールバック)
+    - [マイグレーションの統合](#マイグレーションの統合)
     - [トランザクションマイグレーションとDDL文](#トランザクションマイグレーションとddl文)
 
 <a name="はじめに"></a>
@@ -227,6 +228,23 @@ dstrn migrate:rollback
 
 ```bash
 dstrn migrate:rollback --force
+```
+
+<a name="マイグレーションの統合"></a>
+
+### マイグレーションの統合（スカッシュ）
+
+アプリケーションの成長に伴い多数の履歴マイグレーションが新規データベースの初期化を遅くする場合があります。`migrate:squash`を使用すると適用済みマイグレーションを単一の`database/schema/<driver>-schema.sql`スナップショットに統合できます:
+
+```bash
+dstrn migrate:squash
+dstrn migrate:squash --prune
+```
+
+`--prune`を指定するとスキーマ出力後に適用済みの`.js`マイグレーションファイルが削除されます。マイグレーションが未適用の新しいデータベースでは`dstrn migrate`が自動的に`database/schema/<driver>-schema.sql`を読み込んでから以降の保留中マイグレーションを実行します。明示的なスキーマスナップショットパスを指定する場合は`--schema-path=<path>`を渡すか`config/database.js`で`database.schema_path`を設定します:
+
+```bash
+dstrn migrate --schema-path=database/schema/custom-schema.sql
 ```
 
 <a name="トランザクションマイグレーションとddl文"></a>

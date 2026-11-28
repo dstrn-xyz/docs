@@ -31,6 +31,7 @@
     - [属性の非表示](#属性の非表示)
     - [属性の表示](#属性の表示)
   - [ミューテーション](#ミューテーション)
+  - [モデルファクトリ](#モデルファクトリ)
 
 <a name="はじめに"></a>
 
@@ -650,3 +651,16 @@ user.custom_secret = 'plain-text';
 await user.hash('custom_secret');
 await user.save();
 ```
+
+<a name="モデルファクトリ"></a>
+
+## モデルファクトリ
+
+モデルはモデルファクトリを使用した宣言的なテストおよびダミーデータ生成をサポートしています。`Model.factory(count?)`を呼び出すことで未保存インスタンスの生成やカスタム状態・シーケンス・リレーションを持つレコードの永続化を行えます:
+
+```javascript
+const user = await User.factory().create();
+const users = await User.factory(5).create();
+```
+
+ファクトリクラスの作成と設定に関する詳細については[モデルファクトリのドキュメント](seeding.md#モデルファクトリ)を参照してください。

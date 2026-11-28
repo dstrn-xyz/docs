@@ -12,6 +12,7 @@
   - [running migrations](#running-migrations)
     - [migration status](#migration-status)
     - [rolling back](#rolling-back)
+    - [squashing migrations](#squashing-migrations)
     - [transactional migrations and ddl statements](#transactional-ddl)
 
 <a name="introduction"></a>
@@ -227,6 +228,23 @@ in production (`APP_ENV=production`), the command requires confirmation before a
 
 ```bash
 dstrn migrate:rollback --force
+```
+
+<a name="squashing-migrations"></a>
+
+### squashing migrations
+
+as an application grows, dozens of historical migrations can slow down fresh database initialization. use `migrate:squash` to condense applied migrations into a single `database/schema/<driver>-schema.sql` snapshot:
+
+```bash
+dstrn migrate:squash
+dstrn migrate:squash --prune
+```
+
+when `--prune` is passed, applied `.js` migration files are deleted after dumping the schema. on a fresh database with no applied migrations, `dstrn migrate` automatically loads `database/schema/<driver>-schema.sql` before running any newer pending migrations. you can also specify an explicit schema snapshot path via `--schema-path=<path>` or configure `database.schema_path` in `config/database.js`:
+
+```bash
+dstrn migrate --schema-path=database/schema/custom-schema.sql
 ```
 
 <a name="transactional-ddl"></a>

@@ -144,12 +144,13 @@ selectは同じマイクロタスク内で発行された単純な等価検索�
 
 ## トランザクション
 
-アトミックな実行を保証するためにデータベース操作を`DB.transaction`でラップします。トランザクションは同じ非同期コンテキスト内のネストされたモデルクエリや生の`DB.query`呼び出し全体に専用の接続を自動的に伝播します:
+アトミックな実行を保証しコールバックの結果を返すためにデータベース操作を`DB.transaction`でラップします。トランザクションは接続ハンドルを引数で渡すことなく同じ非同期コンテキスト内のネストされたモデル操作（`User.create`、`save`、`delete`）や生の`DB.query`、`DB.table`呼び出し全体に専用の接続を自動的に伝播します:
 
 ```javascript
-await DB.transaction(async (conn) => {
-  await DB.table('users').where({ id: 1 }).update({ status: 'active' });
-  await DB.table('audit_logs').insert({ user_id: 1, action: 'activated' });
+const user = await DB.transaction(async () => {
+  const created = await User.create({ name: 'test' });
+  await DB.table('audit_logs').insert({ user_id: created.id, action: 'created' });
+  return created;
 });
 ```
 

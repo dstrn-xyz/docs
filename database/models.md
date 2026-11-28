@@ -31,6 +31,7 @@
     - [hiding attributes](#hiding-attributes)
     - [visible attributes](#visible-attributes)
   - [mutations](#mutations)
+  - [model factories](#model-factories)
 
 <a name="introduction"></a>
 
@@ -696,3 +697,16 @@ await user.hash('custom_secret');
 await user.save();
 // hash() mutates the instance in place; save() persists it.
 ```
+
+<a name="model-factories"></a>
+
+## model factories
+
+models support declarative testing and dummy data generation through model factories. invoke `Model.factory(count?)` to build unsaved instances or persist records with custom states, sequences, and relationships:
+
+```javascript
+const user = await User.factory().create();
+const users = await User.factory(5).create();
+```
+
+for full documentation on creating and configuring factory classes, see the [model factories documentation](seeding.md#model-factories).

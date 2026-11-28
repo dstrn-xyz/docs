@@ -73,9 +73,10 @@ dstrn --version
 
 | コマンド | 説明 |
 | ---------------------------- | ------------------------------------------------------- |
-| `dstrn migrate`              | 保留中のすべてのマイグレーションを実行 |
+| `dstrn migrate [--schema-path=] [--force]` | 保留中のすべてのマイグレーションを実行 |
 | `dstrn migrate:status`       | マイグレーションの状態を表示 |
 | `dstrn migrate:rollback`     | 最後のマイグレーションバッチをロールバック |
+| `dstrn migrate:squash [--schema-path=] [--prune] [--force]` | 適用済みマイグレーションを単一のスキーマスナップショットへ統合 |
 | `dstrn migrate:make <name>`  | 新しいマイグレーションテンプレートを作成（命名パターンからテーブル名を推論） |
 | `dstrn seed [name]`          | データベースシーダーを実行 |
 | `dstrn seed:make <Name>`     | 新しいシーダーテンプレートを作成 |
@@ -89,6 +90,7 @@ dstrn --version
 | コマンド | 説明 |
 | ------------------------------ | ---------------------------- |
 | `dstrn make:model <Name>`      | 新しいモデルを作成 |
+| `dstrn make:factory <Name> [--model=]` | 新しいモデルファクトリを作成 |
 | `dstrn make:controller <Name>` | 新しいコントローラーを作成 |
 | `dstrn make:middleware <Name>` | 新しいミドルウェアを作成 |
 | `dstrn make:command <Name>`    | 新しいコンソールコマンドを作成 |
@@ -104,6 +106,8 @@ dstrn --version
 | --------------------------------------- | ----------------------------------------------------------------------------- |
 | `dstrn run <CommandName>`               | `console/commands`からユーザーコマンドを実行 |
 | `dstrn queue:work [--queue=] [--driver=] [--once]` | バックグラウンドキュージョブをデーモンとして処理 |
+| `dstrn queue:status [--queue=] [--driver=] [--json]` | ワーカープールの状態、保留ジョブ、失敗、バックオフを表示 |
+| `dstrn schedule:list [--json]`          | 登録済みスケジュールタスク、間隔、次回実行、前回ステータスを表示 |
 | `dstrn dispatch <JobName> [--payload=] [--tracking-id=]` | オプションのペイロードおよび関連付けidを使用して現在のプロセスでジョブを直接実行 |
 | `dstrn logs:clear`                     | 日付フィルタリング付きでログファイルをクリアまたはアーカイブ |
 | `dstrn deploy`                         | 本番デプロイおよびサービス設定を生成 |
@@ -193,7 +197,16 @@ dframework> users.length
 dframework> await User.where('role', 'admin').get();
 ```
 
-シェルはコマンド履歴をプロジェクトルートの`.dframework_history`に永続化します。すべてのフレームワークファサード（`DB`、`Config`、`Session`、`Auth`、`Log`など）およびモデルがコンテキスト内で利用可能です。
+シェルはコマンド履歴をプロジェクトルートの`.dframework_history`に永続化します。すべてのフレームワークファサード（`DB`、`Config`、`Session`、`Auth`、`Log`、`Storage`、`Route`など）、モデル、およびモデルファクトリが事前ロードされます。replはタブ補完および組み込みのドットコマンド（`.models`、`.factories`、`.facades`、`.tables`、`.help`、`.exit`）を提供します:
+
+```
+dframework> .models
+User, Post
+dframework> .tables
+users, posts, migrations
+dframework> User.fac<tab>
+dframework> User.factory().create()
+```
 
 ### インラインコード実行
 

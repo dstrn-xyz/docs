@@ -146,12 +146,13 @@ to intentionally skip batching (for example inside a batcher's own callback or f
 
 ## transactions
 
-wrap database operations in `DB.transaction` to ensure atomic execution. transactions automatically propagate the dedicated connection across nested model queries and raw `DB.query` calls within the same async context:
+wrap database operations in `DB.transaction` to ensure atomic execution and return the callback result. transactions automatically propagate the dedicated connection across nested model operations (`User.create`, `save`, `delete`) and raw `DB.query` or `DB.table` calls within the same async context without passing a connection handle:
 
 ```javascript
-await DB.transaction(async (conn) => {
-  await DB.table('users').where({ id: 1 }).update({ status: 'active' });
-  await DB.table('audit_logs').insert({ user_id: 1, action: 'activated' });
+const user = await DB.transaction(async () => {
+  const created = await User.create({ name: 'test' });
+  await DB.table('audit_logs').insert({ user_id: created.id, action: 'created' });
+  return created;
 });
 ```
 

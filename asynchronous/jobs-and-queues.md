@@ -24,6 +24,7 @@
   - [configuration](#configuration)
     - [dispatch controls and database queue](#dispatch-controls-and-database-queue)
     - [running queue workers](#running-queue-workers)
+    - [inspecting queue status](#inspecting-queue-status)
 
 <a name="introduction"></a>
 
@@ -389,4 +390,15 @@ you can specify a target queue name, driver, or run a single job:
 ```bash
 dstrn queue:work --queue=emails --driver=database
 dstrn queue:work --once
+```
+
+<a name="inspecting-queue-status"></a>
+
+### inspecting queue status
+
+to inspect worker pool health, pending/reserved job counts, retry backoffs, and failed jobs, use `queue:status`:
+
+```bash
+dstrn queue:status
+dstrn queue:status --queue=emails --json
 ```

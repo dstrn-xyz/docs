@@ -73,9 +73,10 @@ passing a command name to `dstrn help <command>` or appending `--help` / `-h` to
 
 | command                      | description                                             |
 | ---------------------------- | ------------------------------------------------------- |
-| `dstrn migrate`              | run all pending migrations                              |
+| `dstrn migrate [--schema-path=] [--force]` | run all pending migrations                              |
 | `dstrn migrate:status`       | display migration status                                |
 | `dstrn migrate:rollback`     | rollback the last migration batch                       |
+| `dstrn migrate:squash [--schema-path=] [--prune] [--force]` | squash applied migrations into a schema snapshot file |
 | `dstrn migrate:make <name>`  | create a new migration template (infers table name from naming patterns) |
 | `dstrn seed [name]`          | run database seeders                                    |
 | `dstrn seed:make <Name>`     | create a new seeder template                            |
@@ -89,6 +90,7 @@ passing a command name to `dstrn help <command>` or appending `--help` / `-h` to
 | command                        | description                                                    |
 | ------------------------------ | -------------------------------------------------------------- |
 | `dstrn make:model <Name>`      | create a new model                                             |
+| `dstrn make:factory <Name> [--model=]` | create a new model factory                             |
 | `dstrn make:controller <Name>` | create a new controller                                        |
 | `dstrn make:middleware <Name>` | create a new middleware                                        |
 | `dstrn make:command <Name>`    | create a new console command                                   |
@@ -104,6 +106,8 @@ passing a command name to `dstrn help <command>` or appending `--help` / `-h` to
 | --------------------------------------- | ----------------------------------------------------------------------------- |
 | `dstrn run <CommandName>`               | run a user command from `console/commands`                                    |
 | `dstrn queue:work [--queue=] [--driver=] [--once]` | start processing background queue jobs as a daemon                            |
+| `dstrn queue:status [--queue=] [--driver=] [--json]` | display worker pool health, pending jobs, failures, and backoffs            |
+| `dstrn schedule:list [--json]`          | list registered scheduled tasks, intervals, next runs, and last exit statuses |
 | `dstrn dispatch <JobName> [--payload=] [--tracking-id=]` | run a job directly in the current process with optional payload and correlation id |
 | `dstrn logs:clear`                     | clear or archive log files with date filtering                                |
 | `dstrn deploy`                         | generate production deployment and service configurations                     |
@@ -193,7 +197,16 @@ dframework> users.length
 dframework> await User.where('role', 'admin').get();
 ```
 
-the shell persists command history to `.dframework_history` in your project root. all framework facades (`DB`, `Config`, `Session`, `Auth`, `Log`, etc.) and models are available in the context.
+the shell persists command history to `.dframework_history` in your project root. all framework facades (`DB`, `Config`, `Session`, `Auth`, `Log`, `Storage`, `Route`, etc.), models, and model factories are preloaded. the repl provides tab autocompletion and built in dot commands (`.models`, `.factories`, `.facades`, `.tables`, `.help`, `.exit`):
+
+```
+dframework> .models
+User, Post
+dframework> .tables
+users, posts, migrations
+dframework> User.fac<tab>
+dframework> User.factory().create()
+```
 
 ### inline code execution
 
